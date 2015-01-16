@@ -13,6 +13,7 @@ Credits
  * [Graham Edgecombe](https://github.com/grahamedgecombe/) - author of the
    original [Lightstone](https://github.com/grahamedgecombe/lightstone).
  * [Glowstone](https://github.com/GlowstoneMC/Glowstone) - for making an awesome open source Minecraft server in java.
+ * [MCProtocolLib](https://github.com/Steveice10/MCProtocolLib) - for making a nice protocol library. 
  * All the people behind [Gradle](http://gradle.org) and
    [Java](http://java.oracle.com).
  * [Notch](http://mojang.com/notch) and the rest of
@@ -23,3 +24,4 @@ Copyright
 ---------
 CyanWool as Glowstone is open-source software released under the MIT license. Please see
 the `LICENSE` file for details.
+MCProtocolLib created by Steveice10
