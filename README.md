@@ -1,2 +1,2 @@
 # CyanWool
-Custom Minecraft server written in Java! 
+Glowstone modification without the support BukkitAPI. 
