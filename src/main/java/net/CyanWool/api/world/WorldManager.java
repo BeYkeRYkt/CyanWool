@@ -7,8 +7,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.api.theards.WorldThread;
-import net.CyanWool.api.world.chunks.Chunk;
-import net.CyanWool.world.CyanChunk;
 
 public class WorldManager {
 

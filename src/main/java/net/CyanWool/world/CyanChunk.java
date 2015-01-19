@@ -23,6 +23,7 @@ public class CyanChunk implements Chunk{
     public static final int SIZE = WIDTH * HEIGHT * DEPTH;
 
     private final List<Entity> entities = new ArrayList<Entity>();
+    private boolean isLoaded;
     
     public CyanChunk(World world, int x, int z) {
         this.world = world;
@@ -76,68 +77,55 @@ public class CyanChunk implements Chunk{
 
     @Override
     public int getSkyLight(int x, int y, int z) {
-        // TODO Auto-generated method stub
-        return 0;
+        return protocolChunk.getSkyLight().get(x, y, z);
     }
 
     @Override
     public void setSkyLight(int x, int y, int z, int skylight) {
-        // TODO Auto-generated method stub
-        
+        protocolChunk.getSkyLight().set(x, y, z, skylight);
     }
 
     @Override
     public int getBlockLight(int x, int y, int z) {
-        // TODO Auto-generated method stub
-        return 0;
+        return protocolChunk.getBlockLight().get(x, y, z);
     }
 
     @Override
     public void setBlockLight(int x, int y, int z, int blocklight) {
-        // TODO Auto-generated method stub
-        
+        protocolChunk.getBlockLight().set(x, y, z, blocklight);
     }
 
     @Override
     public int getType(int x, int z, int y) {
-        // TODO Auto-generated method stub
-        return 0;
+        return protocolChunk.getBlocks().getBlock(x, y, z);
     }
 
     @Override
     public void setType(int x, int z, int y, int type) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public int getMaxHeight() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void generate() {
-        // TODO Auto-generated method stub
-        
+        protocolChunk.getBlocks().setBlock(x, y, z, type);
     }
 
     @Override
     public void setBlock(int x, int y, int z, BlockType type) {
-        // TODO Auto-generated method stub
-        
+        protocolChunk.getBlocks().setBlockAndData(x, y, z, type.getID(), type.getData());
     }
 
     @Override
     public void loadChunk() {
         // TODO Auto-generated method stub
-        
+        this.protocolChunk = new org.spacehq.mc.protocol.data.game.Chunk(true);
+        //todo
     }
 
     @Override
     public void unloadChunk() {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public boolean isLoaded() {
+        return isLoaded;
     }
     
 }

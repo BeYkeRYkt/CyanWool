@@ -11,6 +11,7 @@ import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.entity.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.chunks.Chunk;
+import net.CyanWool.api.world.chunks.ChunkManager;
 
 import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 import org.spacehq.mc.protocol.data.game.values.world.Particle;
@@ -106,4 +107,6 @@ public interface World {
     public boolean getGamerule(String rule);
     
     public void saveAll();
+    
+    public ChunkManager getChunkManager();
 }

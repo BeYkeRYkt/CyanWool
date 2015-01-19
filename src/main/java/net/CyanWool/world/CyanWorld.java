@@ -14,6 +14,8 @@ import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Dimension;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
+import net.CyanWool.api.world.chunks.Chunk;
+import net.CyanWool.api.world.chunks.ChunkManager;
 
 import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 import org.spacehq.mc.protocol.data.game.values.world.Particle;
@@ -25,9 +27,11 @@ public class CyanWorld implements World {
 
     private WorldInfo info;
     private CyanServer server;
+    private ChunkManager chunk;
 
     public CyanWorld(WorldInfo info) {
         this.info = info;
+        //this.chunk = new ChunkManager(world, service, generator);
     }
 
     public void loadNBT(CompoundTag tag) {
@@ -301,5 +305,10 @@ public class CyanWorld implements World {
     public void saveAll() {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public ChunkManager getChunkManager() {
+        return chunk;
     }
 }
