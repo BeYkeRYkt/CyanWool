@@ -119,7 +119,7 @@ public class CyanBlockType implements BlockType {
     }
 
     @Override
-    public BlockType clone() {
+    public BlockType cloneBlock() {
         CyanBlockType clone = new CyanBlockType(id, data);
         clone.setBreakSound(breakSound);
         clone.setDigSound(digSound);

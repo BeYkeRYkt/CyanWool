@@ -42,6 +42,15 @@ public class WorldManager {
         }
         return false;
     }
+    
+    public World getWorld(String name){
+        for (World w : worlds) {
+            if (!w.getName().equals(name)) {
+                return w;
+            }
+        }
+        return null;
+    }
 
     public boolean removeWorld(World world) {
         if (stopWorldEntry(world) && stopWorld(world)) {

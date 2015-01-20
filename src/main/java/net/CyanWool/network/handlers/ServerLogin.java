@@ -15,7 +15,7 @@ public class ServerLogin implements ServerLoginHandler {
 
     @Override
     public void loggedIn(Session session) {
-        // server.getPlayerManager().joinPlayer(session);
+        server.getPlayerManager().loginPlayer(session);
     }
 
 }

@@ -14,7 +14,7 @@ import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 
 public class CyanChunk implements Chunk{
 
-    private org.spacehq.mc.protocol.data.game.Chunk protocolChunk;
+    private org.spacehq.mc.protocol.data.game.Chunk[] protocolChunk; //???
     private World world;
     private int x;
     private int z;
@@ -70,50 +70,50 @@ public class CyanChunk implements Chunk{
     }
 
     @Override
-    public void updateChunk() {
-        ServerChunkDataPacket packet = new ServerChunkDataPacket(x, z);//...
-        //For all players in chunk
+    public void updateChunk(Player player) {
+        ServerChunkDataPacket packet = new ServerChunkDataPacket(x, z, protocolChunk);//...
+        player.getPlayerNetwork().sendPacket(packet);
     }
 
     @Override
     public int getSkyLight(int x, int y, int z) {
-        return protocolChunk.getSkyLight().get(x, y, z);
+        return protocolChunk[0].getSkyLight().get(x, y, z);
     }
 
     @Override
     public void setSkyLight(int x, int y, int z, int skylight) {
-        protocolChunk.getSkyLight().set(x, y, z, skylight);
+        protocolChunk[0].getSkyLight().set(x, y, z, skylight);
     }
 
     @Override
     public int getBlockLight(int x, int y, int z) {
-        return protocolChunk.getBlockLight().get(x, y, z);
+        return protocolChunk[0].getBlockLight().get(x, y, z);
     }
 
     @Override
     public void setBlockLight(int x, int y, int z, int blocklight) {
-        protocolChunk.getBlockLight().set(x, y, z, blocklight);
+        protocolChunk[0].getBlockLight().set(x, y, z, blocklight);
     }
 
     @Override
     public int getType(int x, int z, int y) {
-        return protocolChunk.getBlocks().getBlock(x, y, z);
+        return protocolChunk[0].getBlocks().getBlock(x, y, z);
     }
 
     @Override
     public void setType(int x, int z, int y, int type) {
-        protocolChunk.getBlocks().setBlock(x, y, z, type);
+        protocolChunk[0].getBlocks().setBlock(x, y, z, type);
     }
 
     @Override
     public void setBlock(int x, int y, int z, BlockType type) {
-        protocolChunk.getBlocks().setBlockAndData(x, y, z, type.getID(), type.getData());
+        protocolChunk[0].getBlocks().setBlockAndData(x, y, z, type.getID(), type.getData());
     }
 
     @Override
     public void loadChunk() {
         // TODO Auto-generated method stub
-        this.protocolChunk = new org.spacehq.mc.protocol.data.game.Chunk(true);
+        this.protocolChunk[0] = new org.spacehq.mc.protocol.data.game.Chunk(true);
         //todo
     }
 

@@ -3,13 +3,19 @@ package net.CyanWool.entity;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.inventory.ItemStack;
-import net.CyanWool.api.world.Location;
 
 public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase {
 
-    public CyanEntityLivingBase(Location location) {
-        super(location);
-        // TODO Auto-generated constructor stub
+    private int age;
+    private int arrowCount;
+    private float health;
+    private float maxHealth;
+    private boolean jump;
+    private EntityLivingBase target;
+    private String name;
+    
+    public CyanEntityLivingBase() {
+        //super();
     }
 
     @Override
@@ -32,26 +38,17 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public int getAge() {
-        // TODO Auto-generated method stub
-        return 0;
+        return age;
     }
 
     @Override
-    public float getAIMoveSpeed() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public EntityLivingBase getAITarget() {
-        // TODO Auto-generated method stub
-        return null;
+    public EntityLivingBase getTarget() {
+        return target;
     }
 
     @Override
     public int getArrowCountInEntity() {
-        // TODO Auto-generated method stub
-        return 0;
+        return arrowCount;
     }
 
     @Override
@@ -62,8 +59,7 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public float getHealth() {
-        // TODO Auto-generated method stub
-        return 0;
+        return health;
     }
 
     @Override
@@ -74,20 +70,13 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public float getMaxHealth() {
-        // TODO Auto-generated method stub
-        return 0;
+        return maxHealth;
     }
 
     @Override
     public int getTotalArmorValue() {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public void setAIMoveSpeed(float f) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -98,26 +87,22 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public void setArrowCountInEntity(int i) {
-        // TODO Auto-generated method stub
-
+        this.arrowCount = i;
     }
 
     @Override
     public void setHealth(float health) {
-        // TODO Auto-generated method stub
-
+        this.health = health;
     }
 
     @Override
     public void setJumping(boolean flag) {
-        // TODO Auto-generated method stub
-
+        this.jump = flag;
     }
 
     @Override
-    public void setRevengeTarget(EntityLivingBase entity) {
-        // TODO Auto-generated method stub
-
+    public void setTarget(EntityLivingBase entity) {
+        this.target = entity;
     }
 
     @Override
@@ -128,8 +113,7 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public void damage(double amount) {
-        // TODO Auto-generated method stub
-
+        this.damage(amount, null);
     }
 
     @Override
@@ -140,6 +124,27 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public void onTick() {
+        age++;
+        //TODO
+    }
 
+    @Override
+    public boolean isJumping() {
+        return jump;
+    }
+
+    @Override
+    public void setMaxHealth(float health) {
+        this.maxHealth = health;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return name;
+    }
+
+    @Override
+    public void setDisplayName(String name) {
+        this.name = name;
     }
 }

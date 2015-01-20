@@ -28,7 +28,7 @@ public interface Chunk {
     
     public List<Player> getPlayers();
     
-    public void updateChunk();
+    public void updateChunk(Player player);
     
     public int getSkyLight(int x, int y, int z);
     

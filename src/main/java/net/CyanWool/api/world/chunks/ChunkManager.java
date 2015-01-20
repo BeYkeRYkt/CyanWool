@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import net.CyanWool.api.io.ChunkIOService;
+import net.CyanWool.api.io.services.ChunkIOService;
 import net.CyanWool.api.world.World;
 
 public class ChunkManager {
@@ -45,9 +45,9 @@ public class ChunkManager {
     }
 
     public boolean loadChunk(int x, int z, boolean generate) {
-        if (service.read(x, z)) {
+        //if (service.read(x, z)) {
             // Start event...
-        }
+        //}
 
         if (!generate) {
             return false;

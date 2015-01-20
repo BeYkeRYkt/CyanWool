@@ -1,8 +1,10 @@
 package net.CyanWool;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.Server;
@@ -11,12 +13,14 @@ import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ConsoleCommandSender;
 import net.CyanWool.api.command.ICommandSender;
 import net.CyanWool.api.entity.Player;
+import net.CyanWool.api.management.PlayerManager;
 import net.CyanWool.api.network.NetworkManager;
 import net.CyanWool.api.plugin.PluginManager;
 import net.CyanWool.api.theards.ConsoleThread;
 import net.CyanWool.api.theards.SchedulerThread;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
+import net.CyanWool.management.CyanPlayerManager;
 import net.CyanWool.network.CyanNetworkServer;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +42,10 @@ public class CyanServer implements Server {
 
     private SchedulerThread schedulert;
     private ConsoleThread console;
+    private PlayerManager playerManager;
 
+    private static BufferedImage icon;
+    
     public static void main(String[] args) {
         CyanServer mc = new CyanServer();
         CyanWool.setServer(mc);
@@ -58,6 +65,8 @@ public class CyanServer implements Server {
         this.config = new ServerConfiguration(configFile);
         this.config.init();
 
+        this.playerManager = new CyanPlayerManager(this);
+        
         this.console = new ConsoleThread(this);
         this.console.start();
         this.consoleSender = new ConsoleCommandSender();
@@ -65,6 +74,12 @@ public class CyanServer implements Server {
         this.network = network;
         network.init();
 
+        try {
+            icon = ImageIO.read(new File("server-icon.png"));
+        } catch (Exception ignored) {
+            
+        }
+        
         this.worlds = new WorldManager(this);
         this.cmdManager = new CommandManager();
         this.pluginManager = new PluginManager();
@@ -158,17 +173,13 @@ public class CyanServer implements Server {
                 getLogger().info(world.getName() + " is unloaded!");
             }
         }
-        
+        System.exit(1);
         //TODO
     }
 
     @Override
     public List<Player> getPlayers() {
-        List<Player> list = new ArrayList<Player>();
-        for (World world : getWorlds()) {
-            list.addAll(world.getPlayers());
-        }
-        return list;
+        return getPlayerManager().getPlayers();
     }
 
     @Override
@@ -186,6 +197,7 @@ public class CyanServer implements Server {
         for (Player player : getPlayers()) {
             player.sendMessage(message);
         }
+        getConsoleCommandSender().sendMessage(message);
     }
 
     @Override
@@ -206,5 +218,15 @@ public class CyanServer implements Server {
     @Override
     public WorldManager getWorldManager() {
         return worlds;
+    }
+
+    @Override
+    public BufferedImage getIcon() {
+        return icon;
+    }
+
+    @Override
+    public PlayerManager getPlayerManager() {
+        return playerManager;
     }
 }

@@ -54,4 +54,10 @@ public class CyanPlayerNetwork implements PlayerNetwork {
     public Server getServer() {
         return server;
     }
+
+    @Override
+    public void handlePacket(Packet packet) {
+        // TODO Auto-generated method stub
+        
+    }
 }

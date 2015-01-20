@@ -1,11 +1,16 @@
 package net.CyanWool.api;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 
+import net.CyanWool.api.command.CommandManager;
+import net.CyanWool.api.command.ICommandSender;
 import net.CyanWool.api.entity.Player;
+import net.CyanWool.api.management.PlayerManager;
 import net.CyanWool.api.network.NetworkManager;
 import net.CyanWool.api.plugin.PluginManager;
 import net.CyanWool.api.world.World;
+import net.CyanWool.api.world.WorldManager;
 
 import org.apache.logging.log4j.Logger;
 
@@ -76,5 +81,37 @@ public class CyanWool {
 
     public static PluginManager getPluginManager() {
         return getServer().getPluginManager();
+    }
+
+    public static Player getPlayer(String name) {
+        return getServer().getPlayer(name);
+    }
+    
+    public static void shutdown(){
+        getServer().shutdown();
+    }
+
+    public static ICommandSender getConsoleCommandSender() {
+        return getServer().getConsoleCommandSender();
+    }
+
+    public CommandManager getCommandManager() {
+        return getServer().getCommandManager();
+    }
+
+    public void broadcastMessage(String message) {
+        getServer().broadcastMessage(message);
+    }
+
+    public WorldManager getWorldManager() {
+        return getServer().getWorldManager();
+    }
+
+    public BufferedImage getIcon() {
+        return getServer().getIcon();
+    }
+    
+    public PlayerManager getPlayerManager (){
+        return getServer().getPlayerManager();
     }
 }

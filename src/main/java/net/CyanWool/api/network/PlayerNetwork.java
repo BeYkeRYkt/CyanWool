@@ -12,10 +12,12 @@ public interface PlayerNetwork {
     public void disconnect(String reason);
 
     public Server getServer();
-
+    
     public void addListener(SessionListener listener);
-
+    
     public void removeListener(SessionListener listener);
 
     public String getHost();
+    
+    public void handlePacket(Packet packet);
 }

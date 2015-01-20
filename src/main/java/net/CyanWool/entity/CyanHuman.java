@@ -2,61 +2,67 @@ package net.CyanWool.entity;
 
 import net.CyanWool.api.entity.Human;
 import net.CyanWool.api.inventory.ItemStack;
-import net.CyanWool.api.world.Location;
+import org.spacehq.mc.auth.GameProfile;
 
 public class CyanHuman extends CyanEntityLivingBase implements Human {
 
-    public CyanHuman(Location location) {
-        super(location);
-        // TODO Auto-generated constructor stub
+    private GameProfile profile;
+    private String displayName;
+    private boolean sleeping;
+    private boolean blocking;
+    
+    private int foodLevel;
+    private int xpLevel;
+    private int xpTotal;
+    private float xpInBar;
+    private boolean disableDamage;
+    private boolean isFlying;
+    private boolean isAllowFlying;
+    private boolean isCreative;
+    private float flySpeed;
+    private float walkSpeed;
+    private boolean canBuild;
+    
+    
+    public CyanHuman(GameProfile profile) {
+        this.profile = profile;
+        this.displayName = profile.getName();
     }
 
     @Override
     public String getDisplayName() {
-        // TODO Auto-generated method stub
-        return null;
+        return displayName;
     }
 
     @Override
     public void setDisplayName(String name) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void updateInventory() {
-        // TODO Auto-generated method stub
-
+        this.displayName = name;
+        //update...
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return profile.getName();
     }
 
     @Override
     public boolean hasItemInHand() {
-        // TODO Auto-generated method stub
-        return false;
+        return getItemInHand() != null;
     }
 
     @Override
     public void setItemInHand(ItemStack item) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public boolean isSleeping() {
-        // TODO Auto-generated method stub
-        return false;
+        return sleeping;
     }
 
     @Override
     public boolean isBlocking() {
-        // TODO Auto-generated method stub
-        return false;
+        return blocking;
     }
 
     @Override
@@ -66,33 +72,18 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     }
 
     @Override
-    public float getArmorVisibility() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public ItemStack getCurrentArmor(int slot) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public boolean isNeedFood() {
-        // TODO Auto-generated method stub
-        return false;
+        return getFoodLevel() < 20;
     }
 
     @Override
     public int getFoodLevel() {
-        // TODO Auto-generated method stub
-        return 0;
+        return foodLevel;
     }
 
     @Override
     public void setFoodLevel(int level) {
-        // TODO Auto-generated method stub
-
+        this.foodLevel = level;
     }
 
     @Override
@@ -103,122 +94,108 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public int getXPLevel() {
-        // TODO Auto-generated method stub
-        return 0;
+        return xpLevel;
     }
 
     @Override
     public int getXPTotal() {
-        // TODO Auto-generated method stub
-        return 0;
+        return xpTotal;
     }
 
     @Override
     public float getXPInBar() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getXPBarCap() {
-        // TODO Auto-generated method stub
-        return 0;
+        return xpInBar;
     }
 
     @Override
     public void setXPLevel(int level) {
-        // TODO Auto-generated method stub
-
+        this.xpLevel = level;
     }
 
     @Override
     public void setXPTotal(int xp) {
-        // TODO Auto-generated method stub
-
+        this.xpTotal = xp;
     }
 
     @Override
     public void setXPInBar(float xp) {
-        // TODO Auto-generated method stub
-
+        this.xpInBar = xp;
     }
 
     @Override
     public boolean isDisableDamage() {
-        // TODO Auto-generated method stub
-        return false;
+        return disableDamage;
     }
 
     @Override
     public void setDisableDamage(boolean flag) {
-        // TODO Auto-generated method stub
-
+        this.disableDamage = flag;
     }
 
     @Override
     public boolean isFlying() {
-        // TODO Auto-generated method stub
-        return false;
+        return isFlying;
     }
 
     @Override
     public void setFlying(boolean flag) {
-        // TODO Auto-generated method stub
-
+        this.isFlying = flag;
     }
 
     @Override
     public boolean isAllowFlying() {
-        // TODO Auto-generated method stub
-        return false;
+        return isAllowFlying;
     }
 
     @Override
     public void setAllowFlying(boolean flag) {
-        // TODO Auto-generated method stub
-
+        this.isAllowFlying = flag;
     }
 
     @Override
     public boolean isCreativeMode() {
-        // TODO Auto-generated method stub
-        return false;
+        return isCreative;
     }
 
     @Override
     public float getFlySpeed() {
-        // TODO Auto-generated method stub
-        return 0;
+        return flySpeed;
     }
 
     @Override
     public void setFlySpeed(float speed) {
-        // TODO Auto-generated method stub
-
+        this.flySpeed = speed;
     }
 
     @Override
     public float getWalkSpeed() {
-        // TODO Auto-generated method stub
-        return 0;
+        return walkSpeed;
     }
 
     @Override
     public void setWalkSpeed(float speed) {
-        // TODO Auto-generated method stub
-
+        this.walkSpeed = speed;
     }
 
     @Override
     public boolean canBuild() {
-        // TODO Auto-generated method stub
-        return false;
+        return canBuild;
     }
 
     @Override
     public void setBuild(boolean flag) {
-        // TODO Auto-generated method stub
+        this.canBuild = flag;
+    }
 
+    @Override
+    public void wakeUp() {
+        this.sleeping = false;
+        //todo...
+    }
+
+    @Override
+    public GameProfile getGameProfile() {
+        return profile;
     }
 
 }

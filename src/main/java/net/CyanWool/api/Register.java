@@ -90,7 +90,7 @@ public class Register {
     public static BlockType getBlock(int id, int data) {
         for (BlockType block : blocks) {
             if (block.getID() == id && block.getData() == data) {
-                return block.clone();
+                return block.cloneBlock();
             }
         }
         return null;

@@ -8,16 +8,11 @@ public interface EntityLivingBase extends Entity {
 
     public boolean isChild();
 
-    @Override
-    public boolean isAlive();
-
     public boolean isEntityUndead();
 
     public int getAge();
 
-    public float getAIMoveSpeed();
-
-    public EntityLivingBase getAITarget();
+    public EntityLivingBase getTarget();
 
     public int getArrowCountInEntity();
 
@@ -33,8 +28,8 @@ public interface EntityLivingBase extends Entity {
     public float getMaxHealth();
 
     public int getTotalArmorValue();
-
-    public void setAIMoveSpeed(float f);
+    
+    public boolean isJumping();
 
     public void setCurrentItemOrArmor(int slot, ItemStack item);
 
@@ -44,14 +39,20 @@ public interface EntityLivingBase extends Entity {
 
     public void setJumping(boolean flag);
 
-    public void setRevengeTarget(EntityLivingBase entity);
+    public void setTarget(EntityLivingBase entity);
 
     @Override
     public void setSprinting(boolean flag);
+    
+    public void setMaxHealth(float health);
 
     public boolean canAttackWithItem();
 
     public void damage(double amount);
 
     public void damage(double amount, Entity damaged);
+    
+    public String getDisplayName();
+
+    public void setDisplayName(String name);
 }

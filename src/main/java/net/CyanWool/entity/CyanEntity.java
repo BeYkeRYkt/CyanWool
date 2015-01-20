@@ -31,9 +31,9 @@ public class CyanEntity implements Entity {
     private boolean sprint;
     private boolean onGround;
 
-    public CyanEntity(Location location) {
-        this.prevLoc = location;
-        this.location = location;
+    public CyanEntity() {
+        //this.prevLoc = location.clone();
+        //this.location = location.clone();
         // TODO
     }
 

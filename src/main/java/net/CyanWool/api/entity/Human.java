@@ -2,26 +2,12 @@ package net.CyanWool.api.entity;
 
 import net.CyanWool.api.inventory.ItemStack;
 
+import org.spacehq.mc.auth.GameProfile;
+
 public interface Human extends EntityLivingBase {
 
-    public String getDisplayName();
-
-    public void setDisplayName(String name);
-
-    @Override
-    public boolean isSneaking();
-
-    @Override
-    public void setSneaking(boolean sneak);
-
-    @Override
-    public boolean isSprinting();
-
-    @Override
-    public void setSprinting(boolean sprinting);
-
-    public void updateInventory();
-
+    public GameProfile getGameProfile();
+    
     public String getName();
 
     public boolean hasItemInHand();
@@ -36,10 +22,8 @@ public interface Human extends EntityLivingBase {
     public boolean isBlocking();
 
     public void sleepInBedAt(int x, int y, int z);
-
-    public float getArmorVisibility();
-
-    public ItemStack getCurrentArmor(int slot);
+    
+    public void wakeUp();
 
     public boolean isNeedFood();
 
@@ -54,8 +38,6 @@ public interface Human extends EntityLivingBase {
     public int getXPTotal();
 
     public float getXPInBar();
-
-    public int getXPBarCap();
 
     public void setXPLevel(int level);
 

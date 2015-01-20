@@ -47,7 +47,7 @@ public interface BlockType {
 
     public List<ItemStack> getDrop();
 
-    public BlockType clone();
+    public BlockType cloneBlock();
 
     public ParticleEffect getBreakParticle();
 

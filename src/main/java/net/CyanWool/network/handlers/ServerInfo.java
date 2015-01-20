@@ -1,9 +1,6 @@
 package net.CyanWool.network.handlers;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.imageio.ImageIO;
 
 import net.CyanWool.CyanServer;
 
@@ -31,10 +28,7 @@ public class ServerInfo implements ServerInfoBuilder {
         PlayerInfo player = new PlayerInfo(server.getConfiguration().getMaxPlayers(), server.getPlayers().size(), new GameProfile[0]);
         Message message = new TextMessage(server.getConfiguration().getMotd());
 
-        BufferedImage icon = null;
-        try {
-            icon = ImageIO.read(new File("server-icon.png"));
-        } catch (Exception ignored) {}
+        BufferedImage icon = server.getIcon();
         return new ServerStatusInfo(version, player, message, icon);
     }
 
