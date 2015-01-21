@@ -91,7 +91,8 @@ public class CyanPlayer extends CyanHuman implements Player {
         for(ChunkCoords chunkcoords: newChunks){
             chunks.add(chunkcoords);
             Chunk chunk = getWorld().getChunkManager().getChunk(chunkcoords.getX(), chunkcoords.getZ());
-            chunk.updateChunk(this);
+            //chunk.updateChunk(this);
+            //TODO: Sending
         }
         
             //Maybe: TODO: ServerMultiChunkDataPacket

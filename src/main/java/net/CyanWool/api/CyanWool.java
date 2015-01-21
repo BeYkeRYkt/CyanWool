@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ICommandSender;
+import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.Player;
 import net.CyanWool.api.management.PlayerManager;
 import net.CyanWool.api.network.NetworkManager;
@@ -67,11 +68,11 @@ public class CyanWool {
         return getServer().getServerConfiguration();
     }
 
-    public List<World> getWorlds() {
+    public static List<World> getWorlds() {
         return getServer().getWorlds();
     }
 
-    public World getWorld(int i) {
+    public static World getWorld(int i) {
         return getServer().getWorld(i);
     }
 
@@ -95,11 +96,11 @@ public class CyanWool {
         return getServer().getConsoleCommandSender();
     }
 
-    public CommandManager getCommandManager() {
+    public static CommandManager getCommandManager() {
         return getServer().getCommandManager();
     }
 
-    public void broadcastMessage(String message) {
+    public static void broadcastMessage(String message) {
         getServer().broadcastMessage(message);
     }
 
@@ -107,11 +108,19 @@ public class CyanWool {
         return getServer().getWorldManager();
     }
 
-    public BufferedImage getIcon() {
+    public static BufferedImage getIcon() {
         return getServer().getIcon();
     }
     
-    public PlayerManager getPlayerManager (){
+    public static PlayerManager getPlayerManager (){
         return getServer().getPlayerManager();
+    }
+
+    public static WorldManager getWordManager() {
+        return getServer().getWorldManager();
+    }
+    
+    public static EntityManager getEntityManager(){
+        return getServer().getEntityManager();
     }
 }

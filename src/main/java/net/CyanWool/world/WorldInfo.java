@@ -11,13 +11,19 @@ import org.spacehq.opennbt.tag.builtin.StringTag;
 
 public class WorldInfo {
 
-    private String name;
-    private GameMode gamemode;
-    private boolean isHardcore;
-    private int dimension;
-    private Difficulty difficulty;
-    private WorldType worldtype;
-    private boolean mapFeatures;
+    public String name;
+    public GameMode gamemode;
+    public boolean isHardcore;
+    public int dimension;
+    public Difficulty difficulty;
+    public WorldType worldtype;
+    public boolean mapFeatures;
+    
+    public int spawnX;
+    public int spawnY;
+    public int spawnZ;
+    public long dayTime;
+    public long seed;
 
     public WorldInfo(CompoundTag tag) {
         CompoundTag data = tag.get("Data");
@@ -53,5 +59,9 @@ public class WorldInfo {
         this.gamemode = GameMode.SURVIVAL;
         // this.difficulty = need Fix;
 
+        
+        this.spawnX = xTag.getValue();
+        this.spawnY = yTag.getValue();
+        this.spawnZ = zTag.getValue();
     }
 }

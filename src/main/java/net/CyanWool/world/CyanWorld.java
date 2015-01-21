@@ -21,98 +21,102 @@ import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 import org.spacehq.mc.protocol.data.game.values.world.Particle;
 import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
 import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
-import org.spacehq.opennbt.tag.builtin.CompoundTag;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
+import org.spacehq.packetlib.packet.Packet;
 
 public class CyanWorld implements World {
 
-    private WorldInfo info;
+    //private WorldInfo info;
     private CyanServer server;
     private ChunkManager chunk;
+    
+    private String name;
+    private Location spawn;
+    private long dayTime;
+    private long seed;
+    private boolean thundering;
+    private int thunderingTime;
+    private boolean raining;
+    private int rainingTime;
 
-    public CyanWorld(WorldInfo info) {
-        this.info = info;
+    public CyanWorld(CyanServer server,WorldInfo info) {
+        this.server = server;
+        //this.info = info;
         //this.chunk = new ChunkManager(world, service, generator);
-    }
-
-    public void loadNBT(CompoundTag tag) {
-        // from http://minecraft.gamepedia.com/Level.dat#level.dat_format
-        CompoundTag data = tag.get("Data");
-    }
-
-    public void saveNBT(CompoundTag tag) {
+        
+        //from info
+        this.name = info.name;
+        Location spawn = new Location(this, info.spawnX, info.spawnY, info.spawnZ);
+        this.spawn = spawn;
+        this.dayTime = info.dayTime;
+        this.seed = info.seed;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return name;
     }
 
     @Override
     public Block getBlock(Location location) {
-        // TODO Auto-generated method stub
-        return null;
+        return location.getChunk().getBlock(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override
     public Chunk getChunkFromChunkCoords(int x, int z) {
-        // TODO Auto-generated method stub
-        return null;
+        return chunk.getChunk(x, z);
     }
 
     @Override
     public Chunk getChunkFromBlockCoords(int x, int z) {
-        // TODO Auto-generated method stub
-        return null;
+        return chunk.getChunk(x >> 4, z >> 4);//? 
     }
 
     @Override
     public Location getSpawnLocation() {
-        // TODO Auto-generated method stub
-        return null;
+        return spawn;
     }
 
     @Override
     public void setSpawnLocation(Location loc) {
-        // TODO Auto-generated method stub
-
+        this.spawn = loc;
     }
 
     @Override
     public boolean isDaytime() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public void playSoundAtEntity(Entity entity, GenericSound sound, float volume, float pitch) {
-        // TODO Auto-generated method stub
-
+        this.playSoundEffect(entity.getLocation(), sound, volume, pitch);
     }
 
     @Override
     public void playSoundEffect(Location location, GenericSound sound, float volume, float pitch) {
-        // TODO Auto-generated method stub
-
+        ServerPlaySoundPacket packet = new ServerPlaySoundPacket(sound, location.getX(), location.getY(), location.getZ(), volume, pitch);
+        
+        for(Player player: getPlayers()){
+            player.getPlayerNetwork().sendPacket(packet);
+        }
     }
 
     @Override
     public void playRecord(String name, int x, int y, int z) {
-        // TODO Auto-generated method stub
-
+        //TODO
     }
 
     @Override
     public boolean spawnEntity(Entity entity) {
-        // TODO Auto-generated method stub
+        for(Packet packet: entity.getSpawnPackets()){
+            for(Player player: getPlayers()){
+                player.getPlayerNetwork().sendPacket(packet);
+                return true;
+            }
+        }
         return false;
     }
 
-    @Override
-    public void removeEntity(Entity entity) {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     public void createExplosion(Entity entity, Location location, float strength, boolean isFlaming) {
@@ -128,96 +132,77 @@ public class CyanWorld implements World {
 
     @Override
     public long getSeed() {
-        // TODO Auto-generated method stub
-        return 0;
+        return seed;
     }
 
     @Override
     public long getTotalWorldTime() {
-        // TODO Auto-generated method stub
-        return 0;
+        return 24000;
     }
 
     @Override
     public long getWorldTime() {
-        // TODO Auto-generated method stub
-        return 0;
+        return dayTime;
     }
 
     @Override
     public void setWorldTime(long time) {
-        // TODO Auto-generated method stub
-
+        this.dayTime = time;
     }
 
     @Override
     public boolean isThundering() {
-        // TODO Auto-generated method stub
-        return false;
+        return thundering;
     }
 
     @Override
     public void setThundering(boolean flag) {
-        // TODO Auto-generated method stub
-
+        this.thundering = flag;
     }
 
     @Override
     public int getThunderTime() {
-        // TODO Auto-generated method stub
-        return 0;
+        return thunderingTime;
     }
 
     @Override
     public void setThunderTime(int time) {
-        // TODO Auto-generated method stub
-
+        this.thunderingTime = time;
     }
 
     @Override
     public boolean isRaining() {
-        // TODO Auto-generated method stub
-        return false;
+        return raining;
     }
 
     @Override
     public void setRaining(boolean rain) {
-        // TODO Auto-generated method stub
-
+        this.raining = rain;
     }
 
     @Override
     public int getRainTime() {
-        // TODO Auto-generated method stub
-        return 0;
+        return rainingTime;
     }
 
     @Override
     public void setRainTime(int time) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public int getHeight() {
-        // TODO Auto-generated method stub
-        return 0;
+       this.rainingTime = time;
     }
 
     @Override
     public int getActualHeight() {
-        // TODO Auto-generated method stub
-        return 0;
+        return 256;
     }
 
     @Override
-    public Entity[] getEntities() {
+    public List<Entity> getEntities() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public EntityLivingBase[] getLivingEntities() {
+    public List<EntityLivingBase> getLivingEntities() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -267,13 +252,11 @@ public class CyanWorld implements World {
 
     @Override
     public Server getServer() {
-        // TODO Auto-generated method stub
-        return null;
+        return server;
     }
 
     @Override
     public Dimension getDimension() {
-        // TODO Auto-generated method stub
         return null;
     }
 

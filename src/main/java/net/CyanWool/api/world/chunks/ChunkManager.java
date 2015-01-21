@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import net.CyanWool.api.io.services.ChunkIOService;
+import net.CyanWool.api.io.ChunkIOService;
+import net.CyanWool.api.theards.ChunkServiceThread;
 import net.CyanWool.api.world.World;
 
 public class ChunkManager {
@@ -45,10 +46,14 @@ public class ChunkManager {
     }
 
     public boolean loadChunk(int x, int z, boolean generate) {
-        //if (service.read(x, z)) {
-            // Start event...
-        //}
-
+        //Recode ?
+        ChunkServiceThread thread = new ChunkServiceThread(service, x, z, false);
+        thread.start();
+        
+        if(thread.getResult() != null){
+            //start event...
+        }
+        
         if (!generate) {
             return false;
         }
@@ -58,7 +63,8 @@ public class ChunkManager {
 
     public void saveChunk(Chunk chunk) {
         // TODO
-        service.save(chunk.getX(), chunk.getZ());
+        ChunkServiceThread thread = new ChunkServiceThread(service, chunk.getX(), chunk.getZ(), true);
+        thread.start();
     }
 
     public void generateChunk(int x, int z) {

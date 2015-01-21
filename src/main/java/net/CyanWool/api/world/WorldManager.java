@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.CyanServer;
+import net.CyanWool.api.io.WorldIOService;
+import net.CyanWool.api.theards.WorldServiceThread;
 import net.CyanWool.api.theards.WorldThread;
 
 public class WorldManager {
@@ -13,10 +15,12 @@ public class WorldManager {
     private List<World> worlds;
     private CyanServer server;
     private final List<WorldEntry> worldsEntry = new CopyOnWriteArrayList<WorldEntry>();
+    private WorldIOService service;
 
-    public WorldManager(CyanServer server) {
+    public WorldManager(CyanServer server, WorldIOService service) {
         this.worlds = new ArrayList<World>();
         this.server = server;
+        this.service = service;
     }
 
     public CyanServer getServer() {
@@ -27,6 +31,12 @@ public class WorldManager {
         return worlds;
     }
 
+    public World loadWorld(String name){
+        WorldServiceThread thread = new WorldServiceThread(service, name, false);
+        thread.start();
+        return thread.getResult();
+    }
+    
     public boolean addWorld(World world) {
         for (World w : worlds) {
             if (!w.getName().equals(world.getName())) {
@@ -56,6 +66,8 @@ public class WorldManager {
         if (stopWorldEntry(world) && stopWorld(world)) {
             // Save
             // world.saveAll();
+            WorldServiceThread thread = new WorldServiceThread(service, world.getName(), true);
+            thread.start();
             return true;
         }
         return false;

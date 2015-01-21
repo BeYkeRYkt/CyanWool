@@ -1,4 +1,4 @@
-package net.CyanWool.api.io.services;
+package net.CyanWool.api.io;
 
 import net.CyanWool.api.world.chunks.Chunk;
 

@@ -5,6 +5,7 @@ import java.util.List;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 
+import org.spacehq.mc.protocol.data.game.values.entity.MobType;
 import org.spacehq.packetlib.packet.Packet;
 
 public interface Entity {
@@ -16,6 +17,8 @@ public interface Entity {
     public void teleport(Location location);
 
     public int getEntityID();
+    
+    public void setEntityID(int id);
 
     public boolean isAlive();
 
@@ -66,4 +69,8 @@ public interface Entity {
     public void setFireTicks(int ticks);
 
     public List<Packet> getUpdatePackets();
+
+    public MobType getMobType();
+    
+    public List<Packet> getSpawnPackets();
 }

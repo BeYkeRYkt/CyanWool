@@ -2,7 +2,9 @@ package net.CyanWool.entity;
 
 import net.CyanWool.api.entity.Human;
 import net.CyanWool.api.inventory.ItemStack;
+
 import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.protocol.data.game.values.entity.MobType;
 
 public class CyanHuman extends CyanEntityLivingBase implements Human {
 
@@ -25,6 +27,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     
     
     public CyanHuman(GameProfile profile) {
+        super(MobType.OCELOT);//TODO
         this.profile = profile;
         this.displayName = profile.getName();
     }

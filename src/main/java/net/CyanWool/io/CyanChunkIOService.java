@@ -1,6 +1,6 @@
-package net.CyanWool.io.nbt;
+package net.CyanWool.io;
 
-import net.CyanWool.api.io.services.ChunkIOService;
+import net.CyanWool.api.io.ChunkIOService;
 import net.CyanWool.api.world.chunks.Chunk;
 
 public class CyanChunkIOService implements ChunkIOService{

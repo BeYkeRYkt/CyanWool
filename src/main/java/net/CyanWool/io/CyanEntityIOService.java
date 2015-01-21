@@ -1,7 +1,7 @@
-package net.CyanWool.io.nbt;
+package net.CyanWool.io;
 
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.io.services.EntityIOService;
+import net.CyanWool.api.io.EntityIOService;
 
 public class CyanEntityIOService implements EntityIOService{
 

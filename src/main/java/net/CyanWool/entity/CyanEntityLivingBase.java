@@ -1,5 +1,7 @@
 package net.CyanWool.entity;
 
+import org.spacehq.mc.protocol.data.game.values.entity.MobType;
+
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.inventory.ItemStack;
@@ -14,8 +16,8 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     private EntityLivingBase target;
     private String name;
     
-    public CyanEntityLivingBase() {
-        //super();
+    public CyanEntityLivingBase(MobType type) {
+        super(type);
     }
 
     @Override

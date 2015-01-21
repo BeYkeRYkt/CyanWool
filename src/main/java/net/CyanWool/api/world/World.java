@@ -52,8 +52,6 @@ public interface World {
 
     public boolean spawnEntity(Entity entity);
 
-    public void removeEntity(Entity entity);
-
     public void createExplosion(Entity entity, Location location, float strength, boolean isFlaming);
 
     public void createExplosion(Location location, float strength, boolean isFlaming);
@@ -82,13 +80,11 @@ public interface World {
 
     public void setRainTime(int time);
 
-    public int getHeight();
-
     public int getActualHeight();
 
-    public Entity[] getEntities();
+    public List<Entity> getEntities();
 
-    public EntityLivingBase[] getLivingEntities();
+    public List<EntityLivingBase> getLivingEntities();
 
     public List<Player> getPlayers();
 

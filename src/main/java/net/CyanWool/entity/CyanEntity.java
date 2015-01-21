@@ -3,10 +3,12 @@ package net.CyanWool.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 
+import org.spacehq.mc.protocol.data.game.values.entity.MobType;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionRotationPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityRotationPacket;
@@ -30,10 +32,13 @@ public class CyanEntity implements Entity {
     private boolean sneak;
     private boolean sprint;
     private boolean onGround;
+    private MobType mobType;
 
-    public CyanEntity() {
+    public CyanEntity(MobType type) {
         //this.prevLoc = location.clone();
         //this.location = location.clone();
+        this.mobType = type;
+        CyanWool.getEntityManager().register(this);
         // TODO
     }
 
@@ -230,5 +235,21 @@ public class CyanEntity implements Entity {
         }
 
         return list;
+    }
+
+    @Override
+    public void setEntityID(int id) {
+        this.entityId = id;
+    }
+
+    @Override
+    public MobType getMobType() {
+        return mobType;
+    }
+
+    @Override
+    public List<Packet> getSpawnPackets() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

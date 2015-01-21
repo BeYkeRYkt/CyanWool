@@ -12,6 +12,7 @@ import net.CyanWool.api.ServerConfiguration;
 import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ConsoleCommandSender;
 import net.CyanWool.api.command.ICommandSender;
+import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.Player;
 import net.CyanWool.api.management.PlayerManager;
 import net.CyanWool.api.network.NetworkManager;
@@ -20,6 +21,7 @@ import net.CyanWool.api.theards.ConsoleThread;
 import net.CyanWool.api.theards.SchedulerThread;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
+import net.CyanWool.io.CyanWorldIOService;
 import net.CyanWool.management.CyanPlayerManager;
 import net.CyanWool.network.CyanNetworkServer;
 
@@ -43,6 +45,7 @@ public class CyanServer implements Server {
     private SchedulerThread schedulert;
     private ConsoleThread console;
     private PlayerManager playerManager;
+    private EntityManager entityManager;
 
     private static BufferedImage icon;
     
@@ -66,6 +69,7 @@ public class CyanServer implements Server {
         this.config.init();
 
         this.playerManager = new CyanPlayerManager(this);
+        this.entityManager = new EntityManager();
         
         this.console = new ConsoleThread(this);
         this.console.start();
@@ -80,7 +84,7 @@ public class CyanServer implements Server {
             
         }
         
-        this.worlds = new WorldManager(this);
+        this.worlds = new WorldManager(this, new CyanWorldIOService());
         this.cmdManager = new CommandManager();
         this.pluginManager = new PluginManager();
         this.pluginManager.loadPlugins();
@@ -228,5 +232,10 @@ public class CyanServer implements Server {
     @Override
     public PlayerManager getPlayerManager() {
         return playerManager;
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 }

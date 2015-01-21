@@ -1,6 +1,6 @@
-package net.CyanWool.io.nbt;
+package net.CyanWool.io;
 
-import net.CyanWool.api.io.services.WorldIOService;
+import net.CyanWool.api.io.WorldIOService;
 import net.CyanWool.api.world.World;
 
 public class CyanWorldIOService implements WorldIOService{
