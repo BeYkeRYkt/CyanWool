@@ -11,45 +11,38 @@ import net.CyanWool.CyanServer;
 import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.Server;
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.entity.Player;
-import net.CyanWool.api.entity.meta.ClientSettings;
-import net.CyanWool.api.network.PlayerNetwork;
-import net.CyanWool.api.world.chunks.Chunk;
+import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.chunks.ChunkCoords;
+import net.CyanWool.entity.meta.ClientSettings;
+import net.CyanWool.network.PlayerNetwork;
+import net.CyanWool.world.CyanChunk;
 
 import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.protocol.data.game.values.setting.SkinPart;
+import org.spacehq.mc.protocol.data.game.values.MagicValues;
+import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
 import org.spacehq.packetlib.packet.Packet;
 
 public class CyanPlayer extends CyanHuman implements Player {
 
     private CyanServer server;
     private PlayerNetwork connection;
-    private Gamemode gameMode;
     private List<Entity> knowEntities;
     private List<ChunkCoords> chunks;
     private ClientSettings settings;
 
-    public CyanPlayer(CyanServer server, GameProfile profile) {
-        super(profile);
+    public CyanPlayer(CyanServer server, GameProfile profile, Location location) {
+        super(profile, location);
         this.server = server;
-        this.gameMode = Gamemode.SURVIVAL;
+        setGamemode(Gamemode.SURVIVAL);
         this.knowEntities = new ArrayList<Entity>();
         this.chunks = new ArrayList<ChunkCoords>();
+        setSettings(ClientSettings.getDEFAULT());
         //updateChunks();
-    }
-    
-    @Override
-    public void load(){
-        
-    }
-    
-    @Override
-    public void save(){
-        
     }
 
     private void updateChunks() {
@@ -67,51 +60,44 @@ public class CyanPlayer extends CyanHuman implements Player {
                 } else {
                     newChunks.add(key);
                 }
-                
-                
+
                 if (newChunks.size() == 0 && prev.size() == 0) {
                     return;
                 }
-                
+
                 Collections.sort(newChunks, new Comparator<ChunkCoords>() {
+
                     @Override
                     public int compare(ChunkCoords a, ChunkCoords b) {
-                    double dx = 16 * a.getX() + 8 - getLocation().getX();
-                    double dz = 16 * a.getZ() + 8 - getLocation().getZ();
-                    double da = dx * dx + dz * dz;
-                    dx = 16 * b.getX() + 8 - getLocation().getX();
-                    dz = 16 * b.getZ() + 8 - getLocation().getZ();
-                    double db = dx * dx + dz * dz;
-                    return Double.compare(da, db);
+                        double dx = 16 * a.getX() + 8 - getLocation().getX();
+                        double dz = 16 * a.getZ() + 8 - getLocation().getZ();
+                        double da = dx * dx + dz * dz;
+                        dx = 16 * b.getX() + 8 - getLocation().getX();
+                        dz = 16 * b.getZ() + 8 - getLocation().getZ();
+                        double db = dx * dx + dz * dz;
+                        return Double.compare(da, db);
                     }
-                    });
+                });
             }
         }
-        
-        for(ChunkCoords chunkcoords: newChunks){
+
+        List<CyanChunk> cchunks = new ArrayList<CyanChunk>();
+        for (ChunkCoords chunkcoords : newChunks) {
             chunks.add(chunkcoords);
-            Chunk chunk = getWorld().getChunkManager().getChunk(chunkcoords.getX(), chunkcoords.getZ());
-            //chunk.updateChunk(this);
-            //TODO: Sending
-        }
-        
-            //Maybe: TODO: ServerMultiChunkDataPacket
-        
+            CyanChunk chunk = (CyanChunk) getWorld().getChunkManager().getChunk(chunkcoords.getX(), chunkcoords.getZ());
+            cchunks.add(chunk);
+        }      
+        ServerChunkDataPacket data = new ServerChunkDataPacket(getLocation().getBlockX(), getLocation().getBlockZ(), (org.spacehq.mc.protocol.data.game.Chunk[]) cchunks.toArray());
+        getPlayerNetwork().sendPacket(data);
+
+        // Maybe: TODO: ServerMultiChunkDataPacket
+
         for (ChunkCoords key : prev) {
             ServerChunkDataPacket packet = new ServerChunkDataPacket(key.getX(), key.getZ());
             getPlayerNetwork().sendPacket(packet);
             chunks.remove(key);
         }
         prev.clear();
-    }
-
-    @Override
-    public PlayerNetwork getPlayerNetwork() {
-        return connection;
-    }
-
-    public void setPlayerNetwork(PlayerNetwork network) {
-        this.connection = network;
     }
 
     @Override
@@ -145,7 +131,7 @@ public class CyanPlayer extends CyanHuman implements Player {
         String format = getDisplayName() + ": " + message; // TODO Event's
         ServerChatPacket packet = new ServerChatPacket(format);
         getPlayerNetwork().sendPacket(packet);
-        
+
         server.getConsoleCommandSender().sendMessage(format);
     }
 
@@ -180,22 +166,6 @@ public class CyanPlayer extends CyanHuman implements Player {
     // }
 
     @Override
-    public Gamemode getGameMode() {
-        return gameMode;
-    }
-
-    @Override
-    public void setGamemode(Gamemode mode) {
-        this.gameMode = mode;
-    }
-
-    // @Override
-    // public PlayerInventory getInventory() {
-    // TODO Auto-generated method stub
-    // return null;
-    // }
-
-    @Override
     public void onTick() {
         // Chunks
         updateChunks();
@@ -226,7 +196,7 @@ public class CyanPlayer extends CyanHuman implements Player {
 
         // Send update packets
         for (Entity entity : list) {
-            for (Packet packet : entity.getUpdatePackets()) {
+            for (Packet packet : ((CyanEntity) entity).getUpdatePackets()) {
                 getPlayerNetwork().sendPacket(packet);
             }
         }
@@ -262,17 +232,29 @@ public class CyanPlayer extends CyanHuman implements Player {
     }
 
     @Override
-    public List<SkinPart> getVisibleParts() {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean isPlayerEntity() {
+        return true;
+    }
+    
+    @Override
+    public void playSound(String sound, float volume, float pitch) {
+        ServerPlaySoundPacket packet = new ServerPlaySoundPacket(MagicValues.key(GenericSound.class, sound), getLocation().getX(), getLocation().getY(), getLocation().getZ(), volume, pitch);
+        getPlayerNetwork().sendPacket(packet);
+    }
+    
+    //Not api
+    public PlayerNetwork getPlayerNetwork() {
+        return connection;
     }
 
-    @Override
+    public void setPlayerNetwork(PlayerNetwork network) {
+        this.connection = network;
+    }
+    
     public ClientSettings getSettings() {
         return settings;
     }
-
-    @Override
+    
     public void setSettings(ClientSettings settings) {
         this.settings = settings;
     }

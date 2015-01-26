@@ -28,12 +28,13 @@ public class EntityManager {
         if (getEntity(entity.getEntityID()) != null) {
             return; // IMPOSIBBLEEE
         }
-        
+
         int startedAt = last;
         for (int id = last + 1; id != startedAt; ++id) {
-            if (id == -1 || id == 0) continue;
-            
-            if(usedIds.add(id)){
+            if (id == -1 || id == 0)
+                continue;
+
+            if (usedIds.add(id)) {
                 entity.setEntityID(id);
                 last = id;
                 break;

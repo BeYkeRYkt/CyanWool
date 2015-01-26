@@ -13,7 +13,6 @@ import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionP
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionRotationPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityRotationPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityTeleportPacket;
-import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.packetlib.packet.Packet;
 
 public class CyanEntity implements Entity {
@@ -32,20 +31,12 @@ public class CyanEntity implements Entity {
     private boolean sneak;
     private boolean sprint;
     private boolean onGround;
-    private MobType mobType;
 
-    public CyanEntity(MobType type) {
-        //this.prevLoc = location.clone();
-        //this.location = location.clone();
-        this.mobType = type;
+    public CyanEntity(Location location) {
+        this.prevLoc = location.clone();
+        this.location = location.clone();
         CyanWool.getEntityManager().register(this);
         // TODO
-    }
-
-    public void loadNBT(CompoundTag tag) {
-    }
-
-    public void saveNBT(CompoundTag tag) {
     }
 
     @Override
@@ -80,19 +71,8 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public boolean isInWater() {
-        return getLocation().getBlock().getBlockType().getID() == 8 || getLocation().getBlock().getBlockType().getID() == 9;
-    }
-
-    @Override
     public float getEyeHeight() {
         return 0; // TODO
-    }
-
-    @Override
-    public boolean isEntityInvulnerable() {
-        // TODO Auto-generated method stub
-        return false;
     }
 
     @Override
@@ -210,6 +190,34 @@ public class CyanEntity implements Entity {
     }
 
     @Override
+    public void setEntityID(int id) {
+        this.entityId = id;
+    }
+
+    @Override
+    public boolean isPlayerEntity() {
+        return false;
+    }
+
+    @Override
+    public boolean isMonsterEntity() {
+        return false;
+    }
+
+    @Override
+    public boolean isAnimalEntity() {
+        return false;
+    }
+
+    @Override
+    public boolean isAliveEntity() {
+        return false;
+    }
+    
+    
+    //Not from API
+    
+
     public List<Packet> getUpdatePackets() {
         // From Glowstone. Thanks dudes :D
         ArrayList<Packet> list = new ArrayList<Packet>();
@@ -237,17 +245,7 @@ public class CyanEntity implements Entity {
         return list;
     }
 
-    @Override
-    public void setEntityID(int id) {
-        this.entityId = id;
-    }
-
-    @Override
-    public MobType getMobType() {
-        return mobType;
-    }
-
-    @Override
+    
     public List<Packet> getSpawnPackets() {
         // TODO Auto-generated method stub
         return null;

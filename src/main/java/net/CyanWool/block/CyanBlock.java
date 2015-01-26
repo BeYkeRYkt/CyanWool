@@ -7,6 +7,7 @@ import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
 
 import org.spacehq.mc.protocol.data.game.values.world.effect.BreakBlockEffectData;
+import org.spacehq.mc.protocol.data.game.values.world.effect.ParticleEffect;
 
 public class CyanBlock implements Block {
 
@@ -33,11 +34,12 @@ public class CyanBlock implements Block {
         // TODO: setAir...
 
         // play break Effect
-        getLocation().getWorld().playEffect(getLocation(), type.getBreakParticle(), new BreakBlockEffectData(getBlockType().getID()));// ?
+        //getLocation().getWorld().playEffect(getLocation(), ParticleEffect.BREAK_BLOCK, new BreakBlockEffectData(getBlockType().getID()));// ?
         getLocation().getWorld().playSoundEffect(getLocation(), getBlockType().getBreakSound().getName(), getBlockType().getBreakSound().getVolume(), getBlockType().getBreakSound().getPitch());
-        
-        type.onBlockDestroy(getLocation());
-        
+
+        CyanBlockType ctype = (CyanBlockType) type;
+        ctype.onBlockDestroy(getLocation());
+
         // apply physics...
 
         if (type.isDrop() && type.getDrop().isEmpty()) {

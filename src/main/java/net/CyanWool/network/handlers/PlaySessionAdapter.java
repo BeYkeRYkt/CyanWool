@@ -1,8 +1,9 @@
 package net.CyanWool.network.handlers;
 
 import net.CyanWool.CyanServer;
-import net.CyanWool.api.entity.Player;
-import net.CyanWool.api.entity.meta.ClientSettings;
+import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.entity.CyanPlayer;
+import net.CyanWool.entity.meta.ClientSettings;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.protocol.ProtocolConstants;
@@ -21,7 +22,7 @@ public class PlaySessionAdapter extends SessionAdapter {
     public PlaySessionAdapter(CyanServer server) {
         this.server = server;
     }
-    
+
     @Override
     public void packetReceived(PacketReceivedEvent event) {
         if (event.getPacket() instanceof ClientSettingsPacket) {
@@ -29,15 +30,15 @@ public class PlaySessionAdapter extends SessionAdapter {
             Player player = server.getPlayer(profile.getName());
             ClientSettingsPacket packet = event.getPacket();
             ClientSettings settings = new ClientSettings(packet);
-            player.setSettings(settings);
+            ((CyanPlayer) player).setSettings(settings);
         } else if (event.getPacket() instanceof ClientChatPacket) {
             GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
             Player player = server.getPlayer(profile.getName());
             ClientChatPacket packet = event.getPacket();
             if (packet.getMessage().startsWith("/")) {
-            server.getCommandManager().dispatchCommand(player, packet.getMessage());
-            }else{
-            player.chat(packet.getMessage());
+                server.getCommandManager().dispatchCommand(player, packet.getMessage());
+            } else {
+                player.chat(packet.getMessage());
             }
         } else if (event.getPacket() instanceof ClientPlayerStatePacket) {
             GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
@@ -64,8 +65,8 @@ public class PlaySessionAdapter extends SessionAdapter {
                     player.wakeUp();
                     break;
             }
-        }else if(event.getPacket() instanceof ClientKeepAlivePacket){
-            event.getSession().send(new ServerKeepAlivePacket(event.<ClientKeepAlivePacket>getPacket().getPingId()));
+        } else if (event.getPacket() instanceof ClientKeepAlivePacket) {
+            event.getSession().send(new ServerKeepAlivePacket(event.<ClientKeepAlivePacket> getPacket().getPingId()));
         }
     }
 }

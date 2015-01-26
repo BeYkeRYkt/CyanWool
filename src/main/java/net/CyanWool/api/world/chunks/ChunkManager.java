@@ -5,21 +5,22 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.io.ChunkIOService;
-import net.CyanWool.api.theards.ChunkServiceThread;
 import net.CyanWool.api.world.World;
 
 public class ChunkManager {
 
-    private ChunkIOService service;
     private World world;
     private ChunkGenerator generator;
-    private ConcurrentMap<ChunkCoords, Chunk> chunks = new ConcurrentHashMap<ChunkCoords, Chunk>();
+    private ConcurrentMap<ChunkCoords, Chunk> chunks;
+    private ChunkIOService service;
 
     public ChunkManager(World world, ChunkIOService service, ChunkGenerator generator) {
         this.world = world;
         this.service = service;
         this.generator = generator;
+        this.chunks = new ConcurrentHashMap<ChunkCoords, Chunk>();
     }
 
     public ChunkGenerator getGenerator() {
@@ -46,25 +47,26 @@ public class ChunkManager {
     }
 
     public boolean loadChunk(int x, int z, boolean generate) {
-        //Recode ?
-        ChunkServiceThread thread = new ChunkServiceThread(service, x, z, false);
-        thread.start();
-        
-        if(thread.getResult() != null){
-            //start event...
-        }
-        
-        if (!generate) {
-            return false;
-        }
-
+        Chunk chunk = service.readChunk(x, z);
+        ChunkCoords coords = new ChunkCoords(x, z);
+        chunks.put(coords, chunk);
+        CyanWool.getLogger().info("Loaded chunk x:" + x +", z: " + z);
+        //if (!generate) {
+        //    return false;
+        //}
         return true;
     }
 
-    public void saveChunk(Chunk chunk) {
-        // TODO
-        ChunkServiceThread thread = new ChunkServiceThread(service, chunk.getX(), chunk.getZ(), true);
-        thread.start();
+    public void saveChunk(final Chunk chunk) {
+        ChunkCoords coords = new ChunkCoords(chunk.getX(), chunk.getZ());
+        chunks.remove(coords);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                service.saveChunk(chunk);
+            }
+        });
     }
 
     public void generateChunk(int x, int z) {

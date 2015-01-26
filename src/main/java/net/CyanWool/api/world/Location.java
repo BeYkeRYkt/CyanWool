@@ -50,7 +50,7 @@ public class Location implements Cloneable {
     }
 
     public Chunk getChunk() {
-        return world.getChunkFromBlockCoords(getBlockX(), getBlockZ());
+        return world.getChunkManager().getChunk(getBlockX() >> 4, getBlockZ() >> 4);
     }
 
     public void setWorld(World world) {

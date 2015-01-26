@@ -1,29 +1,31 @@
 package net.CyanWool.entity;
 
-import org.spacehq.mc.protocol.data.game.values.entity.MobType;
-
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
+import net.CyanWool.api.entity.ai.EntityAITasks;
 import net.CyanWool.api.inventory.ItemStack;
+import net.CyanWool.api.inventory.inventories.EntityInventory;
+import net.CyanWool.api.world.Location;
 
 public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase {
 
     private int age;
-    private int arrowCount;
     private float health;
     private float maxHealth;
     private boolean jump;
     private EntityLivingBase target;
     private String name;
-    
-    public CyanEntityLivingBase(MobType type) {
-        super(type);
-    }
+    private EntityInventory inventory;
 
-    @Override
-    public boolean isSwingInProgress() {
-        // TODO Auto-generated method stub
-        return false;
+    //AI
+    private EntityAITasks targetTasks;
+    private EntityAITasks tasks;
+    
+    public CyanEntityLivingBase(Location location) {
+        super(location);
+        //this.inventory =
+        this.targetTasks = new EntityAITasks();
+        this.tasks = new EntityAITasks();
     }
 
     @Override
@@ -49,17 +51,6 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     }
 
     @Override
-    public int getArrowCountInEntity() {
-        return arrowCount;
-    }
-
-    @Override
-    public ItemStack getEquipmentInSlot(int slot) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public float getHealth() {
         return health;
     }
@@ -73,23 +64,6 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     @Override
     public float getMaxHealth() {
         return maxHealth;
-    }
-
-    @Override
-    public int getTotalArmorValue() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void setCurrentItemOrArmor(int slot, ItemStack item) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setArrowCountInEntity(int i) {
-        this.arrowCount = i;
     }
 
     @Override
@@ -127,7 +101,9 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     @Override
     public void onTick() {
         age++;
-        //TODO
+        getTargetAITasks().onUpdateAI();
+        getAITasks().onUpdateAI();
+        // TODO
     }
 
     @Override
@@ -148,5 +124,25 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     @Override
     public void setDisplayName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean isAliveEntity() {
+        return true;
+    }
+
+    @Override
+    public EntityAITasks getTargetAITasks() {
+        return targetTasks;
+    }
+
+    @Override
+    public EntityAITasks getAITasks() {
+        return tasks;
+    }
+
+    @Override
+    public EntityInventory getInventory() {
+        return inventory;
     }
 }

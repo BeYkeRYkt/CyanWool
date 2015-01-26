@@ -17,7 +17,7 @@ public class ServerConfiguration {
     private boolean online_mode;
     private int maxplayers;
     private String motd;
-    //private int distance; //DEV
+    // private int distance; //DEV
 
     // Messages
     private String unknownCmd;

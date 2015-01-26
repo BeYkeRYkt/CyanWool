@@ -1,19 +1,16 @@
-package net.CyanWool.api.entity;
+package net.CyanWool.api.entity.player;
 
+import net.CyanWool.api.Gamemode;
+import net.CyanWool.api.entity.EntityLivingBase;
+import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
-
-import org.spacehq.mc.auth.GameProfile;
+import net.CyanWool.api.inventory.inventories.EntityInventory;
 
 public interface Human extends EntityLivingBase {
 
-    public GameProfile getGameProfile();
-    
     public String getName();
 
     public boolean hasItemInHand();
-
-    @Override
-    public ItemStack getItemInHand(); // getCurrentEquippedItem()
 
     public void setItemInHand(ItemStack item);
 
@@ -22,7 +19,7 @@ public interface Human extends EntityLivingBase {
     public boolean isBlocking();
 
     public void sleepInBedAt(int x, int y, int z);
-    
+
     public void wakeUp();
 
     public boolean isNeedFood();
@@ -70,4 +67,16 @@ public interface Human extends EntityLivingBase {
     public boolean canBuild();
 
     public void setBuild(boolean flag);
+    
+    public Inventory getViewInventory();
+    
+    public EntityInventory getInventory();
+    
+    public Inventory getEnderChest();
+    
+    public void openInventory(Inventory inventory);
+    
+    public Gamemode getGameMode();
+
+    public void setGamemode(Gamemode mode);
 }

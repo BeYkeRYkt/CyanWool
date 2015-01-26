@@ -1,6 +1,5 @@
 package net.CyanWool.api.world.chunks;
 
-
 public class ChunkCoords {
 
     private final int x;

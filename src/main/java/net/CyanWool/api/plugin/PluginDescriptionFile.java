@@ -18,7 +18,7 @@ public class PluginDescriptionFile {
     private URLClassLoader loader;
 
     // plugin.yml
-    private String name = "";
+    private String name = "UNKNOWN-PLUGIN";
     private String description = "";
     private String author = "";
     private String version = "";

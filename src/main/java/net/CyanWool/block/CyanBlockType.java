@@ -6,7 +6,7 @@ import java.util.List;
 import net.CyanWool.api.block.BlockSound;
 import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.entity.Player;
+import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
 
@@ -24,8 +24,6 @@ public class CyanBlockType implements BlockType {
     private BlockSound placeSound;
 
     private List<ItemStack> drop;
-
-    private ParticleEffect particle;
 
     public CyanBlockType(int id, int data) {
         this.id = id;
@@ -53,23 +51,18 @@ public class CyanBlockType implements BlockType {
         return data;
     }
 
-    @Override
     public void onBlockPlace(Location location) {
     }
 
-    @Override
     public void onBlockDestroy(Location location) {
     }
 
-    @Override
     public void onBlockLeftInteract(Player player) {
     }
 
-    @Override
     public void onBlockRightInteract(Player player) {
     }
 
-    @Override
     public void onEntityWalking(Entity entity) {
     }
 
@@ -126,18 +119,7 @@ public class CyanBlockType implements BlockType {
         clone.setDrop(isDrop);
         clone.setPlaceSound(placeSound);
         clone.setStepSound(stepSound);
-        clone.setParticle(particle);
         clone.getDrop().addAll(drop);
         return clone;
-    }
-
-    @Override
-    public ParticleEffect getBreakParticle() {
-        return null;
-    }
-
-    @Override
-    public void setParticle(ParticleEffect particle) {
-        this.particle = particle;
     }
 }

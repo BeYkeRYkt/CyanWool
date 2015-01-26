@@ -1,12 +1,10 @@
-package net.CyanWool.api.entity.meta;
+package net.CyanWool.entity.meta;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.spacehq.mc.protocol.data.game.values.setting.ChatVisibility;
 import org.spacehq.mc.protocol.data.game.values.setting.SkinPart;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientSettingsPacket;
-
 
 public final class ClientSettings {
 
@@ -55,8 +53,8 @@ public final class ClientSettings {
     public List<SkinPart> getSkinParts() {
         return skinParts;
     }
-    
-    public ClientSettings getDEFAULT(){
+
+    public static ClientSettings getDEFAULT() {
         List<SkinPart> list = new ArrayList<SkinPart>();
         list.add(SkinPart.CAPE);
         list.add(SkinPart.HAT);

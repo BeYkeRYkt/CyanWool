@@ -2,7 +2,6 @@ package net.CyanWool.api.event.world;
 
 import net.CyanWool.api.world.chunks.Chunk;
 
-
 public abstract class ChunkEvent extends WorldEvent {
 
     protected Chunk chunk;

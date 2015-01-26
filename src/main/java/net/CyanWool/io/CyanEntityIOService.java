@@ -3,18 +3,18 @@ package net.CyanWool.io;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.io.EntityIOService;
 
-public class CyanEntityIOService implements EntityIOService{
+public class CyanEntityIOService implements EntityIOService {
 
     @Override
-    public boolean read(Entity entity) {
+    public void readEntity(Entity entity) {
         // TODO Auto-generated method stub
-        return false;
+
     }
 
     @Override
-    public void save(Entity entity) {
+    public void saveEntity(Entity entity) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

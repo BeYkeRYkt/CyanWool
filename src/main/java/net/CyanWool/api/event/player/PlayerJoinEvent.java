@@ -1,6 +1,6 @@
 package net.CyanWool.api.event.player;
 
-import net.CyanWool.api.entity.Player;
+import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.event.HandlerList;
 
 public class PlayerJoinEvent extends PlayerEvent {

@@ -6,7 +6,7 @@ public class SchedulerThread extends Thread {
 
     private boolean running;
     private Server server;
-    
+
     public SchedulerThread(Server server) {
         this.server = server;
         this.running = true;

@@ -63,17 +63,17 @@ public class Register {
         while (it.hasNext()) {
             BlockType t = it.next();
             if (t.getID() == type.getID()) {
-                    it.remove();
-                    return true;
+                it.remove();
+                return true;
             }
         }
         return false;
     }
 
-    public static ItemStack getItemStack(int id){
+    public static ItemStack getItemStack(int id) {
         return getItemStack(id, 0);
     }
-    
+
     public static ItemStack getItemStack(int id, int data) {
         for (ItemStack item : items) {
             if (item.getId() == id && item.getData() == data) {
@@ -83,17 +83,17 @@ public class Register {
         return null;
     }
 
-    public static BlockType getBlock(int id){
+    public static BlockType getBlock(int id) {
         return getBlock(id, 0);
     }
-    
+
     public static BlockType getBlock(int id, int data) {
         for (BlockType block : blocks) {
             if (block.getID() == id && block.getData() == data) {
                 return block.cloneBlock();
             }
         }
-        return null;
+        return blocks.get(0);
     }
 
     public static List<ItemStack> getItems() {

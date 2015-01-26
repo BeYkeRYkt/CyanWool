@@ -1,4 +1,4 @@
-package net.CyanWool.api.theards;
+package net.CyanWool;
 
 import java.io.BufferedReader;
 import java.io.IOException;

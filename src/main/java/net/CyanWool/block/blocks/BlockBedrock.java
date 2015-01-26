@@ -8,12 +8,12 @@ import net.CyanWool.block.CyanBlockType;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 
-public class BlockDirt extends CyanBlockType {
+public class BlockBedrock extends CyanBlockType {
 
-    public BlockDirt() {
+    public BlockBedrock() {
         super(3, 0);
-        BlockSound dig = new BlockSound(MagicValues.value(String.class, GenericSound.DIG_GRAVEL), 1.0F, 1.0F);
-        BlockSound step = new BlockSound(MagicValues.value(String.class, GenericSound.GRAVEL_STEP), 1.0F, 1.0F);
+        BlockSound dig = new BlockSound(MagicValues.value(String.class, GenericSound.DIG_STONE), 1.0F, 1.0F);
+        BlockSound step = new BlockSound(MagicValues.value(String.class, GenericSound.STONE_STEP), 1.0F, 1.0F);
 
         setBreakSound(dig);
         setPlaceSound(dig);

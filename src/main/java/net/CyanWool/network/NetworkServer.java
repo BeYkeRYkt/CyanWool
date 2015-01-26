@@ -1,8 +1,8 @@
 package net.CyanWool.network;
 
 import net.CyanWool.CyanServer;
-import net.CyanWool.api.entity.Player;
-import net.CyanWool.api.network.NetworkManager;
+import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.entity.CyanPlayer;
 import net.CyanWool.network.handlers.ServerInfo;
 import net.CyanWool.network.handlers.ServerLogin;
 
@@ -12,13 +12,13 @@ import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
 
-public class CyanNetworkServer implements NetworkManager {
+public class NetworkServer{
 
     private CyanServer server;
     // MCProtocolLib
     private Server protocol_server;
 
-    public CyanNetworkServer(CyanServer server) {
+    public NetworkServer(CyanServer server) {
         this.server = server;
     }
 
@@ -42,39 +42,33 @@ public class CyanNetworkServer implements NetworkManager {
         }
     }
 
-    @Override
     public net.CyanWool.api.Server getServer() {
         return server;
     }
 
-    @Override
     public Server getProtocolServer() {
         return protocol_server;
     }
 
-    @Override
     public int getPort() {
         return protocol_server.getPort();
     }
 
-    @Override
     public String getHostAddress() {
         return protocol_server.getHost();
     }
 
-    @Override
     public void sendPacketForAll(Packet packet) {
-        for(Player player: server.getPlayers()){
-            player.getPlayerNetwork().sendPacket(packet);
+        for (Player player : server.getPlayers()) {
+            ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
         }
     }
 
-    @Override
     public void sendPacketDistance(int x, int y, int z, Packet packet, int radius) {
-        for(Player player: server.getPlayers()){
-            //if(player.getLocation())
-            player.getPlayerNetwork().sendPacket(packet);
-            //todo
+        for (Player player : server.getPlayers()) {
+            // if(player.getLocation())
+            ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
+            // todo
         }
     }
 

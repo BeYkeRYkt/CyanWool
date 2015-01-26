@@ -4,19 +4,14 @@ import java.util.List;
 
 import net.CyanWool.api.Difficulty;
 import net.CyanWool.api.Gamemode;
-import net.CyanWool.api.Server;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
-import net.CyanWool.api.entity.Player;
+import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
+import net.CyanWool.api.io.PlayerIOService;
 import net.CyanWool.api.world.chunks.Chunk;
 import net.CyanWool.api.world.chunks.ChunkManager;
-
-import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
-import org.spacehq.mc.protocol.data.game.values.world.Particle;
-import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
-import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
 
 public interface World {
 
@@ -36,17 +31,13 @@ public interface World {
 
     public boolean isDaytime();
 
-    public void playSoundAtEntity(Entity entity, GenericSound sound, float volume, float pitch);
-
-    public void playSoundEffect(Location location, GenericSound sound, float volume, float pitch);
-
     public void playSoundAtEntity(Entity entity, String sound, float volume, float pitch);
 
     public void playSoundEffect(Location location, String sound, float volume, float pitch);
 
-    public void playEffect(Location location, Particle effect, float velocityOffset, int amount, int data);
+    //public void playEffect(Location location, Particle effect, float velocityOffset, int amount, int data);
 
-    public void playEffect(Location location, WorldEffect effect, WorldEffectData data);
+    //public void playEffect(Location location, WorldEffect effect, WorldEffectData data);
 
     public void playRecord(String name, int x, int y, int z);
 
@@ -92,17 +83,17 @@ public interface World {
 
     public void dropItemStack(ItemStack item);
 
-    public Server getServer();
-    
-    public Chunk generateChunk(int x, int z);
-    
     public Difficulty getDifficulty();
-    
+
     public Gamemode getDefaultGamemode();
 
     public boolean getGamerule(String rule);
-    
+
     public void saveAll();
-    
+
     public ChunkManager getChunkManager();
+
+    public String getPath();
+
+    public PlayerIOService getPlayerService();
 }

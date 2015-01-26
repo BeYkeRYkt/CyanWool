@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.CyanWool.api.CyanWool;
-import net.CyanWool.api.entity.Player;
+import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.event.Cancellable;
 import net.CyanWool.api.event.HandlerList;
 

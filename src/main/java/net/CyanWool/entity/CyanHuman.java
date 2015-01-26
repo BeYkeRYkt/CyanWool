@@ -1,10 +1,12 @@
 package net.CyanWool.entity;
 
-import net.CyanWool.api.entity.Human;
+import net.CyanWool.api.Gamemode;
+import net.CyanWool.api.entity.player.Human;
+import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
+import net.CyanWool.api.world.Location;
 
 import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.protocol.data.game.values.entity.MobType;
 
 public class CyanHuman extends CyanEntityLivingBase implements Human {
 
@@ -12,7 +14,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     private String displayName;
     private boolean sleeping;
     private boolean blocking;
-    
+
     private int foodLevel;
     private int xpLevel;
     private int xpTotal;
@@ -24,10 +26,11 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     private float flySpeed;
     private float walkSpeed;
     private boolean canBuild;
-    
-    
-    public CyanHuman(GameProfile profile) {
-        super(MobType.OCELOT);//TODO
+    private Inventory viewInventory;
+    private Gamemode gameMode;
+
+    public CyanHuman(GameProfile profile, Location location) {
+        super(location);// TODO
         this.profile = profile;
         this.displayName = profile.getName();
     }
@@ -40,7 +43,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     @Override
     public void setDisplayName(String name) {
         this.displayName = name;
-        //update...
+        // update...
     }
 
     @Override
@@ -91,8 +94,9 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public void closeInventory() {
-        // TODO Auto-generated method stub
-
+        if(viewInventory != null){
+            viewInventory.closeInventory(this);
+        }
     }
 
     @Override
@@ -193,12 +197,41 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     @Override
     public void wakeUp() {
         this.sleeping = false;
-        //todo...
+        // todo...
     }
 
     @Override
+    public Inventory getViewInventory() {
+        return viewInventory;
+    }
+
+    @Override
+    public Inventory getEnderChest() {
+        return null;//TODO ?
+    }
+
+    @Override
+    public void openInventory(Inventory inventory) {
+        closeInventory();
+        inventory.openInventory(this);
+        viewInventory = inventory;
+    }
+
+    @Override
+    public Gamemode getGameMode() {
+        return gameMode;
+    }
+
+    @Override
+    public void setGamemode(Gamemode mode) {
+        this.gameMode = mode;
+    }
+
+    
+    
+    //Not from API
+    
     public GameProfile getGameProfile() {
         return profile;
     }
-
 }
