@@ -8,9 +8,13 @@ import java.util.List;
 import java.util.UUID;
 
 import net.CyanWool.CyanServer;
+import net.CyanWool.Transform;
+import net.CyanWool.api.Effect;
 import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.Server;
+import net.CyanWool.api.Sound;
 import net.CyanWool.api.entity.Entity;
+import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.chunks.ChunkCoords;
@@ -19,11 +23,14 @@ import net.CyanWool.network.PlayerNetwork;
 import net.CyanWool.world.CyanChunk;
 
 import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
+import org.spacehq.mc.protocol.data.game.Position;
+import org.spacehq.mc.protocol.data.game.values.world.CustomSound;
+import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
+import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
 import org.spacehq.packetlib.packet.Packet;
 
@@ -42,7 +49,7 @@ public class CyanPlayer extends CyanHuman implements Player {
         this.knowEntities = new ArrayList<Entity>();
         this.chunks = new ArrayList<ChunkCoords>();
         setSettings(ClientSettings.getDEFAULT());
-        //updateChunks();
+        // updateChunks();
     }
 
     private void updateChunks() {
@@ -86,7 +93,7 @@ public class CyanPlayer extends CyanHuman implements Player {
             chunks.add(chunkcoords);
             CyanChunk chunk = (CyanChunk) getWorld().getChunkManager().getChunk(chunkcoords.getX(), chunkcoords.getZ());
             cchunks.add(chunk);
-        }      
+        }
         ServerChunkDataPacket data = new ServerChunkDataPacket(getLocation().getBlockX(), getLocation().getBlockZ(), (org.spacehq.mc.protocol.data.game.Chunk[]) cchunks.toArray());
         getPlayerNetwork().sendPacket(data);
 
@@ -232,17 +239,38 @@ public class CyanPlayer extends CyanHuman implements Player {
     }
 
     @Override
-    public boolean isPlayerEntity() {
-        return true;
+    public EntityType getEntityType() {
+        return EntityType.PLAYER;
     }
-    
+
     @Override
-    public void playSound(String sound, float volume, float pitch) {
-        ServerPlaySoundPacket packet = new ServerPlaySoundPacket(MagicValues.key(GenericSound.class, sound), getLocation().getX(), getLocation().getY(), getLocation().getZ(), volume, pitch);
+    public void playSound(Location location, String sound, float volume, float pitch) {
+        // ServerPlaySoundPacket packet = new
+        // ServerPlaySoundPacket(MagicValues.key(GenericSound.class, sound),
+        // getLocation().getX(), getLocation().getY(), getLocation().getZ(),
+        // volume, pitch);
+        CustomSound sound1 = new CustomSound(sound);
+        ServerPlaySoundPacket packet = new ServerPlaySoundPacket(sound1, getLocation().getX(), getLocation().getY(), getLocation().getZ(), volume, pitch);
         getPlayerNetwork().sendPacket(packet);
     }
-    
-    //Not api
+
+    @Override
+    public void playSound(Location location, Sound sound, float volume, float pitch) {
+        org.spacehq.mc.protocol.data.game.values.world.Sound libSound = Transform.convertLibSound(sound);
+        ServerPlaySoundPacket packet = new ServerPlaySoundPacket(libSound, getLocation().getX(), getLocation().getY(), getLocation().getZ(), volume, pitch);
+        getPlayerNetwork().sendPacket(packet);
+    }
+
+    @Override
+    public void playEffect(Location location, Effect effect, int data) {
+        WorldEffect libEffect = Transform.convertWorldEffect(effect);
+        WorldEffectData libEffectData = Transform.convertWorldEffectData(effect, data);
+        Position pos = new Position(getLocation().getBlockX(), getLocation().getBlockY(), getLocation().getBlockZ());
+        ServerPlayEffectPacket packet = new ServerPlayEffectPacket(libEffect, pos, libEffectData);
+        getPlayerNetwork().sendPacket(packet);
+    }
+
+    // Not api
     public PlayerNetwork getPlayerNetwork() {
         return connection;
     }
@@ -250,11 +278,11 @@ public class CyanPlayer extends CyanHuman implements Player {
     public void setPlayerNetwork(PlayerNetwork network) {
         this.connection = network;
     }
-    
+
     public ClientSettings getSettings() {
         return settings;
     }
-    
+
     public void setSettings(ClientSettings settings) {
         this.settings = settings;
     }

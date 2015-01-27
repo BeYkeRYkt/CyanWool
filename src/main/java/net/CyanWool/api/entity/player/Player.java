@@ -3,7 +3,10 @@ package net.CyanWool.api.entity.player;
 import java.util.List;
 import java.util.UUID;
 
+import net.CyanWool.api.Effect;
+import net.CyanWool.api.Sound;
 import net.CyanWool.api.command.ICommandSender;
+import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.chunks.ChunkCoords;
 
 public interface Player extends Human, ICommandSender {
@@ -31,6 +34,10 @@ public interface Player extends Human, ICommandSender {
     // public void displayGUI(InventoryType type);
 
     public List<ChunkCoords> getChunks();
-    
-    public void playSound(String sound, float volume, float pitch);
+
+    public void playSound(Location location, String sound, float volume, float pitch);
+
+    public void playSound(Location location, Sound sound, float volume, float pitch);
+
+    public void playEffect(Location location, Effect effect, int data);
 }

@@ -25,7 +25,7 @@ public interface Server {
 
     public Logger getLogger();
 
-    //public NetworkManager getNetworkManager();
+    // public NetworkManager getNetworkManager();
 
     public ServerConfiguration getServerConfiguration();
 
@@ -51,7 +51,7 @@ public interface Server {
 
     public BufferedImage getIcon();
 
-    //public PlayerManager getPlayerManager();
+    // public PlayerManager getPlayerManager();
 
     public EntityManager getEntityManager();
 }

@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.CyanWool.api.Difficulty;
+import net.CyanWool.api.Effect;
 import net.CyanWool.api.Gamemode;
+import net.CyanWool.api.Sound;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
@@ -21,9 +23,6 @@ import net.CyanWool.entity.CyanEntity;
 import net.CyanWool.entity.CyanPlayer;
 import net.CyanWool.io.CyanChunkIOService;
 
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
 import org.spacehq.packetlib.packet.Packet;
 
 public class CyanWorld implements World {
@@ -86,11 +85,6 @@ public class CyanWorld implements World {
     @Override
     public boolean isDaytime() {
         return false;
-    }
-
-    @Override
-    public void playRecord(String name, int x, int y, int z) {
-        // TODO
     }
 
     @Override
@@ -201,7 +195,7 @@ public class CyanWorld implements World {
     @Override
     public void onTick() {
         Iterator<Entity> it = entities.iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             Entity entity = it.next();
             entity.onTick();
         }
@@ -209,15 +203,7 @@ public class CyanWorld implements World {
 
     @Override
     public void playSoundAtEntity(Entity entity, String sound, float volume, float pitch) {
-        this.playSoundEffect(entity.getLocation(), sound, volume, pitch);
-    }
-
-    @Override
-    public void playSoundEffect(Location location, String sound, float volume, float pitch) {
-        ServerPlaySoundPacket packet = new ServerPlaySoundPacket(MagicValues.key(GenericSound.class, sound), location.getX(), location.getY(), location.getZ(), volume, pitch);
-        for (Player player : getPlayers()) {
-            ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
-        }
+        this.playSound(entity.getLocation(), sound, volume, pitch);
     }
 
     @Override
@@ -268,5 +254,33 @@ public class CyanWorld implements World {
     @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public void playSound(Location location, String sound, float volume, float pitch) {
+        for (Player player : getPlayers()) {
+            player.playSound(location, sound, volume, pitch);
+        }
+    }
+
+    @Override
+    public void playSoundAtEntity(Entity entity, Sound sound, float volume, float pitch) {
+        for (Player player : getPlayers()) {
+            player.playSound(entity.getLocation(), sound, volume, pitch);
+        }
+    }
+
+    @Override
+    public void playSound(Location location, Sound sound, float volume, float pitch) {
+        for (Player player : getPlayers()) {
+            player.playSound(location, sound, volume, pitch);
+        }
+    }
+
+    @Override
+    public void playEffect(Location location, Effect effect, int data) {
+        for (Player player : getPlayers()) {
+            player.playEffect(location, effect, data);
+        }
     }
 }

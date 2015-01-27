@@ -17,13 +17,13 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     private String name;
     private EntityInventory inventory;
 
-    //AI
+    // AI
     private EntityAITasks targetTasks;
     private EntityAITasks tasks;
-    
+
     public CyanEntityLivingBase(Location location) {
         super(location);
-        //this.inventory =
+        // this.inventory =
         this.targetTasks = new EntityAITasks();
         this.tasks = new EntityAITasks();
     }
@@ -124,11 +124,6 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     @Override
     public void setDisplayName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public boolean isAliveEntity() {
-        return true;
     }
 
     @Override

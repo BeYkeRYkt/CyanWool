@@ -12,7 +12,7 @@ import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
 
-public class NetworkServer{
+public class NetworkServer {
 
     private CyanServer server;
     // MCProtocolLib

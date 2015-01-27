@@ -10,8 +10,6 @@ import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
 
-import org.spacehq.mc.protocol.data.game.values.world.effect.ParticleEffect;
-
 public class CyanBlockType implements BlockType {
 
     private int id;

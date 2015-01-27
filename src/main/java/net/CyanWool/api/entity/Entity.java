@@ -59,12 +59,5 @@ public interface Entity {
 
     public void setFireTicks(int ticks);
 
-    // Mob Types
-    public boolean isPlayerEntity();
-
-    public boolean isMonsterEntity();
-
-    public boolean isAnimalEntity();
-
-    public boolean isAliveEntity();
+    public EntityType getEntityType();
 }

@@ -50,10 +50,10 @@ public class ChunkManager {
         Chunk chunk = service.readChunk(x, z);
         ChunkCoords coords = new ChunkCoords(x, z);
         chunks.put(coords, chunk);
-        CyanWool.getLogger().info("Loaded chunk x:" + x +", z: " + z);
-        //if (!generate) {
-        //    return false;
-        //}
+        CyanWool.getLogger().info("Loaded chunk x:" + x + ", z: " + z);
+        // if (!generate) {
+        // return false;
+        // }
         return true;
     }
 

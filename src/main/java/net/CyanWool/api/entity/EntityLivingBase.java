@@ -14,6 +14,7 @@ public interface EntityLivingBase extends Entity {
 
     public EntityLivingBase getTarget();
 
+    @Override
     public float getEyeHeight();
 
     public float getHealth();
@@ -41,10 +42,10 @@ public interface EntityLivingBase extends Entity {
     public String getDisplayName();
 
     public void setDisplayName(String name);
-    
+
     public EntityInventory getInventory();
-    
+
     public EntityAITasks getTargetAITasks();
-    
+
     public EntityAITasks getAITasks();
 }

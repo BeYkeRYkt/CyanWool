@@ -67,15 +67,16 @@ public interface Human extends EntityLivingBase {
     public boolean canBuild();
 
     public void setBuild(boolean flag);
-    
+
     public Inventory getViewInventory();
-    
+
+    @Override
     public EntityInventory getInventory();
-    
+
     public Inventory getEnderChest();
-    
+
     public void openInventory(Inventory inventory);
-    
+
     public Gamemode getGameMode();
 
     public void setGamemode(Gamemode mode);

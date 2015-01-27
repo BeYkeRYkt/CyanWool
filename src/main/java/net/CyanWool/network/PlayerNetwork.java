@@ -8,7 +8,7 @@ import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.SessionListener;
 import org.spacehq.packetlib.packet.Packet;
 
-public class PlayerNetwork{
+public class PlayerNetwork {
 
     private CyanServer server;
     private CyanPlayer player;
@@ -35,7 +35,6 @@ public class PlayerNetwork{
     public void removeListener(SessionListener listener) {
         session.removeListener(listener);
     }
-
 
     public void disconnect(String string) {
         session.disconnect(string);

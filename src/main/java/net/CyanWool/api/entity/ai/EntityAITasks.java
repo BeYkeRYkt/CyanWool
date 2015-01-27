@@ -7,32 +7,32 @@ import java.util.List;
 
 public class EntityAITasks {
 
-	private List<BasicAI> aiList = new ArrayList<BasicAI>();
+    private List<BasicAI> aiList = new ArrayList<BasicAI>();
     private List<BasicAI> activeAIList = new LinkedList<BasicAI>();
     private int tickCount;
     private int tickRate = 3;
 
-    public void addAI(BasicAI ai){
-    	synchronized (aiList) {
-        	aiList.add(ai);
-		}
+    public void addAI(BasicAI ai) {
+        synchronized (aiList) {
+            aiList.add(ai);
+        }
     }
 
-    public void removeAI(BasicAI ai){
-    	synchronized (aiList) {
-			aiList.remove(ai);
-		}
-    }
-    
-    public void clearAI(){
-    	synchronized (aiList) {
-			aiList.clear();
-		}
+    public void removeAI(BasicAI ai) {
+        synchronized (aiList) {
+            aiList.remove(ai);
+        }
     }
 
-    public void onUpdateAI(){
-    	ArrayList<BasicAI> list = new ArrayList<BasicAI>();
-    	Iterator<BasicAI> iterator;
+    public void clearAI() {
+        synchronized (aiList) {
+            aiList.clear();
+        }
+    }
+
+    public void onUpdateAI() {
+        ArrayList<BasicAI> list = new ArrayList<BasicAI>();
+        Iterator<BasicAI> iterator;
         if (this.tickCount++ % this.tickRate == 0) {
             iterator = this.aiList.iterator();
 
@@ -45,10 +45,10 @@ public class EntityAITasks {
                     ai.resetTask();
                     this.activeAIList.remove(ai);
                 }
-                    if (ai.shouldExecute()) {
-                    	list.add(ai);
-                        this.activeAIList.add(ai);
-                    }
+                if (ai.shouldExecute()) {
+                    list.add(ai);
+                    this.activeAIList.add(ai);
+                }
 
             }
 
@@ -63,17 +63,17 @@ public class EntityAITasks {
                 }
             }
         }
-        
+
         iterator = list.iterator();
-        
-        while(iterator.hasNext()){
+
+        while (iterator.hasNext()) {
             BasicAI ai = iterator.next();
             ai.startExecuting();
         }
-        
+
         iterator = this.activeAIList.iterator();
-        
-        while(iterator.hasNext()){
+
+        while (iterator.hasNext()) {
             BasicAI ai = iterator.next();
             ai.updateTask();
         }

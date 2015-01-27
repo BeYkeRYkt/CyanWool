@@ -1,13 +1,11 @@
 package net.CyanWool.block;
 
+import net.CyanWool.api.Sound;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.block.BlockSide;
 import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
-
-import org.spacehq.mc.protocol.data.game.values.world.effect.BreakBlockEffectData;
-import org.spacehq.mc.protocol.data.game.values.world.effect.ParticleEffect;
 
 public class CyanBlock implements Block {
 
@@ -34,8 +32,15 @@ public class CyanBlock implements Block {
         // TODO: setAir...
 
         // play break Effect
-        //getLocation().getWorld().playEffect(getLocation(), ParticleEffect.BREAK_BLOCK, new BreakBlockEffectData(getBlockType().getID()));// ?
-        getLocation().getWorld().playSoundEffect(getLocation(), getBlockType().getBreakSound().getName(), getBlockType().getBreakSound().getVolume(), getBlockType().getBreakSound().getPitch());
+        // getLocation().getWorld().playEffect(getLocation(),
+        // ParticleEffect.BREAK_BLOCK, new
+        // BreakBlockEffectData(getBlockType().getID()));// ?
+
+        if (getBlockType().getBreakSound().getSound() != Sound.CLICK) {
+            getLocation().getWorld().playSound(getLocation(), getBlockType().getBreakSound().getSound(), getBlockType().getBreakSound().getVolume(), getBlockType().getBreakSound().getPitch());
+        } else {
+            getLocation().getWorld().playSound(getLocation(), getBlockType().getBreakSound().getName(), getBlockType().getBreakSound().getVolume(), getBlockType().getBreakSound().getPitch());
+        }
 
         CyanBlockType ctype = (CyanBlockType) type;
         ctype.onBlockDestroy(getLocation());

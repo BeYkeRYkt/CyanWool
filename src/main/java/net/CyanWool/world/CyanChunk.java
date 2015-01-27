@@ -173,4 +173,8 @@ public class CyanChunk implements Chunk {
         }
         return sections[idx];
     }
+
+    public org.spacehq.mc.protocol.data.game.Chunk[] getSections() {
+        return sections;
+    }
 }

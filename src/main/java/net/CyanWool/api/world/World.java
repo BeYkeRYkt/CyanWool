@@ -3,7 +3,9 @@ package net.CyanWool.api.world;
 import java.util.List;
 
 import net.CyanWool.api.Difficulty;
+import net.CyanWool.api.Effect;
 import net.CyanWool.api.Gamemode;
+import net.CyanWool.api.Sound;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
@@ -33,13 +35,13 @@ public interface World {
 
     public void playSoundAtEntity(Entity entity, String sound, float volume, float pitch);
 
-    public void playSoundEffect(Location location, String sound, float volume, float pitch);
+    public void playSound(Location location, String sound, float volume, float pitch);
 
-    //public void playEffect(Location location, Particle effect, float velocityOffset, int amount, int data);
+    public void playSoundAtEntity(Entity entity, Sound sound, float volume, float pitch);
 
-    //public void playEffect(Location location, WorldEffect effect, WorldEffectData data);
+    public void playSound(Location location, Sound sound, float volume, float pitch);
 
-    public void playRecord(String name, int x, int y, int z);
+    public void playEffect(Location location, Effect effect, int data);
 
     public boolean spawnEntity(Entity entity);
 

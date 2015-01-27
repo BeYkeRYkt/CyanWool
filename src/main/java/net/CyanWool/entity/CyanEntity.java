@@ -5,10 +5,10 @@ import java.util.List;
 
 import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.entity.Entity;
+import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 
-import org.spacehq.mc.protocol.data.game.values.entity.MobType;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionRotationPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityRotationPacket;
@@ -195,28 +195,11 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public boolean isPlayerEntity() {
-        return false;
+    public EntityType getEntityType() {
+        return null;
     }
 
-    @Override
-    public boolean isMonsterEntity() {
-        return false;
-    }
-
-    @Override
-    public boolean isAnimalEntity() {
-        return false;
-    }
-
-    @Override
-    public boolean isAliveEntity() {
-        return false;
-    }
-    
-    
-    //Not from API
-    
+    // Not from API
 
     public List<Packet> getUpdatePackets() {
         // From Glowstone. Thanks dudes :D
@@ -245,7 +228,6 @@ public class CyanEntity implements Entity {
         return list;
     }
 
-    
     public List<Packet> getSpawnPackets() {
         // TODO Auto-generated method stub
         return null;

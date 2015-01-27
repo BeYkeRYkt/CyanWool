@@ -64,4 +64,9 @@ public class ItemStack {
         clone.setItemData(getItemData());
         return clone;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return false;
+    }
 }

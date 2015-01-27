@@ -1,6 +1,7 @@
 package net.CyanWool.entity;
 
 import net.CyanWool.api.Gamemode;
+import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.player.Human;
 import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
@@ -94,7 +95,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public void closeInventory() {
-        if(viewInventory != null){
+        if (viewInventory != null) {
             viewInventory.closeInventory(this);
         }
     }
@@ -207,7 +208,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public Inventory getEnderChest() {
-        return null;//TODO ?
+        return null;// TODO ?
     }
 
     @Override
@@ -227,10 +228,13 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
         this.gameMode = mode;
     }
 
-    
-    
-    //Not from API
-    
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.PLAYER;
+    }
+
+    // Not from API
+
     public GameProfile getGameProfile() {
         return profile;
     }
