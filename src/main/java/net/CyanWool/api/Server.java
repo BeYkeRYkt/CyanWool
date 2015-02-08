@@ -7,6 +7,7 @@ import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ICommandSender;
 import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.api.inventory.recipes.RecipeManager;
 import net.CyanWool.api.plugin.PluginManager;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
@@ -54,4 +55,6 @@ public interface Server {
     // public PlayerManager getPlayerManager();
 
     public EntityManager getEntityManager();
+
+    public RecipeManager getRecipeManager();
 }

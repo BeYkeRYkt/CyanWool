@@ -9,6 +9,7 @@ public class CommandManager {
 
     public CommandManager() {
         register(new StopCommand());
+        register(new PluginsCommand());
     }
 
     public void register(Command command) {

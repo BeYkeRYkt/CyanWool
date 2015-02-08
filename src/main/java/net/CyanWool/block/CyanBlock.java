@@ -42,14 +42,14 @@ public class CyanBlock implements Block {
             getLocation().getWorld().playSound(getLocation(), getBlockType().getBreakSound().getName(), getBlockType().getBreakSound().getVolume(), getBlockType().getBreakSound().getPitch());
         }
 
-        CyanBlockType ctype = (CyanBlockType) type;
+        BlockType ctype = type;
         ctype.onBlockDestroy(getLocation());
 
         // apply physics...
 
         if (type.isDrop() && type.getDrop().isEmpty()) {
             for (ItemStack item : type.getDrop()) {
-                getLocation().getWorld().dropItemStack(item);
+                getLocation().getWorld().dropItemStack(getLocation(), item);
             }
         }
     }

@@ -2,8 +2,10 @@ package net.CyanWool;
 
 import net.CyanWool.api.Effect;
 import net.CyanWool.api.Sound;
+import net.CyanWool.api.entity.EntityType;
 
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
+import org.spacehq.mc.protocol.data.game.values.entity.MobType;
 import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 import org.spacehq.mc.protocol.data.game.values.world.effect.BreakBlockEffectData;
 import org.spacehq.mc.protocol.data.game.values.world.effect.BreakPotionEffectData;
@@ -45,6 +47,13 @@ public class Transform {
             effectData = new HardLandingEffectData(data);
         }
         return effectData;
+    }
+    
+    public static MobType convertMobType(EntityType type){
+        if(MobType.valueOf(type.name()) != null){
+            return MobType.valueOf(type.name());
+        }
+        return MobType.SQUID;
     }
 
 }

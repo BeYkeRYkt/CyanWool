@@ -1,23 +1,23 @@
-package net.CyanWool.api.block;
+package net.CyanWool.api;
 
-import net.CyanWool.api.Sound;
+//import org.spacehq.mc.protocol.data.game.values.world.Sound;
 
-public class BlockSound {
+public class SoundInfo {
 
     private final String name;
     private float volume;
     private float pitch;
     private Sound sound;
 
-    public BlockSound(String name, float pitch, float volume) {
+    public SoundInfo(String name, float pitch, float volume) {
         this.name = name;
         this.pitch = pitch;
         this.volume = volume;
         this.sound = Sound.CLICK;// ?
     }
-
-    public BlockSound(Sound sound, float pitch, float volume) {
-        this("sound.unknown", pitch, volume);
+    
+    public SoundInfo(Sound sound, float pitch, float volume){
+        this("null", pitch, volume);
         this.sound = sound;
     }
 

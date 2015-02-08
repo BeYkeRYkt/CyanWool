@@ -5,19 +5,15 @@ import net.CyanWool.api.inventory.ItemStack;
 public class Enchantment {
 
     private int weight;
-    private int minLvl;
-    private int maxLvl;
     private String name;
     private String StringId;
     private int id;
 
-    public Enchantment(int id, String stringId, String name, int weight, int minLvl, int maxLvl) {
+    public Enchantment(int id, String stringId, String name, int weight) {
         this.id = id;
         this.StringId = stringId;
         this.name = name;
         this.weight = weight;
-        this.minLvl = minLvl;
-        this.maxLvl = maxLvl;
     }
 
     public int getWeight() {
@@ -25,11 +21,11 @@ public class Enchantment {
     }
 
     public int getMinLvl() {
-        return minLvl;
+        return 1;
     }
 
     public int getMaxLvl() {
-        return maxLvl;
+        return 1;
     }
 
     public String getName() {

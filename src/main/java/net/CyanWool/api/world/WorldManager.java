@@ -10,13 +10,11 @@ import net.CyanWool.api.theards.WorldThread;
 
 public class WorldManager {
 
-    private List<World> worlds;
     private Server server;
     private final List<WorldEntry> worldsEntry = new ArrayList<WorldEntry>();
     private WorldIOService service;
 
     public WorldManager(Server server, WorldIOService service) {
-        this.worlds = new ArrayList<World>();
         this.server = server;
         this.service = service;
     }
@@ -26,6 +24,10 @@ public class WorldManager {
     }
 
     public List<World> getWorlds() {
+        ArrayList<World> worlds = new ArrayList<World>();
+        for (WorldEntry entry : worldsEntry) {
+            worlds.add(entry.getWorld());
+        }
         return worlds;
     }
 
@@ -34,67 +36,49 @@ public class WorldManager {
     }
 
     public boolean addWorld(World world) {
-        if (worlds.isEmpty()) {
-            worlds.add(world);
-
-            WorldEntry we = new WorldEntry(world);
-            WorldThread thread = new WorldThread(world);
-            we.setTask(thread);
-            worldsEntry.add(we);
-            we.getTask().start();
-            server.getLogger().info("Added new world: " + world.getName());
-            return true;
-        } else {
-            for (World w : worlds) {
-                if (!w.getName().equals(world.getName())) {
-                    worlds.add(world);
-
-                    WorldEntry we = new WorldEntry(world);
-                    WorldThread thread = new WorldThread(world);
-                    we.setTask(thread);
-                    worldsEntry.add(we);
-                    we.getTask().start();
-                    server.getLogger().info("Added new world: " + world.getName());
-                    return true;
-                }
+        for (WorldEntry entry : worldsEntry) {
+            if (entry.getWorld().getName().equals(world.getName())) {
+                return false;
             }
         }
-        return false;
+
+        WorldEntry we = new WorldEntry(world);
+        WorldThread thread = new WorldThread(world);
+        we.setTask(thread);
+        worldsEntry.add(we);
+        we.getTask().start();
+        server.getLogger().info("Added new world: " + world.getName());
+        return true;
     }
 
     public World getWorld(String name) {
-        for (World w : worlds) {
-            if (!w.getName().equals(name)) {
-                return w;
+        for (WorldEntry entry : worldsEntry) {
+            if (!entry.getWorld().getName().equals(name)) {
+                return entry.getWorld();
             }
         }
         return null;
     }
 
-    public boolean removeWorld(final World world) {
-        if (stopWorldEntry(world) && stopWorld(world)) {
-            // Save
-            // world.saveAll();
-            // ???
-            service.saveWorld(world);
-            return true;
+    public void removeWorld(final World world) {
+        // Save
+        // world.saveAll();
+        // ???
+        world.saveAll();
+        service.saveWorld(world);
+        stopWorldEntry(world);
+    }
+
+    public void saveAllWorlds() {
+        Iterator<WorldEntry> it = worldsEntry.iterator();
+        while (it.hasNext()) {
+            WorldEntry w = it.next();
+            w.getTask().shutdown();
+            it.remove();
         }
-        return false;
     }
 
     // Needed ?
-    private boolean stopWorld(World world) {
-        Iterator<World> it = worlds.iterator();
-        while (it.hasNext()) {
-            World w = it.next();
-            if (w.getName().equals(world.getName())) {
-                it.remove();
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean stopWorldEntry(World world) {
         Iterator<WorldEntry> it = worldsEntry.iterator();
         while (it.hasNext()) {

@@ -2,8 +2,8 @@ package net.CyanWool.network.handlers;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.api.entity.player.Player;
-import net.CyanWool.entity.CyanPlayer;
 import net.CyanWool.entity.meta.ClientSettings;
+import net.CyanWool.entity.player.CyanPlayer;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.protocol.ProtocolConstants;
@@ -36,7 +36,8 @@ public class PlaySessionAdapter extends SessionAdapter {
             Player player = server.getPlayer(profile.getName());
             ClientChatPacket packet = event.getPacket();
             if (packet.getMessage().startsWith("/")) {
-                server.getCommandManager().dispatchCommand(player, packet.getMessage());
+                String cmd = packet.getMessage().substring(1);
+                server.getCommandManager().dispatchCommand(player, cmd);
             } else {
                 player.chat(packet.getMessage());
             }

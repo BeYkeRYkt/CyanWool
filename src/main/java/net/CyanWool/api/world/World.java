@@ -12,7 +12,6 @@ import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.io.PlayerIOService;
-import net.CyanWool.api.world.chunks.Chunk;
 import net.CyanWool.api.world.chunks.ChunkManager;
 
 public interface World {
@@ -23,15 +22,9 @@ public interface World {
 
     public Block getBlock(Location location);
 
-    public Chunk getChunkFromChunkCoords(int x, int z);
-
-    public Chunk getChunkFromBlockCoords(int x, int z);
-
     public Location getSpawnLocation();
 
     public void setSpawnLocation(Location loc);
-
-    public boolean isDaytime();
 
     public void playSoundAtEntity(Entity entity, String sound, float volume, float pitch);
 
@@ -83,7 +76,7 @@ public interface World {
 
     public void onTick();
 
-    public void dropItemStack(ItemStack item);
+    public void dropItemStack(Location location, ItemStack item);
 
     public Difficulty getDifficulty();
 
@@ -93,9 +86,9 @@ public interface World {
 
     public void saveAll();
 
-    public ChunkManager getChunkManager();
-
     public String getPath();
 
     public PlayerIOService getPlayerService();
+
+    public ChunkManager getChunkManager();
 }

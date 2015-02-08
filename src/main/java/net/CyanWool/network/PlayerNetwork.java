@@ -2,7 +2,7 @@ package net.CyanWool.network;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.api.Server;
-import net.CyanWool.entity.CyanPlayer;
+import net.CyanWool.entity.player.CyanPlayer;
 
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.SessionListener;

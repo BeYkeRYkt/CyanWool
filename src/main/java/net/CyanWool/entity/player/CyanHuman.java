@@ -1,11 +1,14 @@
-package net.CyanWool.entity;
+package net.CyanWool.entity.player;
 
 import net.CyanWool.api.Gamemode;
+import net.CyanWool.api.Sound;
+import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.player.Human;
 import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
+import net.CyanWool.entity.CyanEntityLivingBase;
 
 import org.spacehq.mc.auth.GameProfile;
 
@@ -34,6 +37,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
         super(location);// TODO
         this.profile = profile;
         this.displayName = profile.getName();
+        setDamageSound(new SoundInfo(Sound.PLAYER_HURT, 1.0F, 1.0F));
     }
 
     @Override
@@ -59,7 +63,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public void setItemInHand(ItemStack item) {
-        // TODO Auto-generated method stub
+        getInventory().setItemInHand(item);
     }
 
     @Override
@@ -75,7 +79,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     @Override
     public void sleepInBedAt(int x, int y, int z) {
         // TODO Auto-generated method stub
-
+        
     }
 
     @Override

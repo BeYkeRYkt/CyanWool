@@ -2,6 +2,7 @@ package net.CyanWool.entity.meta;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.spacehq.mc.protocol.data.game.values.setting.ChatVisibility;
 import org.spacehq.mc.protocol.data.game.values.setting.SkinPart;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientSettingsPacket;
@@ -63,7 +64,7 @@ public final class ClientSettings {
         list.add(SkinPart.LEFT_SLEEVE);
         list.add(SkinPart.RIGHT_PANTS_LEG);
         list.add(SkinPart.RIGHT_SLEEVE);
-        ClientSettings settings = new ClientSettings("en_US", 8, ChatVisibility.FULL, true, list);
+        ClientSettings settings = new ClientSettings("en_US", 8, ChatVisibility.FULL, true, list); //Normal - 8
         return settings;
     }
 

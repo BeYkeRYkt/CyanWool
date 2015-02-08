@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import net.CyanWool.CyanServer;
-
 public class ConsoleThread extends Thread {
 
     private CyanServer server;

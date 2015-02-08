@@ -1,4 +1,4 @@
-package net.CyanWool.entity;
+package net.CyanWool.entity.player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +17,9 @@ import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.world.Location;
+import net.CyanWool.api.world.chunks.Chunk;
 import net.CyanWool.api.world.chunks.ChunkCoords;
+import net.CyanWool.entity.CyanEntity;
 import net.CyanWool.entity.meta.ClientSettings;
 import net.CyanWool.network.PlayerNetwork;
 import net.CyanWool.world.CyanChunk;
@@ -29,12 +31,14 @@ import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
 import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPlayerPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
 import org.spacehq.packetlib.packet.Packet;
 
-public class CyanPlayer extends CyanHuman implements Player {
+public class CyanPlayer extends CyanHuman implements Player{
 
     private CyanServer server;
     private PlayerNetwork connection;
@@ -52,7 +56,7 @@ public class CyanPlayer extends CyanHuman implements Player {
         // updateChunks();
     }
 
-    private void updateChunks() {
+    public void updateChunks() {
         List<ChunkCoords> prev = new ArrayList<ChunkCoords>(chunks);
         List<ChunkCoords> newChunks = new ArrayList<ChunkCoords>();
 
@@ -88,14 +92,11 @@ public class CyanPlayer extends CyanHuman implements Player {
             }
         }
 
-        List<CyanChunk> cchunks = new ArrayList<CyanChunk>();
         for (ChunkCoords chunkcoords : newChunks) {
             chunks.add(chunkcoords);
-            CyanChunk chunk = (CyanChunk) getWorld().getChunkManager().getChunk(chunkcoords.getX(), chunkcoords.getZ());
-            cchunks.add(chunk);
+            Chunk chunk = getWorld().getChunkManager().getChunk(chunkcoords.getX(), chunkcoords.getZ());
+            sendChunk(chunk);
         }
-        ServerChunkDataPacket data = new ServerChunkDataPacket(getLocation().getBlockX(), getLocation().getBlockZ(), (org.spacehq.mc.protocol.data.game.Chunk[]) cchunks.toArray());
-        getPlayerNetwork().sendPacket(data);
 
         // Maybe: TODO: ServerMultiChunkDataPacket
 
@@ -189,7 +190,7 @@ public class CyanPlayer extends CyanHuman implements Player {
             if (!e.isInvisible()) {
                 list.add(e);
             } else {
-                destroy.add(e.getEntityID());
+                destroy.add(e.getRegisterID());
                 it.remove();
             }
         }
@@ -268,6 +269,26 @@ public class CyanPlayer extends CyanHuman implements Player {
         Position pos = new Position(getLocation().getBlockX(), getLocation().getBlockY(), getLocation().getBlockZ());
         ServerPlayEffectPacket packet = new ServerPlayEffectPacket(libEffect, pos, libEffectData);
         getPlayerNetwork().sendPacket(packet);
+    }
+    
+    @Override
+    public void setTime(long time) {
+        ServerUpdateTimePacket packet = new ServerUpdateTimePacket(getAge(), time);
+        getPlayerNetwork().sendPacket(packet);
+    }
+
+    @Override
+    public void sendChunk(Chunk chunk) {
+        CyanChunk cchunk = (CyanChunk) chunk;
+        ServerChunkDataPacket packet = new ServerChunkDataPacket(chunk.getX(), chunk.getZ(), cchunk.getSections());
+        getPlayerNetwork().sendPacket(packet);
+    }
+    
+    @Override
+    public List<Packet> getSpawnPackets() {
+        List<Packet> list = new ArrayList<Packet>();
+        list.add(new ServerSpawnPlayerPacket(getRegisterID(), getUniqueId(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), 0 , null)); // TODO
+        return list;
     }
 
     // Not api

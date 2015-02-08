@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.Difficulty;
 import net.CyanWool.api.Effect;
 import net.CyanWool.api.Gamemode;
@@ -11,16 +12,16 @@ import net.CyanWool.api.Sound;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
+import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.io.PlayerIOService;
 import net.CyanWool.api.world.Dimension;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
-import net.CyanWool.api.world.chunks.Chunk;
 import net.CyanWool.api.world.chunks.ChunkManager;
 import net.CyanWool.entity.CyanEntity;
-import net.CyanWool.entity.CyanPlayer;
+import net.CyanWool.entity.player.CyanPlayer;
 import net.CyanWool.io.CyanChunkIOService;
 
 import org.spacehq.packetlib.packet.Packet;
@@ -47,6 +48,7 @@ public class CyanWorld implements World {
         this.service = service;
         this.path = "worlds/" + name;
         this.chunk = new ChunkManager(this, new CyanChunkIOService(this), null);
+        this.chunk.setGenerator(new CyanChunkGenerator(chunk));
         this.entities = new ArrayList<Entity>();
         // this.chunk.loadChunk(getSpawnLocation().getBlockX() >> 4,
         // getSpawnLocation().getBlockZ() >> 4, false);
@@ -63,16 +65,6 @@ public class CyanWorld implements World {
     }
 
     @Override
-    public Chunk getChunkFromChunkCoords(int x, int z) {
-        return chunk.getChunk(x, z);
-    }
-
-    @Override
-    public Chunk getChunkFromBlockCoords(int x, int z) {
-        return chunk.getChunk(x >> 4, z >> 4);// ?
-    }
-
-    @Override
     public Location getSpawnLocation() {
         return spawn;
     }
@@ -83,11 +75,6 @@ public class CyanWorld implements World {
     }
 
     @Override
-    public boolean isDaytime() {
-        return false;
-    }
-
-    @Override
     public boolean spawnEntity(Entity entity) {
         for (Packet packet : ((CyanEntity) entity).getSpawnPackets()) {
             for (Player player : getPlayers()) {
@@ -95,6 +82,7 @@ public class CyanWorld implements World {
                 return true;
             }
         }
+        CyanWool.getEntityManager().register(entity);
         return false;
     }
 
@@ -188,8 +176,13 @@ public class CyanWorld implements World {
 
     @Override
     public List<Player> getPlayers() {
-        // TODO Auto-generated method stub
-        return null;
+        List<Player> list = new ArrayList<Player>();
+        for(Entity entity: getEntities()){
+            if(entity.getEntityType() == EntityType.PLAYER){
+                list.add((Player) entity);
+            }
+        }
+        return list;
     }
 
     @Override
@@ -207,7 +200,7 @@ public class CyanWorld implements World {
     }
 
     @Override
-    public void dropItemStack(ItemStack item) {
+    public void dropItemStack(Location location, ItemStack item) {
         // TODO Auto-generated method stub
 
     }

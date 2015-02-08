@@ -4,7 +4,6 @@ import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
-import net.CyanWool.api.inventory.inventories.EntityInventory;
 
 public interface Human extends EntityLivingBase {
 
@@ -70,14 +69,11 @@ public interface Human extends EntityLivingBase {
 
     public Inventory getViewInventory();
 
-    @Override
-    public EntityInventory getInventory();
-
-    public Inventory getEnderChest();
-
     public void openInventory(Inventory inventory);
 
     public Gamemode getGameMode();
 
     public void setGamemode(Gamemode mode);
+    
+    public Inventory getEnderChest();
 }

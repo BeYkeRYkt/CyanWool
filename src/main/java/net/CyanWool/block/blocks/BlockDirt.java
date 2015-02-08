@@ -1,19 +1,18 @@
 package net.CyanWool.block.blocks;
 
-import net.CyanWool.api.Register;
-import net.CyanWool.api.block.BlockSound;
+import net.CyanWool.api.SoundInfo;
+import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.inventory.ItemStack;
-import net.CyanWool.block.CyanBlockType;
 
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 
-public class BlockDirt extends CyanBlockType {
+public class BlockDirt extends BlockType {
 
     public BlockDirt() {
         super(3, 0);
-        BlockSound dig = new BlockSound(MagicValues.value(String.class, GenericSound.DIG_GRAVEL), 1.0F, 1.0F);
-        BlockSound step = new BlockSound(MagicValues.value(String.class, GenericSound.GRAVEL_STEP), 1.0F, 1.0F);
+        SoundInfo dig = new SoundInfo(MagicValues.value(String.class, GenericSound.DIG_GRAVEL), 1.0F, 1.0F);
+        SoundInfo step = new SoundInfo(MagicValues.value(String.class, GenericSound.GRAVEL_STEP), 1.0F, 1.0F);
 
         setBreakSound(dig);
         setPlaceSound(dig);
@@ -21,7 +20,7 @@ public class BlockDirt extends CyanBlockType {
         setStepSound(step);
         setDrop(true);
 
-        ItemStack item = Register.getItemStack(getID());
+        ItemStack item = new ItemStack(getID());
         getDrop().add(item);
     }
 

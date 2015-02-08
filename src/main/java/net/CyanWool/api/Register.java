@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.CyanWool.api.block.BlockType;
-import net.CyanWool.api.inventory.ItemStack;
+import net.CyanWool.api.inventory.ItemType;
 
 public class Register {
 
     private static List<BlockType> blocks = new ArrayList<BlockType>();
-    private static List<ItemStack> items = new ArrayList<ItemStack>();
+    private static List<ItemType> items = new ArrayList<ItemType>();
 
-    public static boolean registerItem(ItemStack item) {
+    public static boolean registerItem(ItemType item) {
         if (!hasItem(item.getId())) {
             items.add(item);
             return true;
@@ -29,7 +29,7 @@ public class Register {
     }
 
     public static boolean hasItem(int id) {
-        for (ItemStack item : items) {
+        for (ItemType item : items) {
             if (item.getId() == id) {
                 return true;
             }
@@ -46,10 +46,10 @@ public class Register {
         return false;
     }
 
-    public static boolean removeItem(ItemStack item) {
-        Iterator<ItemStack> it = items.iterator();
+    public static boolean removeItem(ItemType item) {
+        Iterator<ItemType> it = items.iterator();
         while (it.hasNext()) {
-            ItemStack i = it.next();
+            ItemType i = it.next();
             if (i.getId() == item.getId()) {
                 it.remove();
                 return true;
@@ -70,17 +70,17 @@ public class Register {
         return false;
     }
 
-    public static ItemStack getItemStack(int id) {
-        return getItemStack(id, 0);
+    public static ItemType getItemType(int id) {
+        return getItemType(id, 0);
     }
 
-    public static ItemStack getItemStack(int id, int data) {
-        for (ItemStack item : items) {
+    public static ItemType getItemType(int id, int data) {
+        for (ItemType item : items) {
             if (item.getId() == id && item.getData() == data) {
-                return item.clone();
+                return item.cloneItem();
             }
         }
-        return null;
+        return new ItemType(0, 0, (short) 0, 0, false);
     }
 
     public static BlockType getBlock(int id) {
@@ -96,7 +96,7 @@ public class Register {
         return blocks.get(0);
     }
 
-    public static List<ItemStack> getItems() {
+    public static List<ItemType> getItems() {
         return items;
     }
 

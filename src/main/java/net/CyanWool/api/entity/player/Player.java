@@ -7,6 +7,7 @@ import net.CyanWool.api.Effect;
 import net.CyanWool.api.Sound;
 import net.CyanWool.api.command.ICommandSender;
 import net.CyanWool.api.world.Location;
+import net.CyanWool.api.world.chunks.Chunk;
 import net.CyanWool.api.world.chunks.ChunkCoords;
 
 public interface Player extends Human, ICommandSender {
@@ -40,4 +41,8 @@ public interface Player extends Human, ICommandSender {
     public void playSound(Location location, Sound sound, float volume, float pitch);
 
     public void playEffect(Location location, Effect effect, int data);
+
+    public void setTime(long time);     // maybe sendTimeUpdate ?
+    
+    public void sendChunk(Chunk chunk);
 }

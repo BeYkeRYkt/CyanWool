@@ -3,7 +3,6 @@ package net.CyanWool.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.world.Location;
@@ -31,11 +30,15 @@ public class CyanEntity implements Entity {
     private boolean sneak;
     private boolean sprint;
     private boolean onGround;
+    private int livedTicks;
+    
+    private Entity passenger;
+    private Entity vehicle;
 
     public CyanEntity(Location location) {
         this.prevLoc = location.clone();
         this.location = location.clone();
-        CyanWool.getEntityManager().register(this);
+        //CyanWool.getEntityManager().register(this);
         // TODO
     }
 
@@ -56,7 +59,7 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public int getEntityID() {
+    public int getRegisterID() {
         return entityId;
     }
 
@@ -68,11 +71,6 @@ public class CyanEntity implements Entity {
     @Override
     public boolean isBurning() {
         return getFireTicks() > 0;
-    }
-
-    @Override
-    public float getEyeHeight() {
-        return 0; // TODO
     }
 
     @Override
@@ -139,23 +137,29 @@ public class CyanEntity implements Entity {
 
     @Override
     public void setPassenger(Entity entity) {
-        // TODO
+        if(getVehicle() != null && getVehicle().getRegisterID() == entity.getEntityID()){
+        this.passenger = entity;
+        entity.teleport(getLocation());
+        entity.setVehicle(this);
+        }
     }
 
     @Override
     public Entity getPassenger() {
-        return null;
+        return passenger;
     }
 
     @Override
     public Entity getVehicle() {
-        return null;
+        return vehicle;
     }
 
     @Override
     public void setVehicle(Entity entity) {
-        // TODO Auto-generated method stub
-
+        if(getPassenger() != null && getPassenger().getRegisterID() == entity.getEntityID()){
+        this.vehicle = entity;
+        entity.setPassenger(this);
+        }
     }
 
     @Override
@@ -175,7 +179,10 @@ public class CyanEntity implements Entity {
         if (fireTicks > 0) {
             fireTicks--;
         }
-
+        
+        if(livedTicks > 0){
+            livedTicks++;
+        }
         // TODO
     }
 
@@ -190,13 +197,13 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public void setEntityID(int id) {
+    public void setRegisterID(int id) {
         this.entityId = id;
     }
 
     @Override
     public EntityType getEntityType() {
-        return null;
+        return EntityType.NONE;
     }
 
     // Not from API
@@ -210,18 +217,18 @@ public class CyanEntity implements Entity {
         double moveZ = getLocation().getZ() - prevLoc.getZ();
 
         if (teleported || teleported && moved) {
-            list.add(new ServerEntityTeleportPacket(getEntityID(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
+            list.add(new ServerEntityTeleportPacket(getRegisterID(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
             this.teleported = false;
             this.moved = false;
         } else if (moved && rotated) {
-            list.add(new ServerEntityPositionRotationPacket(getEntityID(), moveX, moveY, moveZ, getLocation().getYaw(), getLocation().getPitch(), onGround()));
+            list.add(new ServerEntityPositionRotationPacket(getRegisterID(), moveX, moveY, moveZ, getLocation().getYaw(), getLocation().getPitch(), onGround()));
             this.moved = false;
             this.rotated = false;
         } else if (moved) {
-            list.add(new ServerEntityPositionPacket(getEntityID(), moveX, moveY, moveZ, onGround()));
+            list.add(new ServerEntityPositionPacket(getRegisterID(), moveX, moveY, moveZ, onGround()));
             this.moved = false;
         } else if (rotated) {
-            list.add(new ServerEntityRotationPacket(getEntityID(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
+            list.add(new ServerEntityRotationPacket(getRegisterID(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
             this.rotated = false;
         }
 
@@ -231,5 +238,15 @@ public class CyanEntity implements Entity {
     public List<Packet> getSpawnPackets() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public int getEntityID() {
+        return 0;//ENTITY ID: http://minecraft.gamepedia.com/Data_values/Entity_IDs
+    }
+
+    @Override
+    public int getLivedTicks() {
+        return livedTicks;
     }
 }

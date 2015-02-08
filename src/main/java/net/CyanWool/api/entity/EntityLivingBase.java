@@ -1,5 +1,6 @@
 package net.CyanWool.api.entity;
 
+import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.ai.EntityAITasks;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.inventory.inventories.EntityInventory;
@@ -14,7 +15,6 @@ public interface EntityLivingBase extends Entity {
 
     public EntityLivingBase getTarget();
 
-    @Override
     public float getEyeHeight();
 
     public float getHealth();
@@ -48,4 +48,38 @@ public interface EntityLivingBase extends Entity {
     public EntityAITasks getTargetAITasks();
 
     public EntityAITasks getAITasks();
+    
+    public boolean isAIEnabled();
+    
+    public void setAIEnabled(boolean enable);
+    
+    public void addHealth(int i);
+    
+    public void onDamageEntity(Entity damager, float damage);
+    
+    public void onAttackEntity(Entity target, float damage);
+    
+    public void onDeath();
+    
+    public void onWalking();
+    
+    public boolean interact(EntityLivingBase interacter);
+    
+    public SoundInfo getDamageSound();
+    
+    public SoundInfo getTalkSound();
+    
+    public SoundInfo getDeathSound();
+    
+    public void setDeathSound(SoundInfo sound);
+    
+    public void setDamageSound(SoundInfo sound);
+    
+    public void setTalkSound(SoundInfo sound);
+    
+    public boolean playDamageSound();
+    
+    public boolean playTalkSound();
+    
+    public boolean playDeathSound();
 }

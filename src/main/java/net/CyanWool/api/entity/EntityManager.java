@@ -25,7 +25,7 @@ public class EntityManager {
     }
 
     public void register(Entity entity) {
-        if (getEntity(entity.getEntityID()) != null) {
+        if (getEntity(entity.getRegisterID()) != null) {
             return; // IMPOSIBBLEEE
         }
 
@@ -35,23 +35,24 @@ public class EntityManager {
                 continue;
 
             if (usedIds.add(id)) {
-                entity.setEntityID(id);
+                entity.setRegisterID(id);
                 last = id;
                 break;
             }
         }
-        entities.put(entity.getEntityID(), entity);
-        entity.getLocation().getChunk().getEntities().add(entity);
+        entities.put(entity.getRegisterID(), entity);
+        Location loc = entity.getLocation();
+        //loc.getChunk().getEntities().add(entity); - ERRORS!
     }
 
     public void unregister(Entity entity) {
-        entities.remove(entity.getEntityID());
-        usedIds.remove(entity.getEntityID());
+        entities.remove(entity.getRegisterID());
+        usedIds.remove(entity.getRegisterID());
 
         Iterator<Entity> it = entity.getLocation().getChunk().getEntities().iterator();
         while (it.hasNext()) {
             Entity ent = it.next();
-            if (ent.getEntityID() == entity.getEntityID()) {
+            if (ent.getRegisterID() == entity.getRegisterID()) {
                 it.remove();
             }
         }
@@ -65,7 +66,7 @@ public class EntityManager {
             Iterator<Entity> it = prev.getEntities().iterator();
             while (it.hasNext()) {
                 Entity ent = it.next();
-                if (ent.getEntityID() == entity.getEntityID()) {
+                if (ent.getRegisterID() == entity.getRegisterID()) {
                     it.remove();
                 }
             }

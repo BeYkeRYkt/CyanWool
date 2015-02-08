@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.io.ChunkIOService;
 import net.CyanWool.api.world.World;
+import net.CyanWool.world.CyanChunk;
 
 public class ChunkManager {
 
@@ -26,13 +27,20 @@ public class ChunkManager {
     public ChunkGenerator getGenerator() {
         return generator;
     }
+    
+    public void setGenerator(ChunkGenerator generator){
+        this.generator = generator;
+    }
 
     public Chunk getChunk(int x, int z) {
         ChunkCoords coords = new ChunkCoords(x, z);
         if (chunks.containsKey(coords)) {
             return chunks.get(coords);
+        }else{
+        CyanChunk chunk = new CyanChunk(world, x, z);
+        CyanChunk prev = (CyanChunk) chunks.putIfAbsent(coords, chunk);
+        return prev == null ? chunk : prev;
         }
-        return null;// Maybe generate
     }
 
     public boolean isChunkLoaded(int x, int z) {
@@ -50,27 +58,24 @@ public class ChunkManager {
         Chunk chunk = service.readChunk(x, z);
         ChunkCoords coords = new ChunkCoords(x, z);
         chunks.put(coords, chunk);
+        ((CyanChunk) chunk).setLoaded(true);
         CyanWool.getLogger().info("Loaded chunk x:" + x + ", z: " + z);
-        // if (!generate) {
-        // return false;
-        // }
+
+        if (!generate) {
+        return false;
+        }
+        generateChunk(chunk);
         return true;
     }
 
     public void saveChunk(final Chunk chunk) {
         ChunkCoords coords = new ChunkCoords(chunk.getX(), chunk.getZ());
         chunks.remove(coords);
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                service.saveChunk(chunk);
-            }
-        });
+        service.saveChunk(chunk);
     }
 
-    public void generateChunk(int x, int z) {
-        getGenerator().generate(world, x, z);
+    public void generateChunk(Chunk chunk) {
+        getGenerator().generate(world, chunk);
     }
 
     public List<Chunk> getLoadedChunks() {
@@ -81,5 +86,19 @@ public class ChunkManager {
             }
         }
         return result;
+    }
+
+    public Chunk getChunkFromChunkCoords(int x, int z) {
+        return getChunk(x, z);
+    }
+
+    public Chunk getChunkFromBlockCoords(int x, int z) {
+        return getChunk(x >> 4, z >> 4);
+    }
+
+    public void saveChunks() {
+        for(Chunk chunk: getLoadedChunks()){
+            saveChunk(chunk);
+        }
     }
 }

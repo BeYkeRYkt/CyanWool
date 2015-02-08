@@ -22,7 +22,7 @@ public class CyanChunk implements Chunk {
 
     private final List<Entity> entities = new ArrayList<Entity>();
     private boolean isLoaded;
-    private org.spacehq.mc.protocol.data.game.Chunk[] sections;
+    private org.spacehq.mc.protocol.data.game.Chunk[] sections = new org.spacehq.mc.protocol.data.game.Chunk[16];
 
     public CyanChunk(World world, int x, int z) {
         this.world = world;
@@ -147,8 +147,9 @@ public class CyanChunk implements Chunk {
             CyanWool.getLogger().info("Tried to initialize already loaded chunk (" + x + "," + z + ")");
             return;
         }
-        sections = new org.spacehq.mc.protocol.data.game.Chunk[DEPTH / SEC_DEPTH];
-        System.arraycopy(initSections, 0, sections, 0, Math.min(sections.length, initSections.length));
+        //sections = new org.spacehq.mc.protocol.data.game.Chunk[DEPTH / SEC_DEPTH];
+        //System.arraycopy(initSections, 0, sections, 0, Math.min(sections.length, initSections.length));
+        sections = initSections;
         // biomes = new byte[WIDTH * HEIGHT];
         // heightMap = new byte[WIDTH * HEIGHT];
         // tile entity initialization
@@ -168,13 +169,30 @@ public class CyanChunk implements Chunk {
 
     private org.spacehq.mc.protocol.data.game.Chunk getSection(int y) {
         int idx = y >> 4;
+        CyanWool.getLogger().info("idx=" + idx);
         if (y < 0 || y >= DEPTH || !isLoaded || idx >= sections.length) {
             return null;
         }
         return sections[idx];
     }
 
+    private int coordToIndex(int x, int y, int z) {
+        if (x < 0 || z < 0 || y < 0 || x >= WIDTH || z >= HEIGHT || y >= DEPTH)
+            throw new IndexOutOfBoundsException("Coords out of bound! x:" + x + ", z:" + z + ", y:" + y);
+
+        return y << 8 | z << 4 | x;
+    }   
+    
     public org.spacehq.mc.protocol.data.game.Chunk[] getSections() {
         return sections;
+    }
+
+    @Override
+    public int getMaxHeight() {
+        return 256;
+    }
+
+    public void setLoaded(boolean b) {
+        this.isLoaded = b;
     }
 }

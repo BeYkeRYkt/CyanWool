@@ -40,7 +40,7 @@ public interface Chunk {
 
     public void setType(int x, int z, int y, int type);
 
-    // public int getMaxHeight();
+    public int getMaxHeight();
 
     // public void generate();
 

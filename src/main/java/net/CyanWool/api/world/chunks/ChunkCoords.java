@@ -37,7 +37,7 @@ public class ChunkCoords {
             return false;
         } else {
             ChunkCoords chunk = (ChunkCoords) other;
-            return this.getX() == chunk.getX() && this.getZ() == chunk.getZ();
+            return getX() == chunk.getX() && getZ() == chunk.getZ();
         }
     }
 }

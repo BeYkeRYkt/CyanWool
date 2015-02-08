@@ -2,7 +2,7 @@ package net.CyanWool.network;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.api.entity.player.Player;
-import net.CyanWool.entity.CyanPlayer;
+import net.CyanWool.entity.player.CyanPlayer;
 import net.CyanWool.network.handlers.ServerInfo;
 import net.CyanWool.network.handlers.ServerLogin;
 
@@ -31,7 +31,7 @@ public class NetworkServer {
                 protocol_server.setGlobalFlag(ProtocolConstants.SERVER_INFO_BUILDER_KEY, new ServerInfo(server));
                 protocol_server.setGlobalFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY, new ServerLogin(server));
                 protocol_server.addListener(new CyanServerListener(server));
-                protocol_server.setGlobalFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD, 100);
+                protocol_server.setGlobalFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD, 256);
 
                 protocol_server.bind();
                 server.getLogger().info("Protocol server is started!");

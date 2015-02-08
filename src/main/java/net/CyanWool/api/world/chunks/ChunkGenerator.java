@@ -9,9 +9,9 @@ public interface ChunkGenerator {
 
     public List getDecorators(); // Decorator class
 
-    public void generate(World world, int x, int z);
+    public void generate(World world, Chunk chunk);
 
-    public void generate(World world, int x, int z, Random random);
+    public void generate(World world, Chunk chunk, Random random);
 
     // public boolean canSpawnDecorator(); //TODO:
 }

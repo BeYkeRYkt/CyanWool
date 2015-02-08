@@ -1,11 +1,14 @@
 package net.CyanWool.api.inventory;
 
+import net.CyanWool.api.Register;
+
 public class ItemStack {
 
     private int id;
     private int amount;
     private int data;
     private ItemData itemdata;
+    private ItemType type;
 
     public ItemStack(int id) {
         this(id, 1);
@@ -16,9 +19,14 @@ public class ItemStack {
     }
 
     public ItemStack(int id, int amount, int data) {
+        this(id, amount, data, Register.getItemType(id, data));
+    }
+
+    public ItemStack(int id, int amount, int data, ItemType type) {
         this.id = id;
         this.amount = amount;
         this.data = data;
+        this.type = type;
     }
 
     public int getId() {
@@ -31,12 +39,6 @@ public class ItemStack {
 
     public int getData() {
         return this.data;
-    }
-
-    public void saveNbt() {
-    }
-
-    public void loadNbt() {
     }
 
     public boolean hasItemData() {
@@ -67,6 +69,21 @@ public class ItemStack {
 
     @Override
     public boolean equals(Object other) {
-        return false;
+        if (this == other) {
+            return true;
+        } else if (!(other instanceof ItemStack)) {
+            return false;
+        } else {
+            ItemStack item = (ItemStack) other;
+            return item.getId() == getId() && item.getData() == getData(); // Maybe
+                                                                           // todo
+        }
+    }
+
+    /**
+     * @return the type
+     */
+    public ItemType getType() {
+        return type;
     }
 }

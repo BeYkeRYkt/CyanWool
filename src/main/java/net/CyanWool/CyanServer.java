@@ -15,7 +15,8 @@ import net.CyanWool.api.command.ConsoleCommandSender;
 import net.CyanWool.api.command.ICommandSender;
 import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.player.Player;
-import net.CyanWool.api.inventory.ItemStack;
+import net.CyanWool.api.inventory.recipes.RecipeManager;
+import net.CyanWool.api.inventory.recipes.SimpleRecipeManager;
 import net.CyanWool.api.plugin.PluginManager;
 import net.CyanWool.api.theards.SchedulerThread;
 import net.CyanWool.api.world.World;
@@ -24,6 +25,9 @@ import net.CyanWool.block.blocks.BlockAir;
 import net.CyanWool.block.blocks.BlockBedrock;
 import net.CyanWool.block.blocks.BlockDirt;
 import net.CyanWool.block.blocks.BlockGrass;
+import net.CyanWool.inventory.items.ItemBedrock;
+import net.CyanWool.inventory.items.ItemDirt;
+import net.CyanWool.inventory.items.ItemGrass;
 import net.CyanWool.io.CyanPlayerIOService;
 import net.CyanWool.io.CyanWorldIOService;
 import net.CyanWool.management.PlayerManager;
@@ -51,6 +55,7 @@ public class CyanServer implements Server {
     private ConsoleThread console;
     private PlayerManager playerManager;
     private EntityManager entityManager;
+    private RecipeManager recipeManager;
 
     private static BufferedImage icon;
 
@@ -75,6 +80,7 @@ public class CyanServer implements Server {
 
         this.playerManager = new PlayerManager(this);
         this.entityManager = new EntityManager();
+        this.recipeManager = new SimpleRecipeManager();
 
         this.console = new ConsoleThread(this);
         this.console.start();
@@ -92,15 +98,15 @@ public class CyanServer implements Server {
         this.worlds = new WorldManager(this, new CyanWorldIOService());
         this.cmdManager = new CommandManager();
         this.pluginManager = new PluginManager();
+        this.schedulert = new SchedulerThread(this);
+        this.schedulert.start();
+        
         this.pluginManager.loadPlugins();
 
         // load worlds...
         loadWorlds();
 
         this.pluginManager.enablePlugins();
-
-        this.schedulert = new SchedulerThread(this);
-        this.schedulert.start();
 
         long timeEnd = System.currentTimeMillis();
         long time = (timeEnd - timeStart);
@@ -159,25 +165,21 @@ public class CyanServer implements Server {
     public void shutdown() {
         getLogger().info("Shutdown!");
 
+        schedulert.shutdown();
+        getLogger().info("Scheduler's shutdown!");
+        
         pluginManager.unloadPlugins();
         getLogger().info("Plugins unloaded!");
 
         network.getProtocolServer().close();
         getLogger().info("NetworkServer is closed!");
 
-        schedulert.shutdown();
         console.shutdown();
-        getLogger().info("Scheduler's shutdown!");
 
         config.save();
         getLogger().info("Config is saved!");
 
-        if (!worlds.getWorlds().isEmpty()) {
-            for (World world : worlds.getWorlds()) {
-                worlds.removeWorld(world);
-                getLogger().info(world.getName() + " is unloaded!");
-            }
-        }
+        worlds.saveAllWorlds();
         System.exit(1);
         // TODO
     }
@@ -247,10 +249,9 @@ public class CyanServer implements Server {
 
     private void loadWorlds() {
         // TODO: TESTING!
-        Register.registerItem(new ItemStack(0));
-        Register.registerItem(new ItemStack(2));
-        Register.registerItem(new ItemStack(3));
-        Register.registerItem(new ItemStack(7));
+        Register.registerItem(new ItemGrass());
+        Register.registerItem(new ItemDirt());
+        Register.registerItem(new ItemBedrock());
 
         Register.registerBlock(new BlockAir());
         Register.registerBlock(new BlockDirt());
@@ -260,7 +261,7 @@ public class CyanServer implements Server {
         World world = new CyanWorld("world", new CyanPlayerIOService());
         getWorldManager().loadWorld(world);
         getWorldManager().addWorld(world);
-        world.getChunkManager().loadChunk(world.getSpawnLocation().getBlockX() >> 4, world.getSpawnLocation().getBlockZ() >> 4, false);
+        //world.getChunkManager().loadChunk(world.getSpawnLocation().getBlockX() >> 4, world.getSpawnLocation().getBlockZ() >> 4, true);
 
         int centerX = world.getSpawnLocation().getBlockX() >> 4;
         int centerZ = world.getSpawnLocation().getBlockZ() >> 4;
@@ -270,7 +271,7 @@ public class CyanServer implements Server {
         for (int x = centerX - radius; x <= centerX + radius; ++x) {
             for (int z = centerZ - radius; z <= centerZ + radius; ++z) {
                 ++current;
-                world.getChunkManager().loadChunk(x, z, false);
+                world.getChunkManager().loadChunk(x, z, true);
                 // spawnChunkLock.acquire(new GlowChunk.Key(x, z));
                 if (System.currentTimeMillis() >= loadTime + 1000) {
                     int progress = 100 * current / total;
@@ -279,6 +280,11 @@ public class CyanServer implements Server {
                 }
             }
         }
+    }
+
+    @Override
+    public RecipeManager getRecipeManager() {
+        return recipeManager;
     }
 
 }

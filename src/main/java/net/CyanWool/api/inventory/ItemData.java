@@ -6,12 +6,10 @@ import java.util.List;
 public class ItemData {
 
     private short durability;
-    private short maxDurability;
     private String displayName;
     private List<String> lore;
 
     public ItemData(short maxDurability) {
-        this.maxDurability = maxDurability;
         this.durability = maxDurability;
         this.lore = new ArrayList<String>();
     }
@@ -29,21 +27,6 @@ public class ItemData {
      */
     public void setDurability(short durability) {
         this.durability = durability;
-    }
-
-    /**
-     * @return the maxDurability
-     */
-    public short getMaxDurability() {
-        return maxDurability;
-    }
-
-    /**
-     * @param maxDurability
-     *            the maxDurability to set
-     */
-    public void setMaxDurability(short maxDurability) {
-        this.maxDurability = maxDurability;
     }
 
     public boolean hasDisplayName() {

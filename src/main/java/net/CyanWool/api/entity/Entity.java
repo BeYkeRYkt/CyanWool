@@ -11,15 +11,13 @@ public interface Entity {
 
     public void teleport(Location location);
 
-    public int getEntityID();
+    public int getRegisterID();
 
-    public void setEntityID(int id);
+    public void setRegisterID(int id);
 
     public boolean isAlive();
 
     public boolean isBurning();
-
-    public float getEyeHeight();
 
     public boolean isImmuneToFire();
 
@@ -60,4 +58,8 @@ public interface Entity {
     public void setFireTicks(int ticks);
 
     public EntityType getEntityType();
+    
+    public int getEntityID();
+    
+    public int getLivedTicks();
 }
