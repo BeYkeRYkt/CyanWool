@@ -1,4 +1,4 @@
-package net.CyanWool.api.configuration;
+package net.CyanWool.api.utils;
 
 /**
  * Utils for casting number types to other number types

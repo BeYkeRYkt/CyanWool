@@ -1,4 +1,4 @@
-package net.CyanWool.api.world.chunks;
+package net.CyanWool.api.world;
 
 import java.util.List;
 
@@ -6,7 +6,6 @@ import net.CyanWool.api.block.Block;
 import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.player.Player;
-import net.CyanWool.api.world.World;
 
 public interface Chunk {
 
@@ -45,4 +44,6 @@ public interface Chunk {
     // public void generate();
 
     public boolean isLoaded();
+
+    public void setLoaded(boolean b);
 }

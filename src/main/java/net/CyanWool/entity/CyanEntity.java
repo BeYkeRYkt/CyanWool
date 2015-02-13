@@ -3,11 +3,20 @@ package net.CyanWool.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityType;
+import net.CyanWool.api.entity.component.ComponentManager;
+import net.CyanWool.api.entity.component.basics.MovementComponent;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
+import net.CyanWool.network.NetworkServer;
 
+import org.spacehq.mc.protocol.data.game.EntityMetadata;
+import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityHeadLookPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityMetadataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionRotationPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityRotationPacket;
@@ -31,15 +40,30 @@ public class CyanEntity implements Entity {
     private boolean sprint;
     private boolean onGround;
     private int livedTicks;
+
+    private ComponentManager component;
     
-    private Entity passenger;
-    private Entity vehicle;
+    //TODO: Metadata
+    protected EntityMetadata[] metadata;
 
     public CyanEntity(Location location) {
         this.prevLoc = location.clone();
         this.location = location.clone();
+        this.component = new ComponentManager(this);
+        this.metadata = new EntityMetadata[22]; //max 22 ?
+        initMetadata();
+        
+        getComponentManager().addComponent(new MovementComponent(this));
+        
         //CyanWool.getEntityManager().register(this);
         // TODO
+    }
+
+    protected void initMetadata() {
+        // TODO: Metadata
+        //Information about metadata: http://wiki.vg/Entities#Entity_Metadata_Format
+        metadata[0] = new EntityMetadata(0, MetadataType.BYTE, 0);
+        metadata[1] = new EntityMetadata(getEntityID(), MetadataType.SHORT, 0);
     }
 
     @Override
@@ -56,11 +80,6 @@ public class CyanEntity implements Entity {
     public void teleport(Location location) {
         this.teleported = true;
         this.location = location;
-    }
-
-    @Override
-    public int getRegisterID() {
-        return entityId;
     }
 
     @Override
@@ -85,11 +104,6 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public boolean isRiding() {
-        return getVehicle() != null;
-    }
-
-    @Override
     public boolean isSneaking() {
         return sneak;
     }
@@ -105,11 +119,6 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public boolean isNoclip() {
-        return false;
-    }
-
-    @Override
     public boolean onGround() {
         return onGround;
     }
@@ -117,7 +126,7 @@ public class CyanEntity implements Entity {
     @Override
     public void kill() {
         // TODO damage 100500
-
+        this.isAlive = false;
     }
 
     @Override
@@ -126,44 +135,16 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public void setSneaking(boolean flag) {
-        this.sneak = flag;
-    }
-
-    @Override
-    public void setSprinting(boolean flag) {
-        this.sprint = flag;
-    }
-
-    @Override
-    public void setPassenger(Entity entity) {
-        if(getVehicle() != null && getVehicle().getRegisterID() == entity.getEntityID()){
-        this.passenger = entity;
-        entity.teleport(getLocation());
-        entity.setVehicle(this);
-        }
-    }
-
-    @Override
-    public Entity getPassenger() {
-        return passenger;
-    }
-
-    @Override
-    public Entity getVehicle() {
-        return vehicle;
-    }
-
-    @Override
-    public void setVehicle(Entity entity) {
-        if(getPassenger() != null && getPassenger().getRegisterID() == entity.getEntityID()){
-        this.vehicle = entity;
-        entity.setPassenger(this);
-        }
-    }
-
-    @Override
     public void onTick() {
+        
+        //Maybe...
+        if(!isAlive){
+            ServerDestroyEntitiesPacket packet = new ServerDestroyEntitiesPacket(getEntityID());
+            NetworkServer.sendPacketDistance(getLocation(), packet, 32); //Test
+            CyanWool.getEntityManager().unregister(this);
+            return;
+        }
+        
         if (!prevLoc.equals(location)) {
             if (prevLoc.getBlockX() != location.getBlockX() || prevLoc.getBlockY() != location.getBlockY() || prevLoc.getBlockZ() != location.getBlockZ()) {
                 this.moved = true;
@@ -183,6 +164,7 @@ public class CyanEntity implements Entity {
         if(livedTicks > 0){
             livedTicks++;
         }
+        getComponentManager().onUpdateComponents();
         // TODO
     }
 
@@ -197,13 +179,28 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public void setRegisterID(int id) {
+    public EntityType getEntityType() {
+        return EntityType.NONE;
+    }
+
+    @Override
+    public int getEntityID() {
+        return entityId;
+    }
+
+    @Override
+    public int getLivedTicks() {
+        return livedTicks;
+    }
+
+    @Override
+    public void setEntityID(int id) {
         this.entityId = id;
     }
 
     @Override
-    public EntityType getEntityType() {
-        return EntityType.NONE;
+    public ComponentManager getComponentManager() {
+        return component;
     }
 
     // Not from API
@@ -217,20 +214,26 @@ public class CyanEntity implements Entity {
         double moveZ = getLocation().getZ() - prevLoc.getZ();
 
         if (teleported || teleported && moved) {
-            list.add(new ServerEntityTeleportPacket(getRegisterID(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
+            list.add(new ServerEntityTeleportPacket(getEntityID(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
             this.teleported = false;
             this.moved = false;
         } else if (moved && rotated) {
-            list.add(new ServerEntityPositionRotationPacket(getRegisterID(), moveX, moveY, moveZ, getLocation().getYaw(), getLocation().getPitch(), onGround()));
+            list.add(new ServerEntityPositionRotationPacket(getEntityID(), moveX, moveY, moveZ, getLocation().getYaw(), getLocation().getPitch(), onGround()));
             this.moved = false;
             this.rotated = false;
         } else if (moved) {
-            list.add(new ServerEntityPositionPacket(getRegisterID(), moveX, moveY, moveZ, onGround()));
+            list.add(new ServerEntityPositionPacket(getEntityID(), moveX, moveY, moveZ, onGround()));
             this.moved = false;
         } else if (rotated) {
-            list.add(new ServerEntityRotationPacket(getRegisterID(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
+            list.add(new ServerEntityRotationPacket(getEntityID(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
             this.rotated = false;
         }
+        
+        //TODO: Head update
+        list.add(new ServerEntityHeadLookPacket(getEntityID(), getLocation().getYaw()));
+        
+        //TODO: Metadata
+        list.add(new ServerEntityMetadataPacket(getEntityID(), metadata));
 
         return list;
     }
@@ -238,15 +241,5 @@ public class CyanEntity implements Entity {
     public List<Packet> getSpawnPackets() {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    @Override
-    public int getEntityID() {
-        return 0;//ENTITY ID: http://minecraft.gamepedia.com/Data_values/Entity_IDs
-    }
-
-    @Override
-    public int getLivedTicks() {
-        return livedTicks;
     }
 }

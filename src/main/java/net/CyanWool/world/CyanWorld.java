@@ -5,10 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.CyanWool.api.CyanWool;
-import net.CyanWool.api.Difficulty;
-import net.CyanWool.api.Effect;
 import net.CyanWool.api.Gamemode;
-import net.CyanWool.api.Sound;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
@@ -16,10 +13,14 @@ import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.io.PlayerIOService;
+import net.CyanWool.api.world.ChunkManager;
+import net.CyanWool.api.world.Difficulty;
 import net.CyanWool.api.world.Dimension;
+import net.CyanWool.api.world.Effect;
 import net.CyanWool.api.world.Location;
+import net.CyanWool.api.world.Sound;
 import net.CyanWool.api.world.World;
-import net.CyanWool.api.world.chunks.ChunkManager;
+import net.CyanWool.api.world.WorldGenerator;
 import net.CyanWool.entity.CyanEntity;
 import net.CyanWool.entity.player.CyanPlayer;
 import net.CyanWool.io.CyanChunkIOService;
@@ -30,6 +31,7 @@ public class CyanWorld implements World {
 
     // private WorldInfo info;
     private ChunkManager chunk;
+    private WorldGenerator generator;
 
     private String name;
     private Location spawn;
@@ -47,8 +49,8 @@ public class CyanWorld implements World {
         this.name = name;
         this.service = service;
         this.path = "worlds/" + name;
-        this.chunk = new ChunkManager(this, new CyanChunkIOService(this), null);
-        this.chunk.setGenerator(new CyanChunkGenerator(chunk));
+        setGenerator(new FlatWorldGenerator(this)); //TEST
+        this.chunk = new ChunkManager(this, new CyanChunkIOService(this));
         this.entities = new ArrayList<Entity>();
         // this.chunk.loadChunk(getSpawnLocation().getBlockX() >> 4,
         // getSpawnLocation().getBlockZ() >> 4, false);
@@ -275,5 +277,15 @@ public class CyanWorld implements World {
         for (Player player : getPlayers()) {
             player.playEffect(location, effect, data);
         }
+    }
+
+    @Override
+    public WorldGenerator getGenerator() {
+        return generator;
+    }
+
+    @Override
+    public void setGenerator(WorldGenerator generator) {
+        this.generator = generator;
     }
 }

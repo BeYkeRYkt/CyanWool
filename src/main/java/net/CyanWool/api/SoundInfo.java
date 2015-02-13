@@ -1,5 +1,7 @@
 package net.CyanWool.api;
 
+import net.CyanWool.api.world.Sound;
+
 //import org.spacehq.mc.protocol.data.game.values.world.Sound;
 
 public class SoundInfo {
@@ -15,8 +17,8 @@ public class SoundInfo {
         this.volume = volume;
         this.sound = Sound.CLICK;// ?
     }
-    
-    public SoundInfo(Sound sound, float pitch, float volume){
+
+    public SoundInfo(Sound sound, float pitch, float volume) {
         this("null", pitch, volume);
         this.sound = sound;
     }

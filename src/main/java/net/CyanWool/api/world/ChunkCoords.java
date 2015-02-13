@@ -1,4 +1,4 @@
-package net.CyanWool.api.world.chunks;
+package net.CyanWool.api.world;
 
 public class ChunkCoords {
 
@@ -10,16 +10,10 @@ public class ChunkCoords {
         this.z = z;
     }
 
-    /**
-     * @return the z
-     */
     public int getZ() {
         return z;
     }
 
-    /**
-     * @return the x
-     */
     public int getX() {
         return x;
     }

@@ -3,87 +3,50 @@ package net.CyanWool.entity;
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
-import net.CyanWool.api.entity.ai.EntityAITasks;
-import net.CyanWool.api.inventory.ItemStack;
-import net.CyanWool.api.inventory.inventories.EntityInventory;
+import net.CyanWool.api.entity.component.basics.AIComponent;
+import net.CyanWool.api.entity.component.basics.AgeComponent;
+import net.CyanWool.api.entity.component.basics.DisplayNameComponent;
+import net.CyanWool.api.entity.component.basics.HealthComponent;
+import net.CyanWool.api.entity.component.basics.TransportComponent;
 import net.CyanWool.api.world.Location;
+
+import org.spacehq.mc.protocol.data.game.EntityMetadata;
+import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
 
 public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase {
 
-    private int age;
-    private float health;
-    private float maxHealth;
-    private boolean jump;
-    private EntityLivingBase target;
-    private String name;
-    private EntityInventory inventory;
     private SoundInfo damageSound;
     private SoundInfo deathSound;
     private SoundInfo talkSound;
 
-    // AI
-    private EntityAITasks targetTasks;
-    private EntityAITasks tasks;
-    private boolean ai;
-
     public CyanEntityLivingBase(Location location) {
         super(location);
+        initMetadata();
+        getComponentManager().addComponent(new AgeComponent(this));
+        getComponentManager().addComponent(new DisplayNameComponent(this));
+        getComponentManager().addComponent(new AIComponent(this));
+        getComponentManager().addComponent(new TransportComponent(this));
+        //getComponentManager().addComponent(new HealthComponent(this, 20)); - for mobs
+        //getComponentManager().addComponent(new InventoryComponent(this, inv)); - 
         // this.inventory =
-        this.targetTasks = new EntityAITasks();
-        this.tasks = new EntityAITasks();
     }
-
+    
     @Override
-    public boolean isChild() {
-        // TODO Auto-generated method stub
-        return false;
+    protected void initMetadata() {
+        //super.initMetadata();
+        metadata[2] = new EntityMetadata(2, MetadataType.STRING, ""); //Display name
+        metadata[3] = new EntityMetadata(3, MetadataType.BYTE, 0);//Render name tag
+        metadata[4] = new EntityMetadata(6, MetadataType.FLOAT, 0);//health
+        metadata[5] = new EntityMetadata(7, MetadataType.INT, 0);//potion color
+        metadata[6] = new EntityMetadata(8, MetadataType.BYTE, 0);//Is Potion Effect Ambient
+        metadata[7] = new EntityMetadata(9, MetadataType.BYTE, 0);//Number of Arrows in Entity
+        metadata[8] = new EntityMetadata(15, MetadataType.BYTE, 0);//No ai
     }
 
     @Override
     public boolean isEntityUndead() {
         // TODO Auto-generated method stub
         return false;
-    }
-
-    @Override
-    public int getAge() {
-        return age;
-    }
-
-    @Override
-    public EntityLivingBase getTarget() {
-        return target;
-    }
-
-    @Override
-    public float getHealth() {
-        return health;
-    }
-
-    @Override
-    public ItemStack getItemInHand() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public float getMaxHealth() {
-        return maxHealth;
-    }
-
-    @Override
-    public void setHealth(float health) {
-        this.health = health;
-    }
-
-    @Override
-    public void setJumping(boolean flag) {
-        this.jump = flag;
-    }
-
-    @Override
-    public void setTarget(EntityLivingBase entity) {
-        this.target = entity;
     }
 
     @Override
@@ -99,71 +62,68 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public void damage(double amount, Entity damaged) {
-        setHealth((float) (getHealth() - amount));
+        //setHealth((float) (getHealth() - amount));
+        if(getComponentManager().hasComponent("health")){
+            HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
+            component.setHealth(component.getHealth() - amount);
+        }
+        
     }
 
     @Override
     public void onTick() {
         super.onTick();
-        age++;
+        //age++;
         
-        if(isAIEnabled()){
-        getTargetAITasks().onUpdateAI();
-        getAITasks().onUpdateAI();
+        //if(isAIEnabled()){
+        //getTargetAITasks().onUpdateAI();
+        //getAITasks().onUpdateAI();
+        //}
+        //To components
+        
+        //TODO: Update metadata
+        if(getComponentManager().hasComponent("displayName")){
+            DisplayNameComponent component = (DisplayNameComponent) getComponentManager().getComponent("displayName");
+            metadata[2] = new EntityMetadata(2, MetadataType.STRING, component.getDisplayName());
+            
+            byte data = 1;
+            if(!component.isRenderDisplayName()){
+                data = 0;
+            }else{
+                data = 1;
+            }
+            metadata[3] = new EntityMetadata(3, MetadataType.BYTE, data);
         }
+        
+        if(getComponentManager().hasComponent("health")){
+            HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
+            metadata[4] = new EntityMetadata(6, MetadataType.FLOAT, component.getHealth());
+        }
+                
+        if(getComponentManager().hasComponent("ai")){
+            AIComponent component = (AIComponent) getComponentManager().getComponent("ai");
+            byte disable = 1;
+            
+            if(component.isAIEnabled()){
+                disable = 0;
+            }else{
+                disable = 1;
+            }
+            
+            metadata[8] = new EntityMetadata(15, MetadataType.BYTE, disable);
+        }
+        
         // TODO
     }
 
-    @Override
-    public boolean isJumping() {
-        return jump;
-    }
-
-    @Override
-    public void setMaxHealth(float health) {
-        this.maxHealth = health;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return name;
-    }
-
-    @Override
-    public void setDisplayName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public EntityAITasks getTargetAITasks() {
-        return targetTasks;
-    }
-
-    @Override
-    public EntityAITasks getAITasks() {
-        return tasks;
-    }
-
-    @Override
-    public EntityInventory getInventory() {
-        return inventory;
-    }
 
     @Override
     public void addHealth(int i) {
-        setHealth(getHealth() + i);
+        if(getComponentManager().hasComponent("health")){
+            HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
+            component.setHealth(component.getHealth() + i);
+        }
     }
-
-    @Override
-    public boolean isAIEnabled() {
-        return ai;
-    }
-
-    @Override
-    public void setAIEnabled(boolean enable) {
-        this.ai = enable;
-    }
-
 
     @Override
     public void onDeath() {  

@@ -1,6 +1,7 @@
 package net.CyanWool.network.handlers;
 
 import net.CyanWool.CyanServer;
+import net.CyanWool.api.entity.component.basics.MovementComponent;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.entity.meta.ClientSettings;
 import net.CyanWool.entity.player.CyanPlayer;
@@ -47,18 +48,34 @@ public class PlaySessionAdapter extends SessionAdapter {
             ClientPlayerStatePacket packet = event.getPacket();
             switch (packet.getState()) {
                 case START_SNEAKING:
-                    player.setSneaking(true);
+                    if(player.getComponentManager().hasComponent("movement")){
+                    MovementComponent component = (MovementComponent) player.getComponentManager().getComponent("movement");
+                    component.setSneaking(true);
+                    }
                     break;
                 case STOP_SNEAKING:
-                    player.setSneaking(false);
+                    if(player.getComponentManager().hasComponent("movement")){
+                    MovementComponent component = (MovementComponent) player.getComponentManager().getComponent("movement");
+                    component.setSneaking(false);
+                    }
                     break;
                 case START_SPRINTING:
-                    player.setSprinting(true);
+                    if(player.getComponentManager().hasComponent("movement")){
+                    MovementComponent component = (MovementComponent) player.getComponentManager().getComponent("movement");
+                    component.setSprinting(true);
+                    }
                     break;
                 case STOP_SPRINTING:
-                    player.setSprinting(false);
+                    if(player.getComponentManager().hasComponent("movement")){
+                    MovementComponent component = (MovementComponent) player.getComponentManager().getComponent("movement");
+                    component.setSprinting(false);
+                    }
                     break;
                 case RIDING_JUMP:
+                    if(player.getComponentManager().hasComponent("movement")){
+                    MovementComponent component = (MovementComponent) player.getComponentManager().getComponent("movement");
+                    component.setJumping(true);
+                    }
                     break;
                 case OPEN_INVENTORY:
                     break;

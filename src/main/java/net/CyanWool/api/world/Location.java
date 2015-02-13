@@ -1,7 +1,8 @@
 package net.CyanWool.api.world;
 
 import net.CyanWool.api.block.Block;
-import net.CyanWool.api.world.chunks.Chunk;
+import net.CyanWool.api.utils.NumberConversions;
+import net.CyanWool.api.utils.Vector;
 
 public class Location implements Cloneable {
 
@@ -30,15 +31,15 @@ public class Location implements Cloneable {
     }
 
     public int getBlockX() {
-        return (int) x; // TODO
+        return NumberConversions.floor(x); // TODO
     }
 
     public int getBlockY() {
-        return (int) y; // TODO
+        return NumberConversions.floor(y); // TODO
     }
 
     public int getBlockZ() {
-        return (int) z; // TODO
+        return NumberConversions.floor(z); // TODO
     }
 
     public World getWorld() {
@@ -135,5 +136,116 @@ public class Location implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }
+    }
+    
+    public double distance(Location o) {
+        return Math.sqrt(distanceSquared(o));
+    }
+
+    public double distanceSquared(Location o) {
+        if (o == null) {
+            throw new IllegalArgumentException("Cannot measure distance to a null location");
+        } else if (o.getWorld() == null || getWorld() == null) {
+            throw new IllegalArgumentException("Cannot measure distance to a null world");
+        } else if (o.getWorld() != getWorld()) {
+            throw new IllegalArgumentException("Cannot measure distance between " + getWorld().getName() + " and " + o.getWorld().getName());
+        }
+
+        return NumberConversions.square(x - o.x) + NumberConversions.square(y - o.y) + NumberConversions.square(z - o.z);
+    }
+    
+    public Vector getDirection() {
+        Vector vector = new Vector();
+
+        double rotX = this.getYaw();
+        double rotY = this.getPitch();
+
+        vector.setY(-Math.sin(Math.toRadians(rotY)));
+
+        double xz = Math.cos(Math.toRadians(rotY));
+
+        vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
+        vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
+
+        return vector;
+    }
+
+    public Location setDirection(Vector vector) {
+        /*
+         * Sin = Opp / Hyp
+         * Cos = Adj / Hyp
+         * Tan = Opp / Adj
+         *
+         * x = -Opp
+         * z = Adj
+         */
+        final double _2PI = 2 * Math.PI;
+        final double x = vector.getX();
+        final double z = vector.getZ();
+
+        if (x == 0 && z == 0) {
+            pitch = vector.getY() > 0 ? -90 : 90;
+            return this;
+        }
+
+        double theta = Math.atan2(-x, z);
+        yaw = (float) Math.toDegrees((theta + _2PI) % _2PI);
+
+        double x2 = NumberConversions.square(x);
+        double z2 = NumberConversions.square(z);
+        double xz = Math.sqrt(x2 + z2);
+        pitch = (float) Math.toDegrees(Math.atan(-vector.getY() / xz));
+
+        return this;
+    }
+
+    public Location add(Location vec) {
+        if (vec == null || vec.getWorld() != getWorld()) {
+            throw new IllegalArgumentException("Cannot add Locations of differing worlds");
+        }
+
+        x += vec.x;
+        y += vec.y;
+        z += vec.z;
+        return this;
+    }
+
+    public Location add(Vector vec) {
+        this.x += vec.getX();
+        this.y += vec.getY();
+        this.z += vec.getZ();
+        return this;
+    }
+
+    public Location add(double x, double y, double z) {
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        return this;
+    }
+
+    public Location subtract(Location vec) {
+        if (vec == null || vec.getWorld() != getWorld()) {
+            throw new IllegalArgumentException("Cannot add Locations of differing worlds");
+        }
+
+        x -= vec.x;
+        y -= vec.y;
+        z -= vec.z;
+        return this;
+    }
+
+    public Location subtract(Vector vec) {
+        this.x -= vec.getX();
+        this.y -= vec.getY();
+        this.z -= vec.getZ();
+        return this;
+    }
+
+    public Location subtract(double x, double y, double z) {
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
 }

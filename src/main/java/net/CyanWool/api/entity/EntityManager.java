@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.Location;
-import net.CyanWool.api.world.chunks.Chunk;
 
 public class EntityManager {
 
@@ -25,7 +25,7 @@ public class EntityManager {
     }
 
     public void register(Entity entity) {
-        if (getEntity(entity.getRegisterID()) != null) {
+        if (getEntity(entity.getEntityID()) != null) {
             return; // IMPOSIBBLEEE
         }
 
@@ -35,24 +35,24 @@ public class EntityManager {
                 continue;
 
             if (usedIds.add(id)) {
-                entity.setRegisterID(id);
+                entity.setEntityID(id);
                 last = id;
                 break;
             }
         }
-        entities.put(entity.getRegisterID(), entity);
+        entities.put(entity.getEntityID(), entity);
         Location loc = entity.getLocation();
-        //loc.getChunk().getEntities().add(entity); - ERRORS!
+        // loc.getChunk().getEntities().add(entity); - ERRORS!
     }
 
     public void unregister(Entity entity) {
-        entities.remove(entity.getRegisterID());
-        usedIds.remove(entity.getRegisterID());
+        entities.remove(entity.getEntityID());
+        usedIds.remove(entity.getEntityID());
 
         Iterator<Entity> it = entity.getLocation().getChunk().getEntities().iterator();
         while (it.hasNext()) {
             Entity ent = it.next();
-            if (ent.getRegisterID() == entity.getRegisterID()) {
+            if (ent.getEntityID() == entity.getEntityID()) {
                 it.remove();
             }
         }
@@ -66,7 +66,7 @@ public class EntityManager {
             Iterator<Entity> it = prev.getEntities().iterator();
             while (it.hasNext()) {
                 Entity ent = it.next();
-                if (ent.getRegisterID() == entity.getRegisterID()) {
+                if (ent.getEntityID() == entity.getEntityID()) {
                     it.remove();
                 }
             }

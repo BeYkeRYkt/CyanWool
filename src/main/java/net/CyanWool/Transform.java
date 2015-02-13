@@ -1,8 +1,8 @@
 package net.CyanWool;
 
-import net.CyanWool.api.Effect;
-import net.CyanWool.api.Sound;
 import net.CyanWool.api.entity.EntityType;
+import net.CyanWool.api.world.Effect;
+import net.CyanWool.api.world.Sound;
 
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.MobType;

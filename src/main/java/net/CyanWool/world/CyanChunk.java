@@ -9,9 +9,9 @@ import net.CyanWool.api.block.Block;
 import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
-import net.CyanWool.api.world.chunks.Chunk;
 import net.CyanWool.block.CyanBlock;
 
 public class CyanChunk implements Chunk {
@@ -170,18 +170,12 @@ public class CyanChunk implements Chunk {
     private org.spacehq.mc.protocol.data.game.Chunk getSection(int y) {
         int idx = y >> 4;
         CyanWool.getLogger().info("idx=" + idx);
+
         if (y < 0 || y >= DEPTH || !isLoaded || idx >= sections.length) {
             return null;
         }
         return sections[idx];
     }
-
-    private int coordToIndex(int x, int y, int z) {
-        if (x < 0 || z < 0 || y < 0 || x >= WIDTH || z >= HEIGHT || y >= DEPTH)
-            throw new IndexOutOfBoundsException("Coords out of bound! x:" + x + ", z:" + z + ", y:" + y);
-
-        return y << 8 | z << 4 | x;
-    }   
     
     public org.spacehq.mc.protocol.data.game.Chunk[] getSections() {
         return sections;
@@ -192,6 +186,7 @@ public class CyanChunk implements Chunk {
         return 256;
     }
 
+    @Override
     public void setLoaded(boolean b) {
         this.isLoaded = b;
     }

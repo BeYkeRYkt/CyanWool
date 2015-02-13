@@ -1,11 +1,11 @@
 package net.CyanWool.block;
 
-import net.CyanWool.api.Sound;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.block.BlockSide;
 import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
+import net.CyanWool.api.world.Sound;
 
 public class CyanBlock implements Block {
 

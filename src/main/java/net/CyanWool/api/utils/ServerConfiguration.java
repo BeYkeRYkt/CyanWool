@@ -1,4 +1,4 @@
-package net.CyanWool.api;
+package net.CyanWool.api.utils;
 
 import java.io.File;
 import java.io.IOException;

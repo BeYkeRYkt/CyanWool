@@ -1,13 +1,17 @@
 package net.CyanWool.entity.player;
 
 import net.CyanWool.api.Gamemode;
-import net.CyanWool.api.Sound;
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.EntityType;
+import net.CyanWool.api.entity.component.basics.FoodComponent;
+import net.CyanWool.api.entity.component.basics.HealthComponent;
+import net.CyanWool.api.entity.component.basics.InventoryComponent;
+import net.CyanWool.api.entity.component.basics.XPComponent;
 import net.CyanWool.api.entity.player.Human;
 import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
+import net.CyanWool.api.world.Sound;
 import net.CyanWool.entity.CyanEntityLivingBase;
 
 import org.spacehq.mc.auth.GameProfile;
@@ -15,13 +19,9 @@ import org.spacehq.mc.auth.GameProfile;
 public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     private GameProfile profile;
-    private String displayName;
     private boolean sleeping;
     private boolean blocking;
 
-    private int foodLevel;
-    private int xpLevel;
-    private int xpTotal;
     private float xpInBar;
     private boolean disableDamage;
     private boolean isFlying;
@@ -36,19 +36,11 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     public CyanHuman(GameProfile profile, Location location) {
         super(location);// TODO
         this.profile = profile;
-        this.displayName = profile.getName();
+        getComponentManager().removeComponent("ai");
+        getComponentManager().addComponent(new HealthComponent(this, 20));
+        getComponentManager().addComponent(new FoodComponent(this, 20)); // ???
+        getComponentManager().addComponent(new XPComponent(this));
         setDamageSound(new SoundInfo(Sound.PLAYER_HURT, 1.0F, 1.0F));
-    }
-
-    @Override
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    @Override
-    public void setDisplayName(String name) {
-        this.displayName = name;
-        // update...
     }
 
     @Override
@@ -58,12 +50,19 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public boolean hasItemInHand() {
-        return getItemInHand() != null;
+        if(getComponentManager().hasComponent("inventory")){
+            InventoryComponent component = (InventoryComponent) getComponentManager().getComponent("inventory");
+            return component.getInventory().getItemInHand() != null;
+        }
+        return false;
     }
 
     @Override
     public void setItemInHand(ItemStack item) {
-        getInventory().setItemInHand(item);
+        if(getComponentManager().hasComponent("inventory")){
+            InventoryComponent component = (InventoryComponent) getComponentManager().getComponent("inventory");
+            component.getInventory().setItemInHand(item);
+        }
     }
 
     @Override
@@ -83,21 +82,6 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     }
 
     @Override
-    public boolean isNeedFood() {
-        return getFoodLevel() < 20;
-    }
-
-    @Override
-    public int getFoodLevel() {
-        return foodLevel;
-    }
-
-    @Override
-    public void setFoodLevel(int level) {
-        this.foodLevel = level;
-    }
-
-    @Override
     public void closeInventory() {
         if (viewInventory != null) {
             viewInventory.closeInventory(this);
@@ -105,28 +89,8 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     }
 
     @Override
-    public int getXPLevel() {
-        return xpLevel;
-    }
-
-    @Override
-    public int getXPTotal() {
-        return xpTotal;
-    }
-
-    @Override
     public float getXPInBar() {
         return xpInBar;
-    }
-
-    @Override
-    public void setXPLevel(int level) {
-        this.xpLevel = level;
-    }
-
-    @Override
-    public void setXPTotal(int xp) {
-        this.xpTotal = xp;
     }
 
     @Override

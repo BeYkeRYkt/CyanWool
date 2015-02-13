@@ -8,6 +8,7 @@ import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 import net.CyanWool.entity.player.CyanPlayer;
+import net.CyanWool.network.NetworkServer;
 import net.CyanWool.network.PlayerNetwork;
 
 import org.spacehq.mc.auth.GameProfile;
@@ -45,7 +46,7 @@ public class PlayerManager {
         
         // player.load();
         player.setPlayerNetwork(new PlayerNetwork(server, session, player));
-        ServerJoinGamePacket packet = new ServerJoinGamePacket(player.getRegisterID(), false, GameMode.SURVIVAL, 0, Difficulty.NORMAL, server.getMaxPlayers(), WorldType.DEFAULT, false);
+        ServerJoinGamePacket packet = new ServerJoinGamePacket(player.getEntityID(), false, GameMode.SURVIVAL, 0, Difficulty.NORMAL, server.getMaxPlayers(), WorldType.DEFAULT, false);
         session.send(packet);
         players.add(player);
 
@@ -73,7 +74,8 @@ public class PlayerManager {
         
         // Send packets for all players
             for(Packet packets: player.getSpawnPackets()){
-            //server.getNetworkManager().sendPacketForAll(packets); - TESTING
+            server.getNetworkManager();
+            NetworkServer.sendPacketForAll(packets);
             }
 
         player.chat("Hello! This test message for CyanWool!");
@@ -85,13 +87,11 @@ public class PlayerManager {
 
     public void leavePlayer(Player player) {
         server.broadcastMessage(player.getName() + " left the Server!");
-        ServerDestroyEntitiesPacket destroyEntitiesPacket = new ServerDestroyEntitiesPacket(player.getRegisterID());
-        for (Player p : getPlayers()) {
-            ((CyanPlayer) p).getPlayerNetwork().sendPacket(destroyEntitiesPacket);
-        }
+        ServerDestroyEntitiesPacket destroyEntitiesPacket = new ServerDestroyEntitiesPacket(player.getEntityID());
+        NetworkServer.sendPacketForAll(destroyEntitiesPacket);
         // Save and unload
         // player.save();
-        // getPlayers().remove(player);
+        getPlayers().remove(player);
     }
 
     public List<Player> getPlayers() {

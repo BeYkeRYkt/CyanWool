@@ -9,16 +9,17 @@ import java.util.UUID;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.Transform;
-import net.CyanWool.api.Effect;
 import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.Server;
-import net.CyanWool.api.Sound;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityType;
+import net.CyanWool.api.entity.component.basics.DisplayNameComponent;
 import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.api.world.Chunk;
+import net.CyanWool.api.world.ChunkCoords;
+import net.CyanWool.api.world.Effect;
 import net.CyanWool.api.world.Location;
-import net.CyanWool.api.world.chunks.Chunk;
-import net.CyanWool.api.world.chunks.ChunkCoords;
+import net.CyanWool.api.world.Sound;
 import net.CyanWool.entity.CyanEntity;
 import net.CyanWool.entity.meta.ClientSettings;
 import net.CyanWool.network.PlayerNetwork;
@@ -53,6 +54,7 @@ public class CyanPlayer extends CyanHuman implements Player{
         this.knowEntities = new ArrayList<Entity>();
         this.chunks = new ArrayList<ChunkCoords>();
         setSettings(ClientSettings.getDEFAULT());
+        ((DisplayNameComponent) getComponentManager().getComponent("displayName")).setDisplayName(profile.getName());
         // updateChunks();
     }
 
@@ -136,7 +138,11 @@ public class CyanPlayer extends CyanHuman implements Player{
 
     @Override
     public void chat(String message) {
-        String format = getDisplayName() + ": " + message; // TODO Event's
+        String name = "UNKNOWN";
+        if(getComponentManager().hasComponent("displayName")){
+            name = ((DisplayNameComponent) getComponentManager().getComponent("displayName")).getDisplayName();
+        }
+        String format = name + ": " + message; // TODO Event's
         ServerChatPacket packet = new ServerChatPacket(format);
         getPlayerNetwork().sendPacket(packet);
 
@@ -190,7 +196,7 @@ public class CyanPlayer extends CyanHuman implements Player{
             if (!e.isInvisible()) {
                 list.add(e);
             } else {
-                destroy.add(e.getRegisterID());
+                destroy.add(e.getEntityID());
                 it.remove();
             }
         }
@@ -273,7 +279,7 @@ public class CyanPlayer extends CyanHuman implements Player{
     
     @Override
     public void setTime(long time) {
-        ServerUpdateTimePacket packet = new ServerUpdateTimePacket(getAge(), time);
+        ServerUpdateTimePacket packet = new ServerUpdateTimePacket(getWorld().getWorldTime(), time);
         getPlayerNetwork().sendPacket(packet);
     }
 
@@ -287,7 +293,7 @@ public class CyanPlayer extends CyanHuman implements Player{
     @Override
     public List<Packet> getSpawnPackets() {
         List<Packet> list = new ArrayList<Packet>();
-        list.add(new ServerSpawnPlayerPacket(getRegisterID(), getUniqueId(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), 0 , null)); // TODO
+        list.add(new ServerSpawnPlayerPacket(getEntityID(), getUniqueId(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), 0 , metadata)); // TODO
         return list;
     }
 

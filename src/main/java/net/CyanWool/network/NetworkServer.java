@@ -2,6 +2,7 @@ package net.CyanWool.network;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.api.world.Location;
 import net.CyanWool.entity.player.CyanPlayer;
 import net.CyanWool.network.handlers.ServerInfo;
 import net.CyanWool.network.handlers.ServerLogin;
@@ -14,12 +15,12 @@ import org.spacehq.packetlib.tcp.TcpSessionFactory;
 
 public class NetworkServer {
 
-    private CyanServer server;
+    private static CyanServer server;
     // MCProtocolLib
     private Server protocol_server;
 
     public NetworkServer(CyanServer server) {
-        this.server = server;
+        NetworkServer.server = server;
     }
 
     public void init() {
@@ -58,17 +59,19 @@ public class NetworkServer {
         return protocol_server.getHost();
     }
 
-    public void sendPacketForAll(Packet packet) {
+    public static void sendPacketForAll(Packet packet) {
         for (Player player : server.getPlayers()) {
             ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
         }
     }
 
-    public void sendPacketDistance(int x, int y, int z, Packet packet, int radius) {
+    public static void sendPacketDistance(Location location, Packet packet, int radius) {
         for (Player player : server.getPlayers()) {
-            // if(player.getLocation())
-            ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
-            // todo
+            if (player.getWorld().getName().equals(location.getWorld().getName())) {
+                if (player.getLocation().distance(location) < radius) {
+                    ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
+                }
+            }
         }
     }
 

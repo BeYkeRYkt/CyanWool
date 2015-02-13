@@ -2,9 +2,9 @@ package net.CyanWool.api.command;
 
 import java.util.ArrayList;
 
-import net.CyanWool.api.ChatColors;
 import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.plugin.Plugin;
+import net.CyanWool.api.utils.ChatColors;
 
 public class PluginsCommand extends Command {
 

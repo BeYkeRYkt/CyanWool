@@ -2,17 +2,13 @@ package net.CyanWool.api.world;
 
 import java.util.List;
 
-import net.CyanWool.api.Difficulty;
-import net.CyanWool.api.Effect;
 import net.CyanWool.api.Gamemode;
-import net.CyanWool.api.Sound;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.io.PlayerIOService;
-import net.CyanWool.api.world.chunks.ChunkManager;
 
 public interface World {
 
@@ -91,4 +87,8 @@ public interface World {
     public PlayerIOService getPlayerService();
 
     public ChunkManager getChunkManager();
+    
+    public WorldGenerator getGenerator();
+    
+    public void setGenerator(WorldGenerator generator);
 }

@@ -57,7 +57,7 @@ public class CyanInventory implements Inventory {
     @Override
     public boolean isUseableByPlayer(Human player) {
         for (Human human : getViewers()) {
-            if (human.getRegisterID() == player.getRegisterID()) {
+            if (human.getEntityID() == player.getEntityID()) {
                 return true;
             }
         }

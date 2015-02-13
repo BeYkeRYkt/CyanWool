@@ -4,9 +4,7 @@ public interface EntityLiving extends EntityLivingBase {
 
     public boolean isNoDespawnRequired();
 
-    public boolean getRenderNameTag();
-
-    public EntityLivingBase getAttackTarget();
+    //public EntityLivingBase getAttackTarget();
 
     // public String getCustomNameTag();
 
@@ -20,9 +18,7 @@ public interface EntityLiving extends EntityLivingBase {
 
     public int setTalkInterval(int interval);
 
-    public void setRenderNameTag(boolean flag);
-
-    public void setAttackTarget(EntityLivingBase base);
+    //public void setAttackTarget(EntityLivingBase base);
 
     public void setCanPickUpLoot(boolean flag);
 

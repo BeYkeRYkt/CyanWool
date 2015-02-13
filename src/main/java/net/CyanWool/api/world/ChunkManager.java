@@ -1,4 +1,4 @@
-package net.CyanWool.api.world.chunks;
+package net.CyanWool.api.world;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,39 +7,28 @@ import java.util.concurrent.ConcurrentMap;
 
 import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.io.ChunkIOService;
-import net.CyanWool.api.world.World;
 import net.CyanWool.world.CyanChunk;
 
 public class ChunkManager {
 
     private World world;
-    private ChunkGenerator generator;
     private ConcurrentMap<ChunkCoords, Chunk> chunks;
     private ChunkIOService service;
 
-    public ChunkManager(World world, ChunkIOService service, ChunkGenerator generator) {
+    public ChunkManager(World world, ChunkIOService service) {
         this.world = world;
         this.service = service;
-        this.generator = generator;
         this.chunks = new ConcurrentHashMap<ChunkCoords, Chunk>();
-    }
-
-    public ChunkGenerator getGenerator() {
-        return generator;
-    }
-    
-    public void setGenerator(ChunkGenerator generator){
-        this.generator = generator;
     }
 
     public Chunk getChunk(int x, int z) {
         ChunkCoords coords = new ChunkCoords(x, z);
-        if (chunks.containsKey(coords)) {
+        if (chunks.get(coords) != null) {
             return chunks.get(coords);
-        }else{
-        CyanChunk chunk = new CyanChunk(world, x, z);
-        CyanChunk prev = (CyanChunk) chunks.putIfAbsent(coords, chunk);
-        return prev == null ? chunk : prev;
+        } else {
+             CyanChunk chunk = new CyanChunk(world, x, z);
+             CyanChunk prev = (CyanChunk) chunks.putIfAbsent(coords, chunk);
+             return prev == null ? chunk : prev;
         }
     }
 
@@ -58,11 +47,11 @@ public class ChunkManager {
         Chunk chunk = service.readChunk(x, z);
         ChunkCoords coords = new ChunkCoords(x, z);
         chunks.put(coords, chunk);
-        ((CyanChunk) chunk).setLoaded(true);
+        chunk.setLoaded(true);
         CyanWool.getLogger().info("Loaded chunk x:" + x + ", z: " + z);
 
         if (!generate) {
-        return false;
+            return false;
         }
         generateChunk(chunk);
         return true;
@@ -75,7 +64,7 @@ public class ChunkManager {
     }
 
     public void generateChunk(Chunk chunk) {
-        getGenerator().generate(world, chunk);
+        world.getGenerator().generate(chunk.getX(), chunk.getZ());
     }
 
     public List<Chunk> getLoadedChunks() {
@@ -97,7 +86,7 @@ public class ChunkManager {
     }
 
     public void saveChunks() {
-        for(Chunk chunk: getLoadedChunks()){
+        for (Chunk chunk : getLoadedChunks()) {
             saveChunk(chunk);
         }
     }

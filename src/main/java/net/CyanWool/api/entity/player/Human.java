@@ -21,23 +21,9 @@ public interface Human extends EntityLivingBase {
 
     public void wakeUp();
 
-    public boolean isNeedFood();
-
-    public int getFoodLevel();
-
-    public void setFoodLevel(int level);
-
     public void closeInventory();
 
-    public int getXPLevel();
-
-    public int getXPTotal();
-
     public float getXPInBar();
-
-    public void setXPLevel(int level);
-
-    public void setXPTotal(int xp);
 
     public void setXPInBar(float xp);
 
@@ -74,6 +60,6 @@ public interface Human extends EntityLivingBase {
     public Gamemode getGameMode();
 
     public void setGamemode(Gamemode mode);
-    
+
     public Inventory getEnderChest();
 }

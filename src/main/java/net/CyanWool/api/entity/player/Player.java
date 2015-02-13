@@ -3,12 +3,12 @@ package net.CyanWool.api.entity.player;
 import java.util.List;
 import java.util.UUID;
 
-import net.CyanWool.api.Effect;
-import net.CyanWool.api.Sound;
 import net.CyanWool.api.command.ICommandSender;
+import net.CyanWool.api.world.Chunk;
+import net.CyanWool.api.world.ChunkCoords;
+import net.CyanWool.api.world.Effect;
 import net.CyanWool.api.world.Location;
-import net.CyanWool.api.world.chunks.Chunk;
-import net.CyanWool.api.world.chunks.ChunkCoords;
+import net.CyanWool.api.world.Sound;
 
 public interface Player extends Human, ICommandSender {
 
@@ -42,7 +42,7 @@ public interface Player extends Human, ICommandSender {
 
     public void playEffect(Location location, Effect effect, int data);
 
-    public void setTime(long time);     // maybe sendTimeUpdate ?
-    
+    public void setTime(long time); // maybe sendTimeUpdate ?
+
     public void sendChunk(Chunk chunk);
 }

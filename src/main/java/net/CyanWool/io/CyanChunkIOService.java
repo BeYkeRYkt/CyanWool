@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
-import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.io.ChunkIOService;
 import net.CyanWool.api.io.RegionFile;
+import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.World;
-import net.CyanWool.api.world.chunks.Chunk;
 import net.CyanWool.world.CyanChunk;
 
 import org.spacehq.mc.protocol.data.game.NibbleArray3d;
@@ -23,8 +22,7 @@ import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.opennbt.tag.builtin.ListTag;
 import org.spacehq.opennbt.tag.builtin.Tag;
 
-
-public class CyanChunkIOService implements ChunkIOService {
+public class CyanChunkIOService implements ChunkIOService{
 
     private final World world;
     private final File dir;
@@ -33,70 +31,64 @@ public class CyanChunkIOService implements ChunkIOService {
         this.world = world;
         this.dir = new File(world.getPath());
     }
-
+    
     @Override
     public Chunk readChunk(int x, int z) {
         CyanChunk chunk = new CyanChunk(world, x, z);
+        org.spacehq.mc.protocol.data.game.Chunk sectionsChunk[] = new org.spacehq.mc.protocol.data.game.Chunk[16];
         RegionFile region;
         region = RegionFileCache.getRegionFile(dir, x, z);
-        int nX = x & (32-1);
-        int nZ = z & (32-1);
-        if (!region.hasChunk(nX, nZ)) {
-            return null;
-        }
-        DataInputStream in = region.getChunkDataInputStream(nX, nZ);
-        if (in != null) {
-            CompoundTag compoundTag = null;
-            try {
-                compoundTag = (CompoundTag) NBTIO.readTag(in);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (compoundTag == null)
-                return null;
-
-            CompoundTag level = compoundTag.get("Level");
-            ListTag sectionsList = level.get("Sections");
-            org.spacehq.mc.protocol.data.game.Chunk[] sections = new org.spacehq.mc.protocol.data.game.Chunk[16];
-            for (int i = 0; i < sectionsList.size(); i++) {
-                CompoundTag chunkz = sectionsList.get(i);
-                ByteTag y = chunkz.get("Y");
-                ByteArrayTag blocks = chunkz.get("Blocks");
-                ByteArrayTag blockLight = chunkz.get("BlockLight");
-                ByteArrayTag skyLight = chunkz.get("SkyLight");
-                ByteArrayTag data = chunkz.get("Data");
-                ByteArrayTag add = chunkz.get("Add");
+        int regionX = x & (32 - 1);
+        int regionZ = z & (32 - 1);
+        if (!region.hasChunk(regionX, regionZ)) {
+            for (int i = 0; i < 16; i++) {
+                byte[]blockLight = new byte[16 * 16 * 16];
+                byte[]skyLight = new byte[16 * 16 * 16];
                 ShortArray3d block = new ShortArray3d(4096);
-                for (int cX = 0; cX < 16; cX++)
-                    for (int cY = 0; cY < 16; cY++)
-                        for (int cZ = 0; cZ < 16; cZ++) {
-                            int index = 256 * cY + 16 * cZ + cX;
-                            int id = blocks.getValue(index);
-                            block.setBlockAndData(cX, cY, cZ, id + (id < 0 ? 256 : 0), getValue(data, index));
-                        }
-                sections[y.getValue()] = new org.spacehq.mc.protocol.data.game.Chunk(block, new NibbleArray3d(blockLight.getValue()), new NibbleArray3d(skyLight.getValue()));
+                
+                sectionsChunk[i] = new org.spacehq.mc.protocol.data.game.Chunk(block, new NibbleArray3d(blockLight), new NibbleArray3d(skyLight)); 
             }
-     
-            // from Glowstone
-            chunk.initializeSections(sections);
-
-            // TODO: Init entities...
-            CyanWool.getLogger().info("Chunk loaded!");
             return chunk;
-        } else {}
-        // todo: generate chunk
-        org.spacehq.mc.protocol.data.game.Chunk[] sections = new org.spacehq.mc.protocol.data.game.Chunk[16];
-        CyanWool.getLogger().info("Not found NBT sections! Generate new sections...");
-        for (int i = 0; i < 16; i++) {
-            sections[i] = new org.spacehq.mc.protocol.data.game.Chunk(true); 
         }
+        
+        DataInputStream in = region.getChunkDataInputStream(regionX, regionZ);
+        CompoundTag compoundTag = null;
+        try {
+            compoundTag = (CompoundTag) NBTIO.readTag(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (compoundTag == null){
+            return chunk;
+        }
+        CompoundTag level = compoundTag.get("Level");
+        ListTag sections = level.get("Sections");
+        ByteArrayTag biomes = level.get("Biomes");
+        for (int i = 0; i < sections.size(); i++) {
+            CompoundTag chunkz = sections.get(i);
+            ByteArrayTag blocks = chunkz.get("Blocks");
+            ByteArrayTag blockLight = chunkz.get("BlockLight");
+            ByteArrayTag skyLight = chunkz.get("SkyLight");
+            ByteArrayTag data = chunkz.get("Data");
+            ByteArrayTag add = chunkz.get("Add");
+            ShortArray3d block = new ShortArray3d(4096);
+            for (int cX = 0; cX < 16; cX++) 
+                for (int cY = 0; cY < 16; cY++) 
+                    for (int cZ = 0; cZ < 16; cZ++) {
+                        int index = 256*cY + 16*cZ + cX;
+                        int id = blocks.getValue(index) + (add != null ? getValue(add, index) << 8 : 0);
+                        block.setBlockAndData(cX, cY, cZ, id + (id < 0 ? 256 : 0), getValue(data, index));
+                    }
+            sectionsChunk[i] = new org.spacehq.mc.protocol.data.game.Chunk(block, new NibbleArray3d(blockLight.getValue()), new NibbleArray3d(skyLight.getValue()));
+        }
+        chunk.initializeSections(sectionsChunk);
         return chunk;
     }
-
+    
     private int getValue(ByteArrayTag array, int index) {
         return (index%2 == 0 ? array.getValue(index/2) : array.getValue(index/2) >> 4)&0x0F;
     }
-    
+
     @Override
     public void saveChunk(Chunk chunk) {
         int x = chunk.getX(), z = chunk.getZ();
@@ -173,6 +165,6 @@ public class CyanChunkIOService implements ChunkIOService {
                 e.printStackTrace();
             }
         }
-
     }
+    
 }

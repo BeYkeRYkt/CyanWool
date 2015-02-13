@@ -1,8 +1,8 @@
 package net.CyanWool.api.configuration;
 
-import static net.CyanWool.api.configuration.NumberConversions.toDouble;
-import static net.CyanWool.api.configuration.NumberConversions.toInt;
-import static net.CyanWool.api.configuration.NumberConversions.toLong;
+import static net.CyanWool.api.utils.NumberConversions.toDouble;
+import static net.CyanWool.api.utils.NumberConversions.toInt;
+import static net.CyanWool.api.utils.NumberConversions.toLong;
 
 import java.util.ArrayList;
 import java.util.Collections;

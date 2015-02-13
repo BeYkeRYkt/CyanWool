@@ -1,6 +1,7 @@
 package net.CyanWool.api.io;
 
-import net.CyanWool.api.world.chunks.Chunk;
+import net.CyanWool.api.world.Chunk;
+
 
 public interface ChunkIOService {
 
