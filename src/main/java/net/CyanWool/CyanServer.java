@@ -288,5 +288,4 @@ public class CyanServer implements Server {
     public RecipeManager getRecipeManager() {
         return recipeManager;
     }
-
 }

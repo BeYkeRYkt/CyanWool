@@ -22,12 +22,13 @@ public class CyanChunk implements Chunk {
 
     private final List<Entity> entities = new ArrayList<Entity>();
     private boolean isLoaded;
-    private org.spacehq.mc.protocol.data.game.Chunk[] sections = new org.spacehq.mc.protocol.data.game.Chunk[16];
+    private Section[] sections;
 
     public CyanChunk(World world, int x, int z) {
         this.world = world;
         this.x = x;
         this.z = z;
+        this.sections = new Section[16];
     }
 
     @Override
@@ -94,12 +95,7 @@ public class CyanChunk implements Chunk {
     }
 
     @Override
-    public int getType(int x, int z, int y) {
-        return getSection(y).getBlocks().getBlock(x, y, z);
-    }
-
-    @Override
-    public void setType(int x, int z, int y, int type) {
+    public void setBlock(int x, int y, int z, int type) {
         getSection(y).getBlocks().setBlock(x, y, z, type);
     }
 
@@ -142,42 +138,44 @@ public class CyanChunk implements Chunk {
     public static final int WIDTH = 16, HEIGHT = 16, DEPTH = 256;
     private static final int SEC_DEPTH = 16;
 
-    public void initializeSections(org.spacehq.mc.protocol.data.game.Chunk[] initSections) {
+    public void initializeSections(Section[] initSections) {
         if (isLoaded()) {
             CyanWool.getLogger().info("Tried to initialize already loaded chunk (" + x + "," + z + ")");
             return;
         }
-        //sections = new org.spacehq.mc.protocol.data.game.Chunk[DEPTH / SEC_DEPTH];
-        //System.arraycopy(initSections, 0, sections, 0, Math.min(sections.length, initSections.length));
-        sections = initSections;
+        if(initSections != null){
+            for(int i = 0; i < initSections.length; i++){
+                sections[i] = initSections[i];
+            }
+        }
+
         // biomes = new byte[WIDTH * HEIGHT];
         // heightMap = new byte[WIDTH * HEIGHT];
         // tile entity initialization
-        for (int i = 0; i < sections.length; ++i) {
-            if (sections[i] == null)
-                continue;
-            int by = 16 * i;
-            for (int cx = 0; cx < WIDTH; ++cx) {
-                for (int cz = 0; cz < HEIGHT; ++cz) {
-                    for (int cy = by; cy < by + 16; ++cy) {
-                        // createEntity(cx, cy, cz, getType(cx, cz, cy));
-                    }
-                }
-            }
-        }
+        //for (int i = 0; i < sections.length; ++i) {
+        //    if (sections[i] == null)
+        //        continue;
+        //    int by = 16 * i;
+        //    for (int cx = 0; cx < WIDTH; ++cx) {
+        //        for (int cz = 0; cz < HEIGHT; ++cz) {
+        //            for (int cy = by; cy < by + 16; ++cy) {
+        //                // createEntity(cx, cy, cz, getType(cx, cz, cy));
+        //            }
+        //        }
+        //    }
+        //}
     }
 
-    private org.spacehq.mc.protocol.data.game.Chunk getSection(int y) {
+    private Section getSection(int y) {
         int idx = y >> 4;
-        CyanWool.getLogger().info("idx=" + idx);
 
-        if (y < 0 || y >= DEPTH || !isLoaded || idx >= sections.length) {
+        if (y < 0 || y >= DEPTH || !this.isLoaded || idx >= this.sections.length) {
             return null;
         }
         return sections[idx];
     }
     
-    public org.spacehq.mc.protocol.data.game.Chunk[] getSections() {
+    public Section[] getSections() {
         return sections;
     }
 

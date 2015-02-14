@@ -36,7 +36,7 @@ public class PlayerManager {
         this.players = new ArrayList<Player>();
     }
 
-    public Player loginPlayer(Session session) {
+    public synchronized Player loginPlayer(Session session) {
         GameProfile profile = session.getFlag(ProtocolConstants.PROFILE_KEY);
         World world = server.getWorld(0);
         Location location = world.getSpawnLocation();
@@ -53,14 +53,6 @@ public class PlayerManager {
         // set time
         player.setTime(1000);// TODO
 
-        // Send spawn packet
-        ServerPlayerPositionRotationPacket ppacket = new ServerPlayerPositionRotationPacket(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-        session.send(ppacket);
-        
-        Position position = new Position(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-        ServerSpawnPositionPacket spawnPacket = new ServerSpawnPositionPacket(position);
-        session.send(spawnPacket);
-
         // Send health
         ServerUpdateHealthPacket healthPacket = new ServerUpdateHealthPacket(20, 20, 1);
         session.send(healthPacket);
@@ -69,13 +61,21 @@ public class PlayerManager {
         ServerDifficultyPacket diffPacket = new ServerDifficultyPacket(Difficulty.NORMAL);
         session.send(diffPacket);
 
+        // Send spawn packet
+        
+        ServerPlayerPositionRotationPacket ppacket = new ServerPlayerPositionRotationPacket(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+        session.send(ppacket);
+        
+        Position position = new Position(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+        ServerSpawnPositionPacket spawnPacket = new ServerSpawnPositionPacket(position);
+        session.send(spawnPacket);
+        
         // Send chunks
         player.updateChunks();
         
         // Send packets for all players
             for(Packet packets: player.getSpawnPackets()){
-            server.getNetworkManager();
-            NetworkServer.sendPacketForAll(packets);
+            //NetworkServer.sendPacketForAll(packets);
             }
 
         player.chat("Hello! This test message for CyanWool!");
@@ -85,7 +85,7 @@ public class PlayerManager {
         return player;
     }
 
-    public void leavePlayer(Player player) {
+    public synchronized void leavePlayer(Player player) {
         server.broadcastMessage(player.getName() + " left the Server!");
         ServerDestroyEntitiesPacket destroyEntitiesPacket = new ServerDestroyEntitiesPacket(player.getEntityID());
         NetworkServer.sendPacketForAll(destroyEntitiesPacket);

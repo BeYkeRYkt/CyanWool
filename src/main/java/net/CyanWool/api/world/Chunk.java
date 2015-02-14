@@ -35,9 +35,7 @@ public interface Chunk {
 
     public void setBlockLight(int x, int y, int z, int blocklight);
 
-    public int getType(int x, int z, int y);
-
-    public void setType(int x, int z, int y, int type);
+    public void setBlock(int x, int y, int z, int type);
 
     public int getMaxHeight();
 

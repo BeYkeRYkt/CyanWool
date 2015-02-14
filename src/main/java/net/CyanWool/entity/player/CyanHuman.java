@@ -20,6 +20,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     private GameProfile profile;
     private boolean sleeping;
+    private int sleepingTicks;
     private boolean blocking;
 
     private float xpInBar;
@@ -166,6 +167,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     @Override
     public void wakeUp() {
         this.sleeping = false;
+        this.sleepingTicks = 0;
         // todo...
     }
 
@@ -201,9 +203,30 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
         return EntityType.PLAYER;
     }
 
+    @Override
+    public int getSleepingTicks() {
+        return sleepingTicks;
+    }
+
+    @Override
+    public void setSleepingTicks(int ticks) {
+        this.sleepingTicks = ticks;
+    }
+    
+    
+    @Override
+    public synchronized void onTick(){
+        super.onTick();
+        if (sleeping) {
+            ++sleepingTicks;
+        } else {
+            sleepingTicks = 0;
+        }
+    }
     // Not from API
 
     public GameProfile getGameProfile() {
         return profile;
     }
+
 }

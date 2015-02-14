@@ -135,8 +135,7 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public void onTick() {
-        
+    public synchronized void onTick() {
         //Maybe...
         if(!isAlive){
             ServerDestroyEntitiesPacket packet = new ServerDestroyEntitiesPacket(getEntityID());

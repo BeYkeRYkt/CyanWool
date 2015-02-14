@@ -32,6 +32,7 @@ import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
 import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityHeadLookPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPlayerPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
@@ -102,10 +103,12 @@ public class CyanPlayer extends CyanHuman implements Player{
 
         // Maybe: TODO: ServerMultiChunkDataPacket
 
+        if(!prev.isEmpty()){
         for (ChunkCoords key : prev) {
             ServerChunkDataPacket packet = new ServerChunkDataPacket(key.getX(), key.getZ());
             getPlayerNetwork().sendPacket(packet);
             chunks.remove(key);
+        }
         }
         prev.clear();
     }
@@ -220,6 +223,10 @@ public class CyanPlayer extends CyanHuman implements Player{
             // if(SeeEntity(entity))
             if (!knowEntities.contains(entity)) {
                 knowEntities.add(entity);
+                //sending...
+                for(Packet packet: ((CyanEntity) entity).getSpawnPackets()){
+                    getPlayerNetwork().sendPacket(packet);
+                }
             }
         }
     }
@@ -293,7 +300,9 @@ public class CyanPlayer extends CyanHuman implements Player{
     @Override
     public List<Packet> getSpawnPackets() {
         List<Packet> list = new ArrayList<Packet>();
-        list.add(new ServerSpawnPlayerPacket(getEntityID(), getUniqueId(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), 0 , metadata)); // TODO
+        list.add(new ServerSpawnPlayerPacket(getEntityID(), getUniqueId(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), 0 , metadata));
+        list.add(new ServerEntityHeadLookPacket(getEntityID(), getLocation().getYaw()));
+        // TODO
         return list;
     }
 

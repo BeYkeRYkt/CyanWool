@@ -19,9 +19,6 @@ public class ServerConfiguration {
     private String motd;
     // private int distance; //DEV
 
-    // Messages
-    private String unknownCmd;
-    private String noConsole;
 
     // and more others...
 
@@ -48,8 +45,6 @@ public class ServerConfiguration {
             config.set("online-mode", isOnlineMode()); // for test
             config.set("max-players", getMaxPlayers());
             config.set("motd", getMotd());
-            config.set("Strings.unknownCmd", getUnknownCommandMessage());
-            config.set("Strings.noConsole", getNoConsoleMessage());
             config.save(configFile);
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -64,8 +59,6 @@ public class ServerConfiguration {
             config.set("online-mode", false); // for test
             config.set("max-players", 20);
             config.set("motd", "CyanWool Server!");
-            config.set("Strings.unknownCmd", "Unknown command. Type /help for help.");
-            config.set("Strings.noConsole", "This command is not accesible from console.");
             config.save(configFile);
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -101,13 +94,6 @@ public class ServerConfiguration {
         // set motd
         String motd = config.getString("motd");
         this.setMotd(motd);
-
-        // set messages
-        String unknown = config.getString("Strings.unknownCmd");
-        this.setUnknownCommandMessage(unknown);
-
-        String noConsole = config.getString("Strings.noConsole");
-        this.setNoConsoleMessage(noConsole);
     }
 
     public String getIPAdress() {
@@ -140,21 +126,5 @@ public class ServerConfiguration {
 
     public void setMotd(String motd) {
         this.motd = motd;
-    }
-
-    public String getUnknownCommandMessage() {
-        return unknownCmd;
-    }
-
-    public void setUnknownCommandMessage(String unknownCmd) {
-        this.unknownCmd = unknownCmd;
-    }
-
-    public String getNoConsoleMessage() {
-        return noConsole;
-    }
-
-    public void setNoConsoleMessage(String noConsole) {
-        this.noConsole = noConsole;
     }
 }

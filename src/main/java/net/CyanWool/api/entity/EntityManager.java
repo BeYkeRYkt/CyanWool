@@ -24,7 +24,7 @@ public class EntityManager {
         return entities.get(id);
     }
 
-    public void register(Entity entity) {
+    public synchronized void register(Entity entity) {
         if (getEntity(entity.getEntityID()) != null) {
             return; // IMPOSIBBLEEE
         }
@@ -42,10 +42,10 @@ public class EntityManager {
         }
         entities.put(entity.getEntityID(), entity);
         Location loc = entity.getLocation();
-        // loc.getChunk().getEntities().add(entity); - ERRORS!
+        loc.getChunk().getEntities().add(entity);
     }
 
-    public void unregister(Entity entity) {
+    public synchronized void unregister(Entity entity) {
         entities.remove(entity.getEntityID());
         usedIds.remove(entity.getEntityID());
 

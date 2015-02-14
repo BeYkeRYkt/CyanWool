@@ -71,7 +71,7 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     }
 
     @Override
-    public void onTick() {
+    public synchronized void onTick() {
         super.onTick();
         //age++;
         

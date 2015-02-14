@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.io.ChunkIOService;
 import net.CyanWool.api.io.RegionFile;
 import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.World;
 import net.CyanWool.world.CyanChunk;
+import net.CyanWool.world.Section;
 
 import org.spacehq.mc.protocol.data.game.NibbleArray3d;
 import org.spacehq.mc.protocol.data.game.ShortArray3d;
@@ -22,7 +24,7 @@ import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.opennbt.tag.builtin.ListTag;
 import org.spacehq.opennbt.tag.builtin.Tag;
 
-public class CyanChunkIOService implements ChunkIOService{
+public class CyanChunkIOService implements ChunkIOService {
 
     private final World world;
     private final File dir;
@@ -31,26 +33,32 @@ public class CyanChunkIOService implements ChunkIOService{
         this.world = world;
         this.dir = new File(world.getPath());
     }
-    
+
     @Override
     public Chunk readChunk(int x, int z) {
         CyanChunk chunk = new CyanChunk(world, x, z);
-        org.spacehq.mc.protocol.data.game.Chunk sectionsChunk[] = new org.spacehq.mc.protocol.data.game.Chunk[16];
-        RegionFile region;
-        region = RegionFileCache.getRegionFile(dir, x, z);
-        int regionX = x & (32 - 1);
-        int regionZ = z & (32 - 1);
-        if (!region.hasChunk(regionX, regionZ)) {
-            for (int i = 0; i < 16; i++) {
-                byte[]blockLight = new byte[16 * 16 * 16];
-                byte[]skyLight = new byte[16 * 16 * 16];
-                ShortArray3d block = new ShortArray3d(4096);
-                
-                sectionsChunk[i] = new org.spacehq.mc.protocol.data.game.Chunk(block, new NibbleArray3d(blockLight), new NibbleArray3d(skyLight)); 
-            }
-            return chunk;
+        Section sectionsChunk[] = new Section[16];
+        //Preview loading
+        for (int i = 0; i < 16; i++) {
+            byte[] blockLight = new byte[16 * 16 * 16];
+            byte[] skyLight = new byte[16 * 16 * 16];
+            ShortArray3d block = new ShortArray3d(4096);
+
+            Section section = new Section(i, block, new NibbleArray3d(blockLight), new NibbleArray3d(skyLight));
+            sectionsChunk[i] = section;
         }
         
+        RegionFile region = RegionFileCache.getRegionFile(dir, x, z);
+        int regionX = x & 31;
+        int regionZ = z & 31;
+        if (!region.hasChunk(regionX, regionZ)) {
+            chunk.initializeSections(sectionsChunk);
+            //TODO: Entity, biomes and etc.
+            
+            chunk.setLoaded(true);
+            return chunk; //TODO: maybe ?
+        }
+
         DataInputStream in = region.getChunkDataInputStream(regionX, regionZ);
         CompoundTag compoundTag = null;
         try {
@@ -58,12 +66,14 @@ public class CyanChunkIOService implements ChunkIOService{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (compoundTag == null){
+        if (compoundTag == null) {
+            CyanWool.getLogger().info("null compoundTag");
             return chunk;
         }
         CompoundTag level = compoundTag.get("Level");
         ListTag sections = level.get("Sections");
         ByteArrayTag biomes = level.get("Biomes");
+        
         for (int i = 0; i < sections.size(); i++) {
             CompoundTag chunkz = sections.get(i);
             ByteArrayTag blocks = chunkz.get("Blocks");
@@ -72,28 +82,34 @@ public class CyanChunkIOService implements ChunkIOService{
             ByteArrayTag data = chunkz.get("Data");
             ByteArrayTag add = chunkz.get("Add");
             ShortArray3d block = new ShortArray3d(4096);
-            for (int cX = 0; cX < 16; cX++) 
-                for (int cY = 0; cY < 16; cY++) 
+            for (int cX = 0; cX < 16; cX++) {
+                for (int cY = 0; cY < 16; cY++) {
                     for (int cZ = 0; cZ < 16; cZ++) {
-                        int index = 256*cY + 16*cZ + cX;
+                        int index = 256 * cY + 16 * cZ + cX;
                         int id = blocks.getValue(index) + (add != null ? getValue(add, index) << 8 : 0);
                         block.setBlockAndData(cX, cY, cZ, id + (id < 0 ? 256 : 0), getValue(data, index));
                     }
-            sectionsChunk[i] = new org.spacehq.mc.protocol.data.game.Chunk(block, new NibbleArray3d(blockLight.getValue()), new NibbleArray3d(skyLight.getValue()));
+                }
+            }
+            Section section = new Section(i, block, new NibbleArray3d(blockLight.getValue()), new NibbleArray3d(skyLight.getValue()));
+            sectionsChunk[i] = section;
         }
         chunk.initializeSections(sectionsChunk);
+        //TODO: Entity, biomes and etc.
+        
+        chunk.setLoaded(true);
         return chunk;
     }
-    
+
     private int getValue(ByteArrayTag array, int index) {
-        return (index%2 == 0 ? array.getValue(index/2) : array.getValue(index/2) >> 4)&0x0F;
+        return (index % 2 == 0 ? array.getValue(index / 2) : array.getValue(index / 2) >> 4) & 0x0F;
     }
 
     @Override
     public void saveChunk(Chunk chunk) {
         int x = chunk.getX(), z = chunk.getZ();
         RegionFile region = RegionFileCache.getRegionFile(dir, x, z);
-        int regionX = x & (32- 1);
+        int regionX = x & (32 - 1);
         int regionZ = z & (32 - 1);
 
         DataOutputStream out = region.getChunkDataOutputStream(regionX, regionZ);
@@ -166,5 +182,5 @@ public class CyanChunkIOService implements ChunkIOService{
             }
         }
     }
-    
+
 }

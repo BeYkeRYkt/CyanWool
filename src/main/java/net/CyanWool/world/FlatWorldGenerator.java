@@ -15,7 +15,7 @@ public class FlatWorldGenerator implements WorldGenerator {
     
     @Override
     public Chunk generate(int chunkX, int chunkZ) {
-        CyanChunk chunk = new CyanChunk(null, chunkX, chunkZ);
+        CyanChunk chunk = (CyanChunk) world.getChunkManager().getChunk(chunkX, chunkZ);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = 0; y < 16; y++) {
@@ -27,12 +27,12 @@ public class FlatWorldGenerator implements WorldGenerator {
                     else if (y == 0)
                         id = 7; //Bedrock
                     else if (y < 55)
-                        id = 1;
+                        id = 2;
 
-                    chunk.setType(x, z, y, id);
+                    chunk.setBlock(x, y, z, id);
                     //chunk.setMetaData(x, z, y, 0);
-                    chunk.setBlockLight(x, z, y, 0);
-                    chunk.setSkyLight(x, z, y, 15);
+                    chunk.setBlockLight(x, y, z, 0);
+                    chunk.setSkyLight(x, y, z, 15);
                 }
             }
         }

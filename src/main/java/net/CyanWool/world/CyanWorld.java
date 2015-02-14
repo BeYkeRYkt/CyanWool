@@ -50,7 +50,7 @@ public class CyanWorld implements World {
         this.service = service;
         this.path = "worlds/" + name;
         setGenerator(new FlatWorldGenerator(this)); //TEST
-        this.chunk = new ChunkManager(this, new CyanChunkIOService(this));
+        this.chunk = new CyanChunkManager(this, new CyanChunkIOService(this));
         this.entities = new ArrayList<Entity>();
         // this.chunk.loadChunk(getSpawnLocation().getBlockX() >> 4,
         // getSpawnLocation().getBlockZ() >> 4, false);
@@ -189,10 +189,12 @@ public class CyanWorld implements World {
 
     @Override
     public void onTick() {
-        Iterator<Entity> it = entities.iterator();
-        while (it.hasNext()) {
-            Entity entity = it.next();
-            entity.onTick();
+        synchronized (entities) {
+            Iterator<Entity> it = entities.iterator();
+            while (it.hasNext()) {
+                Entity entity = it.next();
+                entity.onTick();
+            }
         }
     }
 

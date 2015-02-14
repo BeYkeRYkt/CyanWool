@@ -62,4 +62,8 @@ public interface Human extends EntityLivingBase {
     public void setGamemode(Gamemode mode);
 
     public Inventory getEnderChest();
+    
+    public int getSleepingTicks();
+    
+    public void setSleepingTicks(int ticks);
 }

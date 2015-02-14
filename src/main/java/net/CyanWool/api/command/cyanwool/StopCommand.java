@@ -1,4 +1,7 @@
-package net.CyanWool.api.command;
+package net.CyanWool.api.command.cyanwool;
+
+import net.CyanWool.api.command.Command;
+import net.CyanWool.api.command.ICommandSender;
 
 public class StopCommand extends Command {
 

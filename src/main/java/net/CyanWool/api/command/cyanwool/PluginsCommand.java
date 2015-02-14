@@ -1,8 +1,10 @@
-package net.CyanWool.api.command;
+package net.CyanWool.api.command.cyanwool;
 
 import java.util.ArrayList;
 
 import net.CyanWool.api.CyanWool;
+import net.CyanWool.api.command.Command;
+import net.CyanWool.api.command.ICommandSender;
 import net.CyanWool.api.plugin.Plugin;
 import net.CyanWool.api.utils.ChatColors;
 
@@ -18,7 +20,7 @@ public class PluginsCommand extends Command {
         String plugins = "";
 
         if (sender.isPlayer()) {
-            plugins = ChatColors.AQUA + "Plugins " + ChatColors.WHITE + "(" + ChatColors.AQUA + pluginList.size() + ChatColors.WHITE + "): ";
+            plugins = ChatColors.AQUA + "Plugins" + ChatColors.WHITE + " (" + ChatColors.AQUA + pluginList.size() + ChatColors.WHITE + "): ";
 
             if (pluginList.size() >= 2) {
                 for (Plugin plugin : pluginList) {
