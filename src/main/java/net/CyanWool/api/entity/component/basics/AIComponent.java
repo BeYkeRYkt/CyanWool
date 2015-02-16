@@ -47,6 +47,7 @@ public class AIComponent extends Component {
 
     @Override
     public void update() {
+        getEntity().getMetadata().setMetadata(15, (byte) (this.aiEnabled ? 1 : 0));
         if (aiEnabled) {
             getTargetAITasks().onUpdateAI();
             getAITasks().onUpdateAI();

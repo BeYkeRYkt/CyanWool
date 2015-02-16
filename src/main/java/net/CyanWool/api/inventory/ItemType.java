@@ -49,11 +49,6 @@ public class ItemType {
         return data;
     }
 
-    public ItemType cloneItem() {
-        // return new ItemType(id, data, maxDurability, maxStack, isDamageable);
-        return null;
-    }
-
     /**
      * @return the maxStack
      */

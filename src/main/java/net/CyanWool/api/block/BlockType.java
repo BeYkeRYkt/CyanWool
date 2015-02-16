@@ -9,7 +9,7 @@ import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
 
-public class BlockType {
+public class BlockType { //??
 
     private int id;
     private int data;
@@ -21,11 +21,13 @@ public class BlockType {
     private SoundInfo placeSound;
 
     private List<ItemStack> drop;
+    private int maxData;
 
-    public BlockType(int id, int data) {
+    public BlockType(int id, int data, int maxData) {
         this.id = id;
         this.data = data;
         this.drop = new ArrayList<ItemStack>();
+        this.maxData = data;
     }
 
     public boolean isDrop() {
@@ -42,6 +44,10 @@ public class BlockType {
 
     public int getData() {
         return data;
+    }
+    
+    public void setData(int data){
+        this.data = data;
     }
 
     public void onBlockPlace(Location location) {
@@ -97,8 +103,8 @@ public class BlockType {
     public List<ItemStack> getDrop() {
         return drop;
     }
-
-    public BlockType cloneBlock() {
-        return null;
+    
+    public int getMaxData(){
+        return maxData;
     }
 }

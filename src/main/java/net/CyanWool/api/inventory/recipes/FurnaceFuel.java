@@ -9,7 +9,7 @@ public class FurnaceFuel {
     private int time;
 
     public FurnaceFuel(ItemStack item, int time) {
-        this.type = item.getType();
+        this.type = item.getItemType();
         this.time = time;
     }
 

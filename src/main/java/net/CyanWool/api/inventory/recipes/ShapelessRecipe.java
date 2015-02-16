@@ -17,7 +17,7 @@ public class ShapelessRecipe implements Recipe {
     }
 
     public void addIndegrient(ItemStack item) {
-        addIndegrient(item.getType());
+        addIndegrient(item.getItemType());
     }
 
     public void addIndegrient(ItemType type) {

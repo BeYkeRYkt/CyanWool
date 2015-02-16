@@ -83,7 +83,7 @@ public class ItemStack {
     /**
      * @return the type
      */
-    public ItemType getType() {
+    public ItemType getItemType() {
         return type;
     }
 }

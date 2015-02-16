@@ -29,9 +29,8 @@ public class CyanChunkManager implements ChunkManager{
         if (chunks.containsKey(coords)) {
             return chunks.get(coords);
         } else {
-             CyanChunk chunk = (CyanChunk) service.readChunk(x, z);
-             CyanChunk prev = (CyanChunk) chunks.putIfAbsent(coords, chunk);
-             return prev == null ? chunk : prev;
+            loadChunk(x, z);
+            return chunks.get(coords);
         }
     }
 
@@ -45,17 +44,19 @@ public class CyanChunkManager implements ChunkManager{
     public boolean isChunkInUse(int x, int z) {
         ChunkCoords coords = new ChunkCoords(x, z);
         Chunk chunk = chunks.get(coords);
-        return chunk != null && chunk.getPlayers().isEmpty();
+        return chunk != null && !chunk.getPlayers().isEmpty();
     }
 
     @Override
-    public boolean loadChunk(int x, int z, boolean generate) {
+    public boolean loadChunk(int x, int z) {
         Chunk chunk = service.readChunk(x, z);
         ChunkCoords coords = new ChunkCoords(x, z);
         chunks.put(coords, chunk);
+        
+        boolean generate = chunk.isNeedGenerate();
 
         if (!generate) {
-            return false;
+            return true;
         }
         generateChunk(chunk);
         return true;
@@ -100,4 +101,6 @@ public class CyanChunkManager implements ChunkManager{
             saveChunk(chunk);
         }
     }
+    
+    
 }

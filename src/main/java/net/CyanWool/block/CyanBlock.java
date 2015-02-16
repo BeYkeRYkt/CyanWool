@@ -29,8 +29,6 @@ public class CyanBlock implements Block {
 
     @Override
     public void breakBlock() {
-        // TODO: setAir...
-
         // play break Effect
         // getLocation().getWorld().playEffect(getLocation(),
         // ParticleEffect.BREAK_BLOCK, new
@@ -52,6 +50,9 @@ public class CyanBlock implements Block {
                 getLocation().getWorld().dropItemStack(getLocation(), item);
             }
         }
+        // TODO: setAir...
+        getLocation().getChunk().setBlock(getLocation().getBlockX(), getLocation().getBlockY(), getLocation().getBlockZ(), 0);
+
     }
 
     @Override

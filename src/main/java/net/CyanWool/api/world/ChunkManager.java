@@ -10,7 +10,7 @@ public interface ChunkManager {
     
     public boolean isChunkInUse(int x, int z);
 
-    public boolean loadChunk(int x, int z, boolean generate);
+    public boolean loadChunk(int x, int z);
     
     public void saveChunk(Chunk chunk);
 

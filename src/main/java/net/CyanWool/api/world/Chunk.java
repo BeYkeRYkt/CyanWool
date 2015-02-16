@@ -44,4 +44,10 @@ public interface Chunk {
     public boolean isLoaded();
 
     public void setLoaded(boolean b);
+
+    public byte[] getBiomeData();
+    
+    public void setNeedGenerate(boolean flag);
+    
+    public boolean isNeedGenerate();
 }

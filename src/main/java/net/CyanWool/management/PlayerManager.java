@@ -43,15 +43,23 @@ public class PlayerManager {
         CyanPlayer player = new CyanPlayer(server, profile, location);
         world.getEntities().add(player);
         server.getEntityManager().register(player);
-        
+
         // player.load();
         player.setPlayerNetwork(new PlayerNetwork(server, session, player));
         ServerJoinGamePacket packet = new ServerJoinGamePacket(player.getEntityID(), false, GameMode.SURVIVAL, 0, Difficulty.NORMAL, server.getMaxPlayers(), WorldType.DEFAULT, false);
         session.send(packet);
         players.add(player);
 
+        // Send spawn packet
+        ServerPlayerPositionRotationPacket ppacket = new ServerPlayerPositionRotationPacket(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+        session.send(ppacket);
+
+        Position position = new Position(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+        ServerSpawnPositionPacket spawnPacket = new ServerSpawnPositionPacket(position);
+        session.send(spawnPacket);
+        
         // set time
-        player.setTime(1000);// TODO
+        player.setTime(0);// TODO
 
         // Send health
         ServerUpdateHealthPacket healthPacket = new ServerUpdateHealthPacket(20, 20, 1);
@@ -61,27 +69,16 @@ public class PlayerManager {
         ServerDifficultyPacket diffPacket = new ServerDifficultyPacket(Difficulty.NORMAL);
         session.send(diffPacket);
 
-        // Send spawn packet
-        
-        ServerPlayerPositionRotationPacket ppacket = new ServerPlayerPositionRotationPacket(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-        session.send(ppacket);
-        
-        Position position = new Position(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-        ServerSpawnPositionPacket spawnPacket = new ServerSpawnPositionPacket(position);
-        session.send(spawnPacket);
-        
-        // Send chunks
-        player.updateChunks();
-        
         // Send packets for all players
-            for(Packet packets: player.getSpawnPackets()){
-            //NetworkServer.sendPacketForAll(packets);
-            }
+        for (Packet packets : player.getSpawnPackets()) {
+            NetworkServer.sendPacketForAll(packets);
+        }
 
         player.chat("Hello! This test message for CyanWool!");
-        
-        //Test sounds
-        player.playDamageSound();
+        player.setMoveable(true);
+
+        // Test sounds
+        player.damage(5);
         return player;
     }
 
@@ -91,7 +88,7 @@ public class PlayerManager {
         NetworkServer.sendPacketForAll(destroyEntitiesPacket);
         // Save and unload
         // player.save();
-        getPlayers().remove(player);
+        players.remove(player);
     }
 
     public List<Player> getPlayers() {

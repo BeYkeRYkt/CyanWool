@@ -20,14 +20,14 @@ public class ChunkCoords {
 
     @Override
     public String toString() {
-        return "ChunkCoords{" + "x=" + getX() + "z=" + getZ() + '}';
+        return "ChunkCoords{" + "x=" + getX() + "z=" + getZ() + "}";
     }
 
     @Override
     public boolean equals(Object other) {
         if (this == other) {
             return true;
-        } else if (!(other instanceof ChunkCoords)) {
+        } else if (other == null || getClass() != other.getClass()) {
             return false;
         } else {
             ChunkCoords chunk = (ChunkCoords) other;
@@ -37,11 +37,7 @@ public class ChunkCoords {
     
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + x;
-        result = prime * result + z;
-        return result;
+        return 31 * x + z;
     }
 
 }

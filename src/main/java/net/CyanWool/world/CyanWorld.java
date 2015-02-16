@@ -44,12 +44,15 @@ public class CyanWorld implements World {
     private PlayerIOService service;
     private String path;
     private List<Entity> entities;
+    private Dimension dimension;
+    private Difficulty difficulty;
+    private Gamemode defaultGamemode;
 
     public CyanWorld(String name, PlayerIOService service) {
         this.name = name;
         this.service = service;
         this.path = "worlds/" + name;
-        setGenerator(new FlatWorldGenerator(this)); //TEST
+        setGenerator(new FlatWorldGenerator(this)); // TEST
         this.chunk = new CyanChunkManager(this, new CyanChunkIOService(this));
         this.entities = new ArrayList<Entity>();
         // this.chunk.loadChunk(getSpawnLocation().getBlockX() >> 4,
@@ -179,8 +182,8 @@ public class CyanWorld implements World {
     @Override
     public List<Player> getPlayers() {
         List<Player> list = new ArrayList<Player>();
-        for(Entity entity: getEntities()){
-            if(entity.getEntityType() == EntityType.PLAYER){
+        for (Entity entity : getEntities()) {
+            if (entity.getEntityType() == EntityType.PLAYER) {
                 list.add((Player) entity);
             }
         }
@@ -195,6 +198,14 @@ public class CyanWorld implements World {
                 Entity entity = it.next();
                 entity.onTick();
             }
+        }
+        dayTime++;
+        if(dayTime == 24000){
+            dayTime = 0;
+        }
+        
+        for(Player player: getPlayers()){
+            player.setTime(dayTime);
         }
     }
 
@@ -211,19 +222,17 @@ public class CyanWorld implements World {
 
     @Override
     public Dimension getDimension() {
-        return null;
+        return dimension;
     }
 
     @Override
     public Difficulty getDifficulty() {
-        // TODO Auto-generated method stub
-        return null;
+        return difficulty;
     }
 
     @Override
     public Gamemode getDefaultGamemode() {
-        // TODO Auto-generated method stub
-        return null;
+        return defaultGamemode;
     }
 
     @Override

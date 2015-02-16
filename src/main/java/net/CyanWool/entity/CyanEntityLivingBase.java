@@ -10,9 +10,6 @@ import net.CyanWool.api.entity.component.basics.HealthComponent;
 import net.CyanWool.api.entity.component.basics.TransportComponent;
 import net.CyanWool.api.world.Location;
 
-import org.spacehq.mc.protocol.data.game.EntityMetadata;
-import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
-
 public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase {
 
     private SoundInfo damageSound;
@@ -21,7 +18,6 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     public CyanEntityLivingBase(Location location) {
         super(location);
-        initMetadata();
         getComponentManager().addComponent(new AgeComponent(this));
         getComponentManager().addComponent(new DisplayNameComponent(this));
         getComponentManager().addComponent(new AIComponent(this));
@@ -29,18 +25,19 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
         //getComponentManager().addComponent(new HealthComponent(this, 20)); - for mobs
         //getComponentManager().addComponent(new InventoryComponent(this, inv)); - 
         // this.inventory =
+        initMetadata();
     }
     
     @Override
     protected void initMetadata() {
         //super.initMetadata();
-        metadata[2] = new EntityMetadata(2, MetadataType.STRING, ""); //Display name
-        metadata[3] = new EntityMetadata(3, MetadataType.BYTE, 0);//Render name tag
-        metadata[4] = new EntityMetadata(6, MetadataType.FLOAT, 0);//health
-        metadata[5] = new EntityMetadata(7, MetadataType.INT, 0);//potion color
-        metadata[6] = new EntityMetadata(8, MetadataType.BYTE, 0);//Is Potion Effect Ambient
-        metadata[7] = new EntityMetadata(9, MetadataType.BYTE, 0);//Number of Arrows in Entity
-        metadata[8] = new EntityMetadata(15, MetadataType.BYTE, 0);//No ai
+        getMetadata().setMetadata(2, "");//Display name
+        getMetadata().setMetadata(3, (byte) 0);//Render name tag
+        getMetadata().setMetadata(6, (float) 20);//health
+        getMetadata().setMetadata(7, 0);//potion color
+        getMetadata().setMetadata(8, (byte) 0);//Is Potion Effect Ambient
+        getMetadata().setMetadata(9, 0);//Number of Arrows in Entity
+        getMetadata().setMetadata(15, (byte) 0);//No ai
     }
 
     @Override
@@ -66,6 +63,7 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
         if(getComponentManager().hasComponent("health")){
             HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
             component.setHealth(component.getHealth() - amount);
+            playDamageSound();
         }
         
     }
@@ -80,38 +78,6 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
         //getAITasks().onUpdateAI();
         //}
         //To components
-        
-        //TODO: Update metadata
-        if(getComponentManager().hasComponent("displayName")){
-            DisplayNameComponent component = (DisplayNameComponent) getComponentManager().getComponent("displayName");
-            metadata[2] = new EntityMetadata(2, MetadataType.STRING, component.getDisplayName());
-            
-            byte data = 1;
-            if(!component.isRenderDisplayName()){
-                data = 0;
-            }else{
-                data = 1;
-            }
-            metadata[3] = new EntityMetadata(3, MetadataType.BYTE, data);
-        }
-        
-        if(getComponentManager().hasComponent("health")){
-            HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
-            metadata[4] = new EntityMetadata(6, MetadataType.FLOAT, component.getHealth());
-        }
-                
-        if(getComponentManager().hasComponent("ai")){
-            AIComponent component = (AIComponent) getComponentManager().getComponent("ai");
-            byte disable = 1;
-            
-            if(component.isAIEnabled()){
-                disable = 0;
-            }else{
-                disable = 1;
-            }
-            
-            metadata[8] = new EntityMetadata(15, MetadataType.BYTE, disable);
-        }
         
         // TODO
     }

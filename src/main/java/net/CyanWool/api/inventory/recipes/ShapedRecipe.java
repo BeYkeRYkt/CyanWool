@@ -17,7 +17,7 @@ public class ShapedRecipe implements Recipe {
     }
 
     public void addIndegrient(int slot, ItemStack item) {
-        addIndegrient(slot, item.getType());
+        addIndegrient(slot, item.getItemType());
     }
 
     public void addIndegrient(int slot, ItemType type) {

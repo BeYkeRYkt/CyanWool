@@ -48,4 +48,16 @@ public class DisplayNameComponent extends Component {
     public String getID() {
         return "displayName";
     }
+    
+    @Override
+    public void update() {
+        getEntity().getMetadata().setMetadata(2, getDisplayName());
+        getEntity().getMetadata().setMetadata(3, (byte) (visibleName ? 1 : 0));
+    }
+
+    @Override
+    public boolean autoUpdate() {
+        return true;
+    }
+
 }

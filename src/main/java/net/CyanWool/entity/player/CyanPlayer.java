@@ -22,10 +22,12 @@ import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.Sound;
 import net.CyanWool.entity.CyanEntity;
 import net.CyanWool.entity.meta.ClientSettings;
+import net.CyanWool.entity.meta.CyanMetadataMap;
 import net.CyanWool.network.PlayerNetwork;
 import net.CyanWool.world.CyanChunk;
 
 import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.protocol.data.game.EntityMetadata;
 import org.spacehq.mc.protocol.data.game.Position;
 import org.spacehq.mc.protocol.data.game.values.world.CustomSound;
 import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
@@ -33,6 +35,7 @@ import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityHeadLookPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityMetadataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPlayerPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
@@ -56,6 +59,7 @@ public class CyanPlayer extends CyanHuman implements Player{
         this.chunks = new ArrayList<ChunkCoords>();
         setSettings(ClientSettings.getDEFAULT());
         ((DisplayNameComponent) getComponentManager().getComponent("displayName")).setDisplayName(profile.getName());
+        ((DisplayNameComponent) getComponentManager().getComponent("displayName")).setRenderDisplayName(true);
         // updateChunks();
     }
 
@@ -110,6 +114,8 @@ public class CyanPlayer extends CyanHuman implements Player{
             chunks.remove(key);
         }
         }
+        
+        
         prev.clear();
     }
 
@@ -147,7 +153,10 @@ public class CyanPlayer extends CyanHuman implements Player{
         }
         String format = name + ": " + message; // TODO Event's
         ServerChatPacket packet = new ServerChatPacket(format);
-        getPlayerNetwork().sendPacket(packet);
+        //getPlayerNetwork().sendPacket(packet);
+        for(Player player: getWorld().getPlayers()){
+            ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
+        }
 
         server.getConsoleCommandSender().sendMessage(format);
     }
@@ -187,6 +196,14 @@ public class CyanPlayer extends CyanHuman implements Player{
         // Chunks
         updateChunks();
 
+        // Send change metadata's
+        if(((CyanMetadataMap) metadata).getChanges() != null){
+        EntityMetadata[] changes = ((CyanMetadataMap) metadata).getChanges();
+        if (changes.length > 0) {
+            getPlayerNetwork().sendPacket(new ServerEntityMetadataPacket(getEntityID(), changes));
+        }
+        }
+        
         // Entities
         List<Entity> list = new ArrayList<Entity>();
         List<Integer> destroy = new ArrayList<Integer>();
@@ -219,7 +236,7 @@ public class CyanPlayer extends CyanHuman implements Player{
         }
 
         // Add know entities
-        for (Entity entity : getWorld().getEntities()) {
+        for (Entity entity : getChunk().getEntities()) {
             // if(SeeEntity(entity))
             if (!knowEntities.contains(entity)) {
                 knowEntities.add(entity);
@@ -293,15 +310,18 @@ public class CyanPlayer extends CyanHuman implements Player{
     @Override
     public void sendChunk(Chunk chunk) {
         CyanChunk cchunk = (CyanChunk) chunk;
-        ServerChunkDataPacket packet = new ServerChunkDataPacket(chunk.getX(), chunk.getZ(), cchunk.getSections());
+        ServerChunkDataPacket packet = new ServerChunkDataPacket(chunk.getX(), chunk.getZ(), cchunk.getSections(), chunk.getBiomeData());
         getPlayerNetwork().sendPacket(packet);
     }
     
     @Override
     public List<Packet> getSpawnPackets() {
         List<Packet> list = new ArrayList<Packet>();
-        list.add(new ServerSpawnPlayerPacket(getEntityID(), getUniqueId(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), 0 , metadata));
+        list.add(new ServerSpawnPlayerPacket(getEntityID(), getUniqueId(), getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch(), 0 , ((CyanMetadataMap) getMetadata()).getMetaArray()));
         list.add(new ServerEntityHeadLookPacket(getEntityID(), getLocation().getYaw()));
+        
+        //Inventory and etc.
+        
         // TODO
         return list;
     }
@@ -321,5 +341,12 @@ public class CyanPlayer extends CyanHuman implements Player{
 
     public void setSettings(ClientSettings settings) {
         this.settings = settings;
+    }
+
+    @Override
+    public void updateChunk(Chunk chunk) {
+        CyanChunk cchunk = (CyanChunk) chunk;
+        ServerChunkDataPacket packet = new ServerChunkDataPacket(chunk.getX(), chunk.getZ(), cchunk.getSections());
+        getPlayerNetwork().sendPacket(packet);
     }
 }

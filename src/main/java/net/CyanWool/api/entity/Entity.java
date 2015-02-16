@@ -1,6 +1,8 @@
 package net.CyanWool.api.entity;
 
 import net.CyanWool.api.entity.component.ComponentManager;
+import net.CyanWool.api.entity.meta.MetadataMap;
+import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 
@@ -47,4 +49,14 @@ public interface Entity {
     public int getLivedTicks();
 
     public ComponentManager getComponentManager();
+    
+    public MetadataMap getMetadata();
+    
+    public boolean isMoveable();
+    
+    public void setMoveable(boolean flag);
+
+    public Chunk getChunk();
+    
+    public void setOnGround(boolean onGround);
 }

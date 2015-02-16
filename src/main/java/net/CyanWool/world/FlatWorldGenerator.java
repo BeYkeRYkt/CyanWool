@@ -1,5 +1,7 @@
 package net.CyanWool.world;
 
+import net.CyanWool.api.Register;
+import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldGenerator;
@@ -29,10 +31,11 @@ public class FlatWorldGenerator implements WorldGenerator {
                     else if (y < 55)
                         id = 2;
 
-                    chunk.setBlock(x, y, z, id);
+                    BlockType type = Register.getBlock(id, 1);
+                    chunk.setBlock(x, y, z, type);
                     //chunk.setMetaData(x, z, y, 0);
-                    chunk.setBlockLight(x, y, z, 0);
-                    chunk.setSkyLight(x, y, z, 15);
+                    //chunk.setBlockLight(x, y, z, 15);
+                    //chunk.setSkyLight(x, y, z, 15);
                 }
             }
         }

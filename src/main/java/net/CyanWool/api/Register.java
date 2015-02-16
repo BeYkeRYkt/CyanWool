@@ -13,7 +13,7 @@ public class Register {
     private static List<ItemType> items = new ArrayList<ItemType>();
 
     public static boolean registerItem(ItemType item) {
-        if (!hasItem(item.getId())) {
+        if (!hasItem(item.getId(), item.getData())) {
             items.add(item);
             return true;
         }
@@ -21,25 +21,25 @@ public class Register {
     }
 
     public static boolean registerBlock(BlockType block) {
-        if (!hasBlock(block.getID())) {
+        if (!hasBlock(block.getID(), block.getData())) {
             blocks.add(block);
             return true;
         }
         return false;
     }
 
-    public static boolean hasItem(int id) {
+    public static boolean hasItem(int id, int data) {
         for (ItemType item : items) {
-            if (item.getId() == id) {
+            if (item.getId() == id && item.getData() == data) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean hasBlock(int id) {
+    public static boolean hasBlock(int id, int data) {
         for (BlockType block : blocks) {
-            if (block.getID() == id) {
+            if (block.getID() == id && block.getData() == data) {
                 return true;
             }
         }
@@ -77,7 +77,7 @@ public class Register {
     public static ItemType getItemType(int id, int data) {
         for (ItemType item : items) {
             if (item.getId() == id && item.getData() == data) {
-                return item.cloneItem();
+                return item;
             }
         }
         return new ItemType(0, 0, (short) 0, 0, false);
@@ -90,7 +90,7 @@ public class Register {
     public static BlockType getBlock(int id, int data) {
         for (BlockType block : blocks) {
             if (block.getID() == id && block.getData() == data) {
-                return block.cloneBlock();
+                return block;
             }
         }
         return blocks.get(0);

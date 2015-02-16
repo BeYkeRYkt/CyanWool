@@ -73,7 +73,9 @@ public class MovementComponent extends Component {
     @Override
     public void update() {
         if(needUpdate){
+            if(getEntity().isMoveable()){
             getEntity().getLocation().add(getVector());
+            }
             needUpdate = false;
         }
     }

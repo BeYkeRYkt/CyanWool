@@ -14,7 +14,7 @@ import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 import net.CyanWool.block.CyanBlock;
 
-public class CyanChunk implements Chunk {
+public class CyanChunk implements Chunk{
 
     private World world;
     private int x;
@@ -23,7 +23,9 @@ public class CyanChunk implements Chunk {
     private final List<Entity> entities = new ArrayList<Entity>();
     private boolean isLoaded;
     private Section[] sections;
-
+    private byte[] biomes;
+    private boolean needGenerate;
+    
     public CyanChunk(World world, int x, int z) {
         this.world = world;
         this.x = x;
@@ -42,9 +44,13 @@ public class CyanChunk implements Chunk {
     }
 
     @Override
-    public Block getBlock(int x, int y, int z) {
+    public Block getBlock(int x, int y, int z) {        
         int id = getSection(y).getBlocks().getBlock(x, y, z);
         int data = getSection(y).getBlocks().getData(x, y, z);
+        //Checking...
+        if(getSection(y).getNotSupportData().getData(x, y, z) != 0){
+            data = getSection(y).getNotSupportData().getData(x, y, z);
+        }
         BlockType type = Register.getBlock(id, data);
         Location location = new Location(world, x, y, z);
         CyanBlock block = new CyanBlock(location, type);
@@ -101,7 +107,12 @@ public class CyanChunk implements Chunk {
 
     @Override
     public void setBlock(int x, int y, int z, BlockType type) {
-        getSection(y).getBlocks().setBlockAndData(x, y, z, type.getID(), type.getData());
+        int data = type.getData();
+        if(data > type.getMaxData()){
+            getSection(y).getNotSupportData().setData(x, y, z, data);
+            data = 0;
+        }
+        getSection(y).getBlocks().setBlockAndData(x, y, z, type.getID(), data);
     }
 
     @Override
@@ -149,7 +160,7 @@ public class CyanChunk implements Chunk {
             }
         }
 
-        // biomes = new byte[WIDTH * HEIGHT];
+        biomes = new byte[WIDTH * HEIGHT];
         // heightMap = new byte[WIDTH * HEIGHT];
         // tile entity initialization
         //for (int i = 0; i < sections.length; ++i) {
@@ -168,7 +179,6 @@ public class CyanChunk implements Chunk {
 
     private Section getSection(int y) {
         int idx = y >> 4;
-
         if (y < 0 || y >= DEPTH || !this.isLoaded || idx >= this.sections.length) {
             return null;
         }
@@ -187,5 +197,20 @@ public class CyanChunk implements Chunk {
     @Override
     public void setLoaded(boolean b) {
         this.isLoaded = b;
+    }
+
+    @Override
+    public byte[] getBiomeData() {
+        return biomes;
+    }
+
+    @Override
+    public void setNeedGenerate(boolean flag) {
+        this.needGenerate = flag;
+    }
+
+    @Override
+    public boolean isNeedGenerate() {
+        return needGenerate;
     }
 }

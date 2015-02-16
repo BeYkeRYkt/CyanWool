@@ -17,7 +17,7 @@ import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
 import net.CyanWool.api.inventory.recipes.SimpleRecipeManager;
 import net.CyanWool.api.plugin.PluginManager;
-import net.CyanWool.api.theards.SchedulerThread;
+import net.CyanWool.api.task.TaskManager;
 import net.CyanWool.api.utils.ServerConfiguration;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
@@ -52,7 +52,7 @@ public class CyanServer implements Server {
     private CommandManager cmdManager;
     private PluginManager pluginManager;
 
-    private SchedulerThread schedulert;
+    private TaskManager taskManager;
     private ConsoleThread console;
     private PlayerManager playerManager;
     private EntityManager entityManager;
@@ -79,6 +79,7 @@ public class CyanServer implements Server {
         this.config = new ServerConfiguration(configFile);
         this.config.init();
 
+        registerVanilla();
         this.playerManager = new PlayerManager(this);
         this.entityManager = new EntityManager();
         this.recipeManager = new SimpleRecipeManager();
@@ -98,10 +99,10 @@ public class CyanServer implements Server {
 
         this.worlds = new WorldManager(this, new CyanWorldIOService());
         this.cmdManager = new CommandManager();
+        this.taskManager = new TaskManager(this);
+        this.taskManager.start();
         this.pluginManager = new PluginManager();
-        this.schedulert = new SchedulerThread(this);
-        this.schedulert.start();
-        
+
         this.pluginManager.loadPlugins();
 
         // load worlds...
@@ -166,9 +167,9 @@ public class CyanServer implements Server {
     public void shutdown() {
         getLogger().info("Shutdown!");
 
-        schedulert.shutdown();
+        taskManager.stop();
         getLogger().info("Scheduler's shutdown!");
-        
+
         pluginManager.unloadPlugins();
         getLogger().info("Plugins unloaded!");
 
@@ -250,20 +251,9 @@ public class CyanServer implements Server {
 
     private void loadWorlds() {
         // TODO: TESTING!
-        Register.registerItem(new ItemGrass());
-        Register.registerItem(new ItemDirt());
-        Register.registerItem(new ItemBedrock());
-
-        Register.registerBlock(new BlockAir());
-        Register.registerBlock(new BlockDirt());
-        Register.registerBlock(new BlockGrass());
-        Register.registerBlock(new BlockBedrock());
-        Register.registerBlock(new BlockGrassTest());
-
         World world = new CyanWorld("world", new CyanPlayerIOService());
         getWorldManager().loadWorld(world);
         getWorldManager().addWorld(world);
-        //world.getChunkManager().loadChunk(world.getSpawnLocation().getBlockX() >> 4, world.getSpawnLocation().getBlockZ() >> 4, true);
 
         int centerX = world.getSpawnLocation().getBlockX() >> 4;
         int centerZ = world.getSpawnLocation().getBlockZ() >> 4;
@@ -273,7 +263,7 @@ public class CyanServer implements Server {
         for (int x = centerX - radius; x <= centerX + radius; ++x) {
             for (int z = centerZ - radius; z <= centerZ + radius; ++z) {
                 ++current;
-                world.getChunkManager().loadChunk(x, z, true);
+                world.getChunkManager().loadChunk(x, z);
                 // spawnChunkLock.acquire(new GlowChunk.Key(x, z));
                 if (System.currentTimeMillis() >= loadTime + 1000) {
                     int progress = 100 * current / total;
@@ -287,5 +277,18 @@ public class CyanServer implements Server {
     @Override
     public RecipeManager getRecipeManager() {
         return recipeManager;
+    }
+
+    private void registerVanilla() {
+        // TODO: TESTING!
+        Register.registerItem(new ItemGrass());
+        Register.registerItem(new ItemDirt());
+        Register.registerItem(new ItemBedrock());
+
+        Register.registerBlock(new BlockAir());
+        Register.registerBlock(new BlockDirt());
+        Register.registerBlock(new BlockGrass());
+        Register.registerBlock(new BlockBedrock());
+        Register.registerBlock(new BlockGrassTest());
     }
 }

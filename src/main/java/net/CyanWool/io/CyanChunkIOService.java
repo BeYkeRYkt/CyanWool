@@ -37,6 +37,7 @@ public class CyanChunkIOService implements ChunkIOService {
     @Override
     public Chunk readChunk(int x, int z) {
         CyanChunk chunk = new CyanChunk(world, x, z);
+        chunk.setNeedGenerate(true); //TODO
         Section sectionsChunk[] = new Section[16];
         //Preview loading
         for (int i = 0; i < 16; i++) {
@@ -97,6 +98,7 @@ public class CyanChunkIOService implements ChunkIOService {
         chunk.initializeSections(sectionsChunk);
         //TODO: Entity, biomes and etc.
         
+        chunk.setNeedGenerate(false);
         chunk.setLoaded(true);
         return chunk;
     }
