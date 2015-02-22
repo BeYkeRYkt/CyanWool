@@ -10,9 +10,9 @@ public interface EntityLivingBase extends Entity {
 
     public boolean canAttackWithItem();
 
-    public void damage(double amount);
+    public void damage(float amount);
 
-    public void damage(double amount, Entity damaged);
+    public void damage(float amount, Entity damaged);
 
     public void addHealth(int i);
 
@@ -43,4 +43,31 @@ public interface EntityLivingBase extends Entity {
     public boolean playTalkSound();
 
     public boolean playDeathSound();
+
+    // for systems components
+    public float getMaxHealth();
+
+    public boolean isJumping();
+
+    public void setHealth(float health);
+
+    public float getHealth();
+
+    public void setJumping(boolean flag);
+
+    public void setTarget(EntityLivingBase entity);
+
+    public void setMaxHealth(float health);
+
+    public EntityLivingBase getTarget();
+
+    public String getDisplayName();
+
+    public void setDisplayName(String name);
+
+    public boolean hasDisplayName();
+
+    public boolean isRenderDisplayName();
+
+    public void setRenderDisplayName(boolean flag);
 }

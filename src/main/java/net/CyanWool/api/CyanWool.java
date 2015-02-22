@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ICommandSender;
-import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
 import net.CyanWool.api.plugin.PluginManager;
@@ -110,10 +109,6 @@ public class CyanWool {
 
     public static WorldManager getWordManager() {
         return getServer().getWorldManager();
-    }
-
-    public static EntityManager getEntityManager() {
-        return getServer().getEntityManager();
     }
 
     public static RecipeManager getRecipeManager() {

@@ -137,7 +137,7 @@ public class Location implements Cloneable {
             throw new Error(e);
         }
     }
-    
+
     public double distance(Location o) {
         return Math.sqrt(distanceSquared(o));
     }
@@ -153,7 +153,7 @@ public class Location implements Cloneable {
 
         return NumberConversions.square(x - o.x) + NumberConversions.square(y - o.y) + NumberConversions.square(z - o.z);
     }
-    
+
     public Vector getDirection() {
         Vector vector = new Vector();
 
@@ -175,7 +175,6 @@ public class Location implements Cloneable {
          * Sin = Opp / Hyp
          * Cos = Adj / Hyp
          * Tan = Opp / Adj
-         *
          * x = -Opp
          * z = Adj
          */

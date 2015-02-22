@@ -37,6 +37,8 @@ public interface Chunk {
 
     public void setBlock(int x, int y, int z, int type);
 
+    public void setBlock(int x, int y, int z, int type, int data);
+
     public int getMaxHeight();
 
     // public void generate();
@@ -46,8 +48,16 @@ public interface Chunk {
     public void setLoaded(boolean b);
 
     public byte[] getBiomeData();
-    
+
     public void setNeedGenerate(boolean flag);
-    
+
     public boolean isNeedGenerate();
+
+    public boolean isLocked();
+
+    public void setLocked(boolean flag);
+
+    public ChunkCoords getChunkCoords();
+
+    public int getUsedPlayers();
 }

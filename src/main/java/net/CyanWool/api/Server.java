@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ICommandSender;
-import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
 import net.CyanWool.api.plugin.PluginManager;
@@ -54,8 +53,6 @@ public interface Server {
     public BufferedImage getIcon();
 
     // public PlayerManager getPlayerManager();
-
-    public EntityManager getEntityManager();
 
     public RecipeManager getRecipeManager();
 }

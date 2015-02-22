@@ -1,9 +1,8 @@
-package net.CyanWool.api.entity.component.basics;
+package net.CyanWool.api.entity.component;
 
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.entity.ai.EntityAITasks;
-import net.CyanWool.api.entity.component.Component;
 
 /**
  * Исскуственный интеллект.

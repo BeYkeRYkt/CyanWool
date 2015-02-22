@@ -1,7 +1,6 @@
-package net.CyanWool.api.entity.component.basics;
+package net.CyanWool.api.entity.component;
 
 import net.CyanWool.api.entity.EntityLivingBase;
-import net.CyanWool.api.entity.component.Component;
 
 /**
  * Сытость для игрока
@@ -9,7 +8,7 @@ import net.CyanWool.api.entity.component.Component;
  * @author DinDev
  *
  */
-public class FoodComponent extends Component {
+public class FoodComponent extends SystemComponent {
 
     private int maxFoodLevel;
     private int foodLevel;

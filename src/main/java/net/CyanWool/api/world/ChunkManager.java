@@ -7,12 +7,12 @@ public interface ChunkManager {
     public Chunk getChunk(int x, int z);
 
     public boolean isChunkLoaded(int x, int z);
-    
+
     public boolean isChunkInUse(int x, int z);
 
     public boolean loadChunk(int x, int z);
-    
-    public void saveChunk(Chunk chunk);
+
+    public void unloadChunk(Chunk chunk);
 
     public void generateChunk(Chunk chunk);
 
@@ -23,4 +23,10 @@ public interface ChunkManager {
     public Chunk getChunkFromBlockCoords(int x, int z);
 
     public void saveChunks();
+
+    public void onTick();
+
+    public void loadSpawnChunks();
+
+    public boolean isLoadedSpawnChunks();
 }

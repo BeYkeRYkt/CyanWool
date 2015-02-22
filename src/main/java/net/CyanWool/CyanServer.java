@@ -234,11 +234,6 @@ public class CyanServer implements Server {
         return icon;
     }
 
-    @Override
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
     // NOT API
 
     public PlayerManager getPlayerManager() {
@@ -254,24 +249,6 @@ public class CyanServer implements Server {
         World world = new CyanWorld("world", new CyanPlayerIOService());
         getWorldManager().loadWorld(world);
         getWorldManager().addWorld(world);
-
-        int centerX = world.getSpawnLocation().getBlockX() >> 4;
-        int centerZ = world.getSpawnLocation().getBlockZ() >> 4;
-        int radius = 4 * 8 / 3;
-        long loadTime = System.currentTimeMillis();
-        int total = (radius * 2 + 1) * (radius * 2 + 1), current = 0;
-        for (int x = centerX - radius; x <= centerX + radius; ++x) {
-            for (int z = centerZ - radius; z <= centerZ + radius; ++z) {
-                ++current;
-                world.getChunkManager().loadChunk(x, z);
-                // spawnChunkLock.acquire(new GlowChunk.Key(x, z));
-                if (System.currentTimeMillis() >= loadTime + 1000) {
-                    int progress = 100 * current / total;
-                    getLogger().info("Preparing spawn for " + world.getName() + ": " + progress + "%");
-                    loadTime = System.currentTimeMillis();
-                }
-            }
-        }
     }
 
     @Override

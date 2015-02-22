@@ -32,9 +32,9 @@ public interface Entity {
 
     public void kill();
 
-    public void setInvisible(boolean flag);
-
     public void onTick();
+
+    public void setInvisible(boolean flag);
 
     public int getFireTicks();
 
@@ -49,14 +49,31 @@ public interface Entity {
     public int getLivedTicks();
 
     public ComponentManager getComponentManager();
-    
+
     public MetadataMap getMetadata();
-    
+
     public boolean isMoveable();
-    
+
     public void setMoveable(boolean flag);
 
     public Chunk getChunk();
-    
+
     public void setOnGround(boolean onGround);
+
+    // For movement component
+    public void setSneaking(boolean flag);
+
+    public void setSprinting(boolean flag);
+
+    public void setPassenger(Entity entity);
+
+    public Entity getPassenger();
+
+    public Entity getVehicle();
+
+    public void setVehicle(Entity entity);
+
+    public boolean canSeeEntity(Entity entity);
+
+    public boolean canSeeLocation(Location location);
 }

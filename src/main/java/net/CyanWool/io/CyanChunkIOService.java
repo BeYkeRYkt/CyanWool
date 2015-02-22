@@ -37,9 +37,9 @@ public class CyanChunkIOService implements ChunkIOService {
     @Override
     public Chunk readChunk(int x, int z) {
         CyanChunk chunk = new CyanChunk(world, x, z);
-        chunk.setNeedGenerate(true); //TODO
+        chunk.setNeedGenerate(true); // TODO
         Section sectionsChunk[] = new Section[16];
-        //Preview loading
+        // Preview loading
         for (int i = 0; i < 16; i++) {
             byte[] blockLight = new byte[16 * 16 * 16];
             byte[] skyLight = new byte[16 * 16 * 16];
@@ -48,16 +48,16 @@ public class CyanChunkIOService implements ChunkIOService {
             Section section = new Section(i, block, new NibbleArray3d(blockLight), new NibbleArray3d(skyLight));
             sectionsChunk[i] = section;
         }
-        
+
         RegionFile region = RegionFileCache.getRegionFile(dir, x, z);
         int regionX = x & 31;
         int regionZ = z & 31;
         if (!region.hasChunk(regionX, regionZ)) {
             chunk.initializeSections(sectionsChunk);
-            //TODO: Entity, biomes and etc.
-            
+            // TODO: Entity, biomes and etc.
+
             chunk.setLoaded(true);
-            return chunk; //TODO: maybe ?
+            return chunk; // TODO: maybe ?
         }
 
         DataInputStream in = region.getChunkDataInputStream(regionX, regionZ);
@@ -74,7 +74,7 @@ public class CyanChunkIOService implements ChunkIOService {
         CompoundTag level = compoundTag.get("Level");
         ListTag sections = level.get("Sections");
         ByteArrayTag biomes = level.get("Biomes");
-        
+
         for (int i = 0; i < sections.size(); i++) {
             CompoundTag chunkz = sections.get(i);
             ByteArrayTag blocks = chunkz.get("Blocks");
@@ -96,8 +96,8 @@ public class CyanChunkIOService implements ChunkIOService {
             sectionsChunk[i] = section;
         }
         chunk.initializeSections(sectionsChunk);
-        //TODO: Entity, biomes and etc.
-        
+        // TODO: Entity, biomes and etc.
+
         chunk.setNeedGenerate(false);
         chunk.setLoaded(true);
         return chunk;

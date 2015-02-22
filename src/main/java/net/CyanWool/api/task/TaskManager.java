@@ -9,22 +9,22 @@ import java.util.concurrent.TimeUnit;
 
 import net.CyanWool.api.Server;
 import net.CyanWool.api.theards.AsyncSchedulerThread;
-import net.CyanWool.api.world.World;
 
 public class TaskManager {
-    
+
     private static final int PULSE_EVERY = 50;
     private final Server server;
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final List<Task> newTasks = new ArrayList<Task>();
     private final List<Task> tasks = new ArrayList<Task>();
-    
+
     public TaskManager(Server server) {
         this.server = server;
     }
-    
+
     public void start() {
         executor.scheduleAtFixedRate(new Runnable() {
+
             @Override
             public void run() {
                 try {
@@ -35,20 +35,20 @@ public class TaskManager {
             }
         }, 0, PULSE_EVERY, TimeUnit.MILLISECONDS);
     }
-    
+
     public void startTask(Task task) {
         synchronized (newTasks) {
             newTasks.add(task);
         }
     }
-    
-    public void startAsyncTask(Task task){
-        new AsyncSchedulerThread(task).start(); //TODO
+
+    public void startAsyncTask(Task task) {
+        new AsyncSchedulerThread(task).start(); // TODO
     }
-    
+
     public void pulse() {
         // handle incoming messages
-        //server.getSessionRegistry().pulse();
+        // server.getSessionRegistry().pulse();
 
         // handle tasks
         synchronized (newTasks) {
@@ -58,18 +58,13 @@ public class TaskManager {
             newTasks.clear();
         }
 
-        for (Iterator<Task> it = tasks.iterator(); it.hasNext(); ) {
+        for (Iterator<Task> it = tasks.iterator(); it.hasNext();) {
             Task task = it.next();
             if (!task.pulse()) {
                 it.remove();
             }
         }
 
-        // handle general game logic
-        for(World w: server.getWorlds()){
-            w.onTick();
-        }
-        
     }
 
     public void stop() {
@@ -77,5 +72,4 @@ public class TaskManager {
         executor.shutdownNow();
     }
 
-    
 }

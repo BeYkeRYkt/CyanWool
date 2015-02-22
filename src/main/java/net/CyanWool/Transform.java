@@ -48,9 +48,9 @@ public class Transform {
         }
         return effectData;
     }
-    
-    public static MobType convertMobType(EntityType type){
-        if(MobType.valueOf(type.name()) != null){
+
+    public static MobType convertMobType(EntityType type) {
+        if (MobType.valueOf(type.name()) != null) {
             return MobType.valueOf(type.name());
         }
         return MobType.SQUID;

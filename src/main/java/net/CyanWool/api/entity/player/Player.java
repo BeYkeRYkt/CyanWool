@@ -45,6 +45,8 @@ public interface Player extends Human, ICommandSender {
     public void setTime(long time); // maybe sendTimeUpdate ?
 
     public void sendChunk(Chunk chunk);
-    
+
     public void updateChunk(Chunk chunk);
+
+    public void respawn();
 }

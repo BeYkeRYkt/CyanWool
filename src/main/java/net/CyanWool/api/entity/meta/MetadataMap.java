@@ -14,7 +14,7 @@ public interface MetadataMap {
 
     public void setBitOfInt(int id, int bit, boolean value);
 
-    //public EntityMetadata[] getMetadataArray();
+    // public EntityMetadata[] getMetadataArray();
 
-    //public EntityMetadata[] getChanges();
+    // public EntityMetadata[] getChanges();
 }

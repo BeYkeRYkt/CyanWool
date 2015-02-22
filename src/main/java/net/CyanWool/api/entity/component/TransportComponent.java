@@ -1,14 +1,13 @@
-package net.CyanWool.api.entity.component.basics;
+package net.CyanWool.api.entity.component;
 
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.entity.component.Component;
 
 /**
  * Транспортировка Entity
  * 
  * @author DinDev
  */
-public class TransportComponent extends Component {
+public class TransportComponent extends SystemComponent {
 
     private Entity vehicle;
     private Entity passenger;
@@ -36,7 +35,9 @@ public class TransportComponent extends Component {
 
     @Override
     public void update() {
-        getPassenger().teleport(getVehicle().getLocation());
+        if (getPassenger() != null) {
+            getPassenger().teleport(getVehicle().getLocation());
+        }
     }
 
     @Override

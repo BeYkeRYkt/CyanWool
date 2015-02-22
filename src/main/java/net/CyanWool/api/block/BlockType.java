@@ -9,7 +9,7 @@ import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
 
-public class BlockType { //??
+public class BlockType { // ??
 
     private int id;
     private int data;
@@ -45,8 +45,8 @@ public class BlockType { //??
     public int getData() {
         return data;
     }
-    
-    public void setData(int data){
+
+    public void setData(int data) {
         this.data = data;
     }
 
@@ -103,8 +103,8 @@ public class BlockType { //??
     public List<ItemStack> getDrop() {
         return drop;
     }
-    
-    public int getMaxData(){
+
+    public int getMaxData() {
         return maxData;
     }
 }

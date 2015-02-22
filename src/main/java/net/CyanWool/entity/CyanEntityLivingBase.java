@@ -3,14 +3,14 @@ package net.CyanWool.entity;
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
-import net.CyanWool.api.entity.component.basics.AIComponent;
-import net.CyanWool.api.entity.component.basics.AgeComponent;
-import net.CyanWool.api.entity.component.basics.DisplayNameComponent;
-import net.CyanWool.api.entity.component.basics.HealthComponent;
-import net.CyanWool.api.entity.component.basics.TransportComponent;
+import net.CyanWool.api.entity.component.AIComponent;
+import net.CyanWool.api.entity.component.AgeComponent;
+import net.CyanWool.api.entity.component.DisplayNameComponent;
+import net.CyanWool.api.entity.component.HealthComponent;
+import net.CyanWool.api.entity.component.MovementComponent;
 import net.CyanWool.api.world.Location;
 
-public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase {
+public abstract class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase {
 
     private SoundInfo damageSound;
     private SoundInfo deathSound;
@@ -21,23 +21,28 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
         getComponentManager().addComponent(new AgeComponent(this));
         getComponentManager().addComponent(new DisplayNameComponent(this));
         getComponentManager().addComponent(new AIComponent(this));
-        getComponentManager().addComponent(new TransportComponent(this));
-        //getComponentManager().addComponent(new HealthComponent(this, 20)); - for mobs
-        //getComponentManager().addComponent(new InventoryComponent(this, inv)); - 
+        getComponentManager().addComponent(new HealthComponent(this, 20));// for
+                                                                          // others
+                                                                          // mobs
+                                                                          // -
+                                                                          // change
+                                                                          // health
+        // getComponentManager().addComponent(new InventoryComponent(this,
+        // inv));
         // this.inventory =
         initMetadata();
     }
-    
+
     @Override
     protected void initMetadata() {
-        //super.initMetadata();
-        getMetadata().setMetadata(2, "");//Display name
-        getMetadata().setMetadata(3, (byte) 0);//Render name tag
-        getMetadata().setMetadata(6, (float) 20);//health
-        getMetadata().setMetadata(7, 0);//potion color
-        getMetadata().setMetadata(8, (byte) 0);//Is Potion Effect Ambient
-        getMetadata().setMetadata(9, 0);//Number of Arrows in Entity
-        getMetadata().setMetadata(15, (byte) 0);//No ai
+        // super.initMetadata();
+        getMetadata().setMetadata(2, "");// Display name
+        getMetadata().setMetadata(3, (byte) 0);// Render name tag
+        getMetadata().setMetadata(6, (float) 20);// health
+        getMetadata().setMetadata(7, 0);// potion color
+        getMetadata().setMetadata(8, (byte) 0);// Is Potion Effect Ambient
+        getMetadata().setMetadata(9, 0);// Number of Arrows in Entity
+        getMetadata().setMetadata(15, (byte) 0);// No ai
     }
 
     @Override
@@ -53,50 +58,41 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     }
 
     @Override
-    public void damage(double amount) {
+    public void damage(float amount) {
         this.damage(amount, null);
     }
 
     @Override
-    public void damage(double amount, Entity damaged) {
-        //setHealth((float) (getHealth() - amount));
-        if(getComponentManager().hasComponent("health")){
-            HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
-            component.setHealth(component.getHealth() - amount);
-            playDamageSound();
-        }
-        
+    public void damage(float amount, Entity damaged) {
+        setHealth(getHealth() - amount);
+        playDamageSound();
     }
 
     @Override
-    public synchronized void onTick() {
+    public void onTick() {
         super.onTick();
-        //age++;
-        
-        //if(isAIEnabled()){
-        //getTargetAITasks().onUpdateAI();
-        //getAITasks().onUpdateAI();
-        //}
-        //To components
-        
+        // age++;
+
+        // if(isAIEnabled()){
+        // getTargetAITasks().onUpdateAI();
+        // getAITasks().onUpdateAI();
+        // }
+        // To components
+
         // TODO
     }
 
-
     @Override
     public void addHealth(int i) {
-        if(getComponentManager().hasComponent("health")){
-            HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
-            component.setHealth(component.getHealth() + i);
-        }
+        setHealth(getHealth() + i);
     }
 
     @Override
-    public void onDeath() {  
+    public void onDeath() {
     }
 
     @Override
-    public void onWalking() {  
+    public void onWalking() {
     }
 
     @Override
@@ -140,7 +136,7 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public boolean playDamageSound() {
-        if(getDamageSound() != null){
+        if (getDamageSound() != null) {
             getWorld().playSound(getLocation(), getDamageSound().getSound(), getDamageSound().getVolume(), getDamageSound().getPitch());
             return true;
         }
@@ -149,7 +145,7 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public boolean playTalkSound() {
-        if(getTalkSound() != null){
+        if (getTalkSound() != null) {
             getWorld().playSound(getLocation(), getTalkSound().getSound(), getTalkSound().getVolume(), getTalkSound().getPitch());
             return true;
         }
@@ -158,7 +154,7 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
 
     @Override
     public boolean playDeathSound() {
-        if(getDeathSound() != null){
+        if (getDeathSound() != null) {
             getWorld().playSound(getLocation(), getDeathSound().getSound(), getDeathSound().getVolume(), getDeathSound().getPitch());
             return true;
         }
@@ -169,9 +165,91 @@ public class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase
     public boolean interact(EntityLivingBase interacter) {
         return false;
     }
-    
+
     @Override
     public float getEyeHeight() {
         return 0;
+    }
+
+    @Override
+    public float getMaxHealth() {
+        HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
+        return component.getMaxHealth();
+    }
+
+    @Override
+    public boolean isJumping() {
+        return false;
+    }
+
+    @Override
+    public void setHealth(float health) {
+        HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
+        component.setHealth(health);
+    }
+
+    @Override
+    public float getHealth() {
+        HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
+        return component.getHealth();
+    }
+
+    @Override
+    public void setJumping(boolean flag) {
+        MovementComponent component = (MovementComponent) getComponentManager().getComponent("movement");
+        component.setJumping(flag);
+    }
+
+    @Override
+    public void setTarget(EntityLivingBase entity) {
+        if (getComponentManager().hasComponent("ai")) {
+            AIComponent component = (AIComponent) getComponentManager().getComponent("ai");
+            component.setTarget(entity);
+        }
+    }
+
+    @Override
+    public void setMaxHealth(float health) {
+        HealthComponent component = (HealthComponent) getComponentManager().getComponent("health");
+        component.setMaxHealth(health);
+    }
+
+    @Override
+    public EntityLivingBase getTarget() {
+        if (getComponentManager().hasComponent("ai")) {
+            AIComponent component = (AIComponent) getComponentManager().getComponent("ai");
+            return component.getTarget();
+        }
+        return null;
+    }
+
+    @Override
+    public String getDisplayName() {
+        DisplayNameComponent component = (DisplayNameComponent) getComponentManager().getComponent("displayName");
+        return component.getDisplayName();
+    }
+
+    @Override
+    public void setDisplayName(String name) {
+        DisplayNameComponent component = (DisplayNameComponent) getComponentManager().getComponent("displayName");
+        component.setDisplayName(name);
+    }
+
+    @Override
+    public boolean hasDisplayName() {
+        DisplayNameComponent component = (DisplayNameComponent) getComponentManager().getComponent("displayName");
+        return component.hasDisplayName();
+    }
+
+    @Override
+    public boolean isRenderDisplayName() {
+        DisplayNameComponent component = (DisplayNameComponent) getComponentManager().getComponent("displayName");
+        return component.isRenderDisplayName();
+    }
+
+    @Override
+    public void setRenderDisplayName(boolean flag) {
+        DisplayNameComponent component = (DisplayNameComponent) getComponentManager().getComponent("displayName");
+        component.setRenderDisplayName(flag);
     }
 }

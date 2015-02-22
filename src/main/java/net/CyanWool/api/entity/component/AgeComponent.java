@@ -1,9 +1,8 @@
-package net.CyanWool.api.entity.component.basics;
+package net.CyanWool.api.entity.component;
 
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.entity.component.Component;
 
-public class AgeComponent extends Component {
+public class AgeComponent extends SystemComponent {
 
     private int age;
 

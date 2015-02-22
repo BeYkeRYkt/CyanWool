@@ -1,7 +1,6 @@
-package net.CyanWool.api.entity.component.basics;
+package net.CyanWool.api.entity.component;
 
 import net.CyanWool.api.entity.EntityLivingBase;
-import net.CyanWool.api.entity.component.Component;
 
 /**
  * Имя над головой для EntityLivingBase.
@@ -9,7 +8,7 @@ import net.CyanWool.api.entity.component.Component;
  * @author DinDev
  *
  */
-public class DisplayNameComponent extends Component {
+public class DisplayNameComponent extends SystemComponent {
 
     private String displayName;
     private String previousName;
@@ -35,12 +34,12 @@ public class DisplayNameComponent extends Component {
     public boolean hasDisplayName() {
         return getDisplayName() != null;
     }
-    
-    public boolean isRenderDisplayName(){
+
+    public boolean isRenderDisplayName() {
         return visibleName;
     }
-    
-    public void setRenderDisplayName(boolean flag){
+
+    public void setRenderDisplayName(boolean flag) {
         this.visibleName = flag;
     }
 
@@ -48,10 +47,12 @@ public class DisplayNameComponent extends Component {
     public String getID() {
         return "displayName";
     }
-    
+
     @Override
     public void update() {
-        getEntity().getMetadata().setMetadata(2, getDisplayName());
+        if (hasDisplayName()) {
+            getEntity().getMetadata().setMetadata(2, getDisplayName());
+        }
         getEntity().getMetadata().setMetadata(3, (byte) (visibleName ? 1 : 0));
     }
 

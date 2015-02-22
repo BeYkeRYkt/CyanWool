@@ -64,7 +64,9 @@ public final class ClientSettings {
         list.add(SkinPart.LEFT_SLEEVE);
         list.add(SkinPart.RIGHT_PANTS_LEG);
         list.add(SkinPart.RIGHT_SLEEVE);
-        ClientSettings settings = new ClientSettings("en_US", 8, ChatVisibility.FULL, true, list); //Normal - 8
+        ClientSettings settings = new ClientSettings("en_US", 8, ChatVisibility.FULL, true, list); // Normal
+                                                                                                   // -
+                                                                                                   // 8
         return settings;
     }
 

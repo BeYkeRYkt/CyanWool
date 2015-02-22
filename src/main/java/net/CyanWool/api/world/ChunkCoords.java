@@ -24,20 +24,27 @@ public class ChunkCoords {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        } else if (other == null || getClass() != other.getClass()) {
-            return false;
-        } else {
-            ChunkCoords chunk = (ChunkCoords) other;
-            return getX() == chunk.getX() && getZ() == chunk.getZ();
-        }
-    }
-    
-    @Override
     public int hashCode() {
-        return 31 * x + z;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + x;
+        result = prime * result + z;
+        return result;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ChunkCoords other = (ChunkCoords) obj;
+        if (x != other.x)
+            return false;
+        if (z != other.z)
+            return false;
+        return true;
+    }
 }

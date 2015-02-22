@@ -18,10 +18,9 @@ public class Section extends Chunk {
     public int getY() {
         return y;
     }
-    
-    public ShortArray3d getNotSupportData(){
+
+    public ShortArray3d getNotSupportData() {
         return data;
     }
 
-    
 }

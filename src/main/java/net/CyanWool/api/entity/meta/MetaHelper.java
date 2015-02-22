@@ -1,11 +1,13 @@
 package net.CyanWool.api.entity.meta;
 
 public class MetaHelper {
+
     public static final byte STATUS = 0;
     public static final byte ARMOR_STAND = 10;
     public static final byte HORSE = 16;
 
     public class StatusFlags {
+
         public static final int ON_FIRE = 0x01;
         public static final int SNEAKING = 0x02;
         public static final int SPRINTING = 0x08;
@@ -14,6 +16,7 @@ public class MetaHelper {
     }
 
     public class ArmorFlags {
+
         public static final int SMALL = 0x01;
         public static final int GRAVITY = 0x02;
         public static final int ARMS = 0x04;
@@ -21,6 +24,7 @@ public class MetaHelper {
     }
 
     public class HorseFlags {
+
         public static final int TAME = 0x02;
         public static final int SADDLE = 0x04;
         public static final int CHEST = 0x08;
@@ -31,6 +35,7 @@ public class MetaHelper {
     }
 
     public class ColorFlags {
+
         public static final byte WHITE = (byte) 0;
         public static final byte ORANGE = (byte) 1;
         public static final byte MAGENTA = (byte) 2;

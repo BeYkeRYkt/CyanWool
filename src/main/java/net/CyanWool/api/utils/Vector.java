@@ -5,7 +5,7 @@ import java.util.Random;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 
-public class Vector{
+public class Vector {
 
     private static Random random = new Random();
     private static double epsilon = 0.000001;
@@ -84,7 +84,6 @@ public class Vector{
     public double distance(Vector o) {
         return Math.sqrt(NumberConversions.square(x - o.x) + NumberConversions.square(y - o.y) + NumberConversions.square(z - o.z));
     }
-
 
     public double distanceSquared(Vector o) {
         return NumberConversions.square(x - o.x) + NumberConversions.square(y - o.y) + NumberConversions.square(z - o.z);
@@ -167,7 +166,6 @@ public class Vector{
         return x >= min.x && x <= max.x && y >= min.y && y <= max.y && z >= min.z && z <= max.z;
     }
 
-    
     public boolean isInSphere(Vector origin, double radius) {
         return (NumberConversions.square(origin.x - x) + NumberConversions.square(origin.y - y) + NumberConversions.square(origin.z - z)) <= NumberConversions.square(radius);
     }
@@ -210,7 +208,7 @@ public class Vector{
         this.x = x;
         return this;
     }
-    
+
     public Vector setY(int y) {
         this.y = y;
         return this;
@@ -220,7 +218,6 @@ public class Vector{
         this.y = y;
         return this;
     }
-
 
     public Vector setY(float y) {
         this.y = y;

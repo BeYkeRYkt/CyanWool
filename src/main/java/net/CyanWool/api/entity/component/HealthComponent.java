@@ -1,39 +1,41 @@
-package net.CyanWool.api.entity.component.basics;
+package net.CyanWool.api.entity.component;
 
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.entity.component.Component;
 
 /**
  * Здоровье Entity
  * 
  * @author DinDev
  */
-public class HealthComponent extends Component {
+public class HealthComponent extends SystemComponent {
 
-    private double maxHealth;
-    private double health;
+    private float maxHealth;
+    private float health;
     private boolean needUpdate;
 
-    public HealthComponent(Entity entity, double maxHealth) {
+    public HealthComponent(Entity entity, float maxHealth) {
         super(entity);
         this.maxHealth = maxHealth;
         this.health = maxHealth;
     }
 
-    public double getMaxHealth() {
+    public float getMaxHealth() {
         return maxHealth;
     }
 
-    public void setMaxHealth(double maxHealth) {
+    public void setMaxHealth(float maxHealth) {
         this.maxHealth = maxHealth;
+        if (getHealth() > getMaxHealth()) {
+            setHealth(maxHealth);
+        }
         this.needUpdate = true;
     }
 
-    public double getHealth() {
+    public float getHealth() {
         return health;
     }
 
-    public void setHealth(double health) {
+    public void setHealth(float health) {
         this.health = health;
         this.needUpdate = true;
     }
@@ -42,7 +44,7 @@ public class HealthComponent extends Component {
     public String getID() {
         return "health";
     }
-    
+
     @Override
     public void update() {
         getEntity().getMetadata().setMetadata(6, this.health = this.maxHealth);
@@ -52,8 +54,8 @@ public class HealthComponent extends Component {
     public boolean autoUpdate() {
         return true;
     }
-    
-    public boolean isNeedUpdate(){
+
+    public boolean isNeedUpdate() {
         return needUpdate;
     }
 

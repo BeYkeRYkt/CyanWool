@@ -14,11 +14,11 @@ public class VersionCommand extends Command {
     @Override
     public void execute(ICommandSender sender, String[] args) {
         String version = "";
-        
+
         if (sender.isPlayer()) {
-            version = ChatColors.WHITE + "This server is running " + ChatColors.AQUA + CyanWool.getModName() + ChatColors.WHITE + " version " + ChatColors.AQUA + CyanWool.getModVersion() + ChatColors.WHITE + " (Minecraft version: " + ChatColors.AQUA + CyanWool.getMCVersion() + ChatColors.WHITE + ")"; 
-        }else{
-            version = "This server is running " + CyanWool.getModName() + " version " + CyanWool.getModVersion() + " (Minecraft version: " + CyanWool.getMCVersion() + ")"; 
+            version = ChatColors.WHITE + "This server is running " + ChatColors.AQUA + CyanWool.getModName() + ChatColors.WHITE + " version " + ChatColors.AQUA + CyanWool.getModVersion() + ChatColors.WHITE + " (Minecraft version: " + ChatColors.AQUA + CyanWool.getMCVersion() + ChatColors.WHITE + ")";
+        } else {
+            version = "This server is running " + CyanWool.getModName() + " version " + CyanWool.getModVersion() + " (Minecraft version: " + CyanWool.getMCVersion() + ")";
         }
         sender.sendMessage(version);
     }

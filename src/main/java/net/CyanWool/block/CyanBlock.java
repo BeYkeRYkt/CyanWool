@@ -6,6 +6,7 @@ import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.Sound;
+import net.CyanWool.api.world.World;
 
 public class CyanBlock implements Block {
 
@@ -69,6 +70,18 @@ public class CyanBlock implements Block {
     @Override
     public Block getRelative(BlockSide side) {
         return getRelative(side.getX(), side.getY(), side.getZ());
+    }
+
+    @Override
+    public void transformToFallingBlock() {
+        if (getRelative(0, -1, 0).getBlockType().getID() == 0) {
+            getWorld().spawnFallingBlock(getLocation(), getBlockType());
+        }
+    }
+
+    @Override
+    public World getWorld() {
+        return getLocation().getWorld();
     }
 
 }

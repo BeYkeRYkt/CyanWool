@@ -17,8 +17,9 @@ public class ServerConfiguration {
     private boolean online_mode;
     private int maxplayers;
     private String motd;
-    // private int distance; //DEV
+    private int view;
 
+    // private int distance; //DEV
 
     // and more others...
 
@@ -44,6 +45,7 @@ public class ServerConfiguration {
             config.set("port", getPort());
             config.set("online-mode", isOnlineMode()); // for test
             config.set("max-players", getMaxPlayers());
+            config.set("view-distance", getViewDistance());
             config.set("motd", getMotd());
             config.save(configFile);
         } catch (IOException e) {
@@ -58,6 +60,7 @@ public class ServerConfiguration {
             config.set("port", 25565);
             config.set("online-mode", false); // for test
             config.set("max-players", 20);
+            config.set("view-distance", 8);
             config.set("motd", "CyanWool Server!");
             config.save(configFile);
         } catch (IOException e) {
@@ -90,6 +93,9 @@ public class ServerConfiguration {
         // set max-players
         int max = Integer.parseInt(config.getString("max-players"));
         this.setMaxPlayers(max);
+
+        int viewDistance = Integer.parseInt(config.getString("max-players"));
+        this.setViewDistance(viewDistance);
 
         // set motd
         String motd = config.getString("motd");
@@ -126,5 +132,13 @@ public class ServerConfiguration {
 
     public void setMotd(String motd) {
         this.motd = motd;
+    }
+
+    public int getViewDistance() {
+        return this.view;
+    }
+
+    public void setViewDistance(int view) {
+        this.view = view;
     }
 }

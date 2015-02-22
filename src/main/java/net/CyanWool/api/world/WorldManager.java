@@ -46,7 +46,7 @@ public class WorldManager {
         WorldThread thread = new WorldThread(world);
         we.setTask(thread);
         worldsEntry.add(we);
-        //we.getTask().start();
+        we.getTask().start();
         server.getLogger().info("Added new world: " + world.getName());
         return true;
     }

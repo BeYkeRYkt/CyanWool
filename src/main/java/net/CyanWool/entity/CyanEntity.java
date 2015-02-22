@@ -7,7 +7,8 @@ import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.component.ComponentManager;
-import net.CyanWool.api.entity.component.basics.MovementComponent;
+import net.CyanWool.api.entity.component.MovementComponent;
+import net.CyanWool.api.entity.component.TransportComponent;
 import net.CyanWool.api.entity.meta.MetaHelper;
 import net.CyanWool.api.entity.meta.MetadataMap;
 import net.CyanWool.api.world.Chunk;
@@ -24,7 +25,7 @@ import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityRotationP
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityTeleportPacket;
 import org.spacehq.packetlib.packet.Packet;
 
-public class CyanEntity implements Entity {
+public abstract class CyanEntity implements Entity {
 
     private boolean moved;
     private boolean teleported;
@@ -32,7 +33,7 @@ public class CyanEntity implements Entity {
 
     private Location location;
     private Location prevLoc;
-    private boolean isAlive;
+    protected boolean isAlive;
 
     private int fireTicks;
     private int entityId;
@@ -41,32 +42,36 @@ public class CyanEntity implements Entity {
     private int livedTicks;
 
     private ComponentManager component;
-    
-    //TODO: Metadata
+
+    // TODO: Metadata
     protected MetadataMap metadata;
     private boolean moveable;
 
     public CyanEntity(Location location) {
+        this.isAlive = true;
         this.prevLoc = location.clone();
         this.location = location.clone();
         this.component = new ComponentManager(this);
-        this.metadata = new CyanMetadataMap();        
+        this.metadata = new CyanMetadataMap();
         getComponentManager().addComponent(new MovementComponent(this));
-        
-        //CyanWool.getEntityManager().register(this);
+        getComponentManager().addComponent(new TransportComponent(this));
+        getWorld().getEntityManager().register(this);
         initMetadata();
         // TODO
     }
 
     protected void initMetadata() {
         // TODO: Metadata
-        //Information about metadata: http://wiki.vg/Entities#Entity_Metadata_Format
+        // Information about metadata:
+        // http://wiki.vg/Entities#Entity_Metadata_Format
         getMetadata().setMetadata(0, (byte) 0);
         getMetadata().setMetadata(1, (short) 0);
-        getMetadata().setBit(MetaHelper.STATUS, MetaHelper.StatusFlags.ON_FIRE, this.fireTicks >= 0);
+        getMetadata().setBit(MetaHelper.STATUS, MetaHelper.StatusFlags.ON_FIRE, this.fireTicks > 0);
         getMetadata().setBit(MetaHelper.STATUS, MetaHelper.StatusFlags.SNEAKING, isSneaking());
         getMetadata().setBit(MetaHelper.STATUS, MetaHelper.StatusFlags.SPRINTING, isSprinting());
-        getMetadata().setBit(MetaHelper.STATUS, MetaHelper.StatusFlags.ARM_UP, false);//Eating, drinking, blocking
+        getMetadata().setBit(MetaHelper.STATUS, MetaHelper.StatusFlags.ARM_UP, false);// Eating,
+                                                                                      // drinking,
+                                                                                      // blocking
         getMetadata().setBit(MetaHelper.STATUS, MetaHelper.StatusFlags.INVISIBLE, this.invisible);
     }
 
@@ -109,7 +114,7 @@ public class CyanEntity implements Entity {
 
     @Override
     public boolean isSneaking() {
-        if(getComponentManager().hasComponent("movement")){
+        if (getComponentManager().hasComponent("movement")) {
             MovementComponent component = (MovementComponent) getComponentManager().getComponent("movement");
             return component.isSneaking();
         }
@@ -118,7 +123,7 @@ public class CyanEntity implements Entity {
 
     @Override
     public boolean isSprinting() {
-        if(getComponentManager().hasComponent("movement")){
+        if (getComponentManager().hasComponent("movement")) {
             MovementComponent component = (MovementComponent) getComponentManager().getComponent("movement");
             return component.isSprinting();
         }
@@ -147,38 +152,39 @@ public class CyanEntity implements Entity {
     }
 
     @Override
-    public synchronized void onTick() {
-        //Maybe...
-        if(!isAlive){
+    public void onTick() {
+        // Maybe...
+        if (!isAlive) {
             ServerDestroyEntitiesPacket packet = new ServerDestroyEntitiesPacket(getEntityID());
-            NetworkServer.sendPacketDistance(getLocation(), packet, 32); //Test
-            CyanWool.getEntityManager().unregister(this);
+            NetworkServer.sendPacketDistance(getLocation(), packet, 32); // Test
+            getWorld().getEntityManager().unregister(this);
             return;
         }
-        
-        if(moveable){
-        if (!prevLoc.equals(location)) {
-            if (prevLoc.getBlockX() != location.getBlockX() || prevLoc.getBlockY() != location.getBlockY() || prevLoc.getBlockZ() != location.getBlockZ()) {
-                this.moved = true;
-            }
 
-            if (prevLoc.getPitch() != location.getPitch() || prevLoc.getYaw() != location.getYaw()) {
-                this.rotated = true;
-            }
+        if (moveable) {
+            if (!prevLoc.equals(location)) {
+                if (prevLoc.getBlockX() != location.getBlockX() || prevLoc.getBlockY() != location.getBlockY() || prevLoc.getBlockZ() != location.getBlockZ()) {
+                    this.moved = true;
+                }
 
-            this.prevLoc = location;
-            CyanWool.getEntityManager().moveToOtherLocation(this, location);
-        }
-        
-        }else{
+                if (prevLoc.getPitch() != location.getPitch() || prevLoc.getYaw() != location.getYaw()) {
+                    this.rotated = true;
+                }
+
+                this.prevLoc = location;
+                getWorld().getEntityManager().moveToOtherLocation(this, location);
+            }
+        } else {
             teleport(prevLoc);
         }
 
         if (fireTicks > 0) {
             fireTicks--;
         }
-        
-        if(livedTicks > 0){
+
+        getMetadata().setBit(MetaHelper.STATUS, MetaHelper.StatusFlags.ON_FIRE, this.fireTicks > 0);
+
+        if (livedTicks > 0) {
             livedTicks++;
         }
         getComponentManager().onUpdateComponents();
@@ -220,6 +226,79 @@ public class CyanEntity implements Entity {
         return component;
     }
 
+    @Override
+    public MetadataMap getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public boolean isMoveable() {
+        return moveable;
+    }
+
+    @Override
+    public void setMoveable(boolean flag) {
+        this.moveable = flag;
+    }
+
+    @Override
+    public Chunk getChunk() {
+        return getLocation().getChunk();
+    }
+
+    @Override
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
+    }
+
+    @Override
+    public void setSneaking(boolean flag) {
+        MovementComponent component = (MovementComponent) getComponentManager().getComponent("movement");
+        component.setSneaking(flag);
+    }
+
+    @Override
+    public void setSprinting(boolean flag) {
+        MovementComponent component = (MovementComponent) getComponentManager().getComponent("movement");
+        component.setSprinting(flag);
+    }
+
+    @Override
+    public void setPassenger(Entity entity) {
+        TransportComponent component = (TransportComponent) getComponentManager().getComponent("transport");
+        component.setPassenger(entity);
+    }
+
+    @Override
+    public Entity getPassenger() {
+        TransportComponent component = (TransportComponent) getComponentManager().getComponent("transport");
+        return component.getPassenger();
+    }
+
+    @Override
+    public Entity getVehicle() {
+        TransportComponent component = (TransportComponent) getComponentManager().getComponent("transport");
+        return component.getVehicle();
+    }
+
+    @Override
+    public void setVehicle(Entity entity) {
+        TransportComponent component = (TransportComponent) getComponentManager().getComponent("transport");
+        component.setVehicle(entity);
+    }
+
+    @Override
+    public boolean canSeeEntity(Entity entity) {
+        return canSeeLocation(entity.getLocation());
+    }
+
+    @Override
+    public boolean canSeeLocation(Location loc) {
+        double dx = Math.abs(getLocation().getX() - loc.getX());
+        double dz = Math.abs(getLocation().getZ() - loc.getZ());
+        return loc.getWorld() == getWorld() && dx <= (CyanWool.getServerConfiguration().getViewDistance() * 16) && dz <= (CyanWool.getServerConfiguration().getViewDistance() * 256);
+    }
+
     // Not from API
 
     public List<Packet> getUpdatePackets() {
@@ -245,43 +324,43 @@ public class CyanEntity implements Entity {
             list.add(new ServerEntityRotationPacket(getEntityID(), getLocation().getYaw(), getLocation().getPitch(), onGround()));
             this.rotated = false;
         }
-        
-        //TODO: Head update
-        //list.add(new ServerEntityHeadLookPacket(getEntityID(), getLocation().getYaw()));
-        
-        //TODO: Metadata
+
+        // TODO: Head update
+        // list.add(new ServerEntityHeadLookPacket(getEntityID(),
+        // getLocation().getYaw()));
+
+        // TODO: Metadata
         list.add(new ServerEntityMetadataPacket(getEntityID(), ((CyanMetadataMap) metadata).getMetaArray()));
 
         return list;
     }
 
-    public List<Packet> getSpawnPackets() {
-        // TODO Auto-generated method stub
-        return null;
+    // for others entities
+    public abstract List<Packet> getSpawnPackets();
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + entityId;
+        return result;
     }
 
     @Override
-    public MetadataMap getMetadata() {
-        return metadata;
-    }
-
-    @Override
-    public boolean isMoveable() {
-        return moveable;
-    }
-
-    @Override
-    public void setMoveable(boolean flag) {
-        this.moveable = flag;
-    }
-
-    @Override
-    public Chunk getChunk() {
-        return getLocation().getChunk();
-    }
-
-    @Override
-    public void setOnGround(boolean onGround) {
-        this.onGround = onGround;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof CyanEntity)) {
+            return false;
+        }
+        CyanEntity other = (CyanEntity) obj;
+        if (entityId != other.entityId) {
+            return false;
+        }
+        return true;
     }
 }

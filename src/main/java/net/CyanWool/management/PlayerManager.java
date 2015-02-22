@@ -19,7 +19,6 @@ import org.spacehq.mc.protocol.data.game.values.setting.Difficulty;
 import org.spacehq.mc.protocol.data.game.values.world.WorldType;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerDifficultyPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerUpdateHealthPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
@@ -41,11 +40,9 @@ public class PlayerManager {
         World world = server.getWorld(0);
         Location location = world.getSpawnLocation();
         CyanPlayer player = new CyanPlayer(server, profile, location);
-        world.getEntities().add(player);
-        server.getEntityManager().register(player);
+        player.setPlayerNetwork(new PlayerNetwork(server, session, player));
 
         // player.load();
-        player.setPlayerNetwork(new PlayerNetwork(server, session, player));
         ServerJoinGamePacket packet = new ServerJoinGamePacket(player.getEntityID(), false, GameMode.SURVIVAL, 0, Difficulty.NORMAL, server.getMaxPlayers(), WorldType.DEFAULT, false);
         session.send(packet);
         players.add(player);
@@ -57,7 +54,7 @@ public class PlayerManager {
         Position position = new Position(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
         ServerSpawnPositionPacket spawnPacket = new ServerSpawnPositionPacket(position);
         session.send(spawnPacket);
-        
+
         // set time
         player.setTime(0);// TODO
 
@@ -84,10 +81,13 @@ public class PlayerManager {
 
     public synchronized void leavePlayer(Player player) {
         server.broadcastMessage(player.getName() + " left the Server!");
-        ServerDestroyEntitiesPacket destroyEntitiesPacket = new ServerDestroyEntitiesPacket(player.getEntityID());
-        NetworkServer.sendPacketForAll(destroyEntitiesPacket);
+        // ServerDestroyEntitiesPacket destroyEntitiesPacket = new
+        // ServerDestroyEntitiesPacket(player.getEntityID());
+        // NetworkServer.sendPacketForAll(destroyEntitiesPacket);
+        player.kill();
         // Save and unload
         // player.save();
+        // player.getWorld().getEntityManager().unregister(player);
         players.remove(player);
     }
 

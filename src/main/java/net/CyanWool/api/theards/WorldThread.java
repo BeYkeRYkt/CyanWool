@@ -21,6 +21,11 @@ public class WorldThread extends Thread {
     public void run() {
         while (running) {
             world.onTick();
+            try {
+                sleep(50); // 1000 milliseconds is one second.
+            } catch (InterruptedException ex) {
+                currentThread().interrupt();
+            }
         }
     }
 

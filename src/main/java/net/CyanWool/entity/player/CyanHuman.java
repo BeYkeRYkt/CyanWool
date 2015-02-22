@@ -3,10 +3,10 @@ package net.CyanWool.entity.player;
 import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.EntityType;
-import net.CyanWool.api.entity.component.basics.FoodComponent;
-import net.CyanWool.api.entity.component.basics.HealthComponent;
-import net.CyanWool.api.entity.component.basics.InventoryComponent;
-import net.CyanWool.api.entity.component.basics.XPComponent;
+import net.CyanWool.api.entity.component.FoodComponent;
+import net.CyanWool.api.entity.component.HealthComponent;
+import net.CyanWool.api.entity.component.InventoryComponent;
+import net.CyanWool.api.entity.component.XPComponent;
 import net.CyanWool.api.entity.player.Human;
 import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
@@ -16,7 +16,7 @@ import net.CyanWool.entity.CyanEntityLivingBase;
 
 import org.spacehq.mc.auth.GameProfile;
 
-public class CyanHuman extends CyanEntityLivingBase implements Human {
+public abstract class CyanHuman extends CyanEntityLivingBase implements Human {
 
     private GameProfile profile;
     private boolean sleeping;
@@ -38,10 +38,11 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
         super(location);// TODO
         this.profile = profile;
         getComponentManager().removeComponent("ai");
-        getComponentManager().addComponent(new HealthComponent(this, 20));
         getComponentManager().addComponent(new FoodComponent(this, 20)); // ???
         getComponentManager().addComponent(new XPComponent(this));
         setDamageSound(new SoundInfo(Sound.PLAYER_HURT, 1.0F, 1.0F));
+        ((HealthComponent) getComponentManager().getComponent("health")).setMaxHealth(20);
+        ((HealthComponent) getComponentManager().getComponent("health")).setHealth(20);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public boolean hasItemInHand() {
-        if(getComponentManager().hasComponent("inventory")){
+        if (getComponentManager().hasComponent("inventory")) {
             InventoryComponent component = (InventoryComponent) getComponentManager().getComponent("inventory");
             return component.getInventory().getItemInHand() != null;
         }
@@ -60,7 +61,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public void setItemInHand(ItemStack item) {
-        if(getComponentManager().hasComponent("inventory")){
+        if (getComponentManager().hasComponent("inventory")) {
             InventoryComponent component = (InventoryComponent) getComponentManager().getComponent("inventory");
             component.getInventory().setItemInHand(item);
         }
@@ -79,7 +80,7 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     @Override
     public void sleepInBedAt(int x, int y, int z) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -212,10 +213,9 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
     public void setSleepingTicks(int ticks) {
         this.sleepingTicks = ticks;
     }
-    
-    
+
     @Override
-    public synchronized void onTick(){
+    public void onTick() {
         super.onTick();
         if (sleeping) {
             ++sleepingTicks;
@@ -223,10 +223,52 @@ public class CyanHuman extends CyanEntityLivingBase implements Human {
             sleepingTicks = 0;
         }
     }
+
     // Not from API
 
     public GameProfile getGameProfile() {
         return profile;
     }
 
+    @Override
+    public boolean isNeedFood() {
+        FoodComponent component = (FoodComponent) getComponentManager().getComponent("food");
+        return component.getFoodLevel() < 20;
+    }
+
+    @Override
+    public int getFoodLevel() {
+        FoodComponent component = (FoodComponent) getComponentManager().getComponent("food");
+        return component.getFoodLevel();
+    }
+
+    @Override
+    public void setFoodLevel(int level) {
+        FoodComponent component = (FoodComponent) getComponentManager().getComponent("food");
+        component.setFoodLevel(level);
+    }
+
+    @Override
+    public int getXPLevel() {
+        XPComponent component = (XPComponent) getComponentManager().getComponent("xp");
+        return component.getXPLevel();
+    }
+
+    @Override
+    public int getXPTotal() {
+        XPComponent component = (XPComponent) getComponentManager().getComponent("xp");
+        return component.getXPTotal();
+    }
+
+    @Override
+    public void setXPLevel(int level) {
+        XPComponent component = (XPComponent) getComponentManager().getComponent("xp");
+        component.setXPLevel(level);
+    }
+
+    @Override
+    public void setXPTotal(int xp) {
+        XPComponent component = (XPComponent) getComponentManager().getComponent("xp");
+        component.setXPTotal(xp);
+    }
 }

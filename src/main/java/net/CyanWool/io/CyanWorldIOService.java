@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 
 import net.CyanWool.api.io.WorldIOService;
+import net.CyanWool.api.world.Difficulty;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 
 import org.spacehq.opennbt.NBTIO;
+import org.spacehq.opennbt.tag.builtin.ByteTag;
 import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.opennbt.tag.builtin.IntTag;
+import org.spacehq.opennbt.tag.builtin.LongTag;
 
 public class CyanWorldIOService implements WorldIOService {
 
@@ -23,12 +26,17 @@ public class CyanWorldIOService implements WorldIOService {
             IntTag yTag = data.get("SpawnY");
             IntTag zTag = data.get("SpawnZ");
 
+            // StringTag name = data.get("LevelName");
+            ByteTag difficulty = data.get("Difficulty");
+            LongTag daytime = data.get("DayTime");
+
             // World world = new CyanWorld(name, new CyanPlayerIOService());
             Location newSpawn = new Location(world, xTag.getValue(), yTag.getValue(), zTag.getValue());
             world.setSpawnLocation(newSpawn);
-            world.setWorldTime(0);// Demo test
-            // world.getChunkManager().loadChunk(newSpawn.getBlockX() >> 4,
-            // newSpawn.getBlockZ() >> 4, false);
+
+            world.setDifficulty(Difficulty.getDifficulty(difficulty.getValue()));
+            world.setWorldTime(daytime.getValue());// Demo test
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

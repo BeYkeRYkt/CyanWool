@@ -1,19 +1,18 @@
-package net.CyanWool.api.entity.component.basics;
+package net.CyanWool.api.entity.component;
 
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.entity.component.Component;
 import net.CyanWool.api.utils.Vector;
 
-public class MovementComponent extends Component {
+public class MovementComponent extends SystemComponent {
 
     private Vector vector;
     private float speed;
     private boolean needUpdate;
-    
+
     private boolean jumping;
     private boolean sneak;
     private boolean sprint;
-    
+
     public MovementComponent(Entity entity) {
         super(entity);
     }
@@ -25,37 +24,37 @@ public class MovementComponent extends Component {
     public void setVector(Vector vector) {
         this.vector = vector;
     }
-    
+
     @Override
-    public void initialization(){
+    public void initialization() {
         this.vector = new Vector();
     }
-    
-    public double getVectorX(){
+
+    public double getVectorX() {
         return this.vector.getX();
     }
-    
-    public double getVectorY(){
+
+    public double getVectorY() {
         return this.vector.getY();
     }
-    
-    public double getVectorZ(){
+
+    public double getVectorZ() {
         return this.vector.getZ();
     }
-    
-    public void setVectorX(double x){
+
+    public void setVectorX(double x) {
         this.vector.setX(x);
     }
-    
-    public void setVectorY(double y){
+
+    public void setVectorY(double y) {
         this.vector.setY(y);
     }
-    
-    public void setVectorZ(double z){
+
+    public void setVectorZ(double z) {
         this.vector.setZ(z);
     }
-    
-    public void move(double motionX, double motionY, double motionZ){
+
+    public void move(double motionX, double motionY, double motionZ) {
         Vector vector = new Vector(motionX, motionY, motionZ);
         vector.multiply(getSpeed());
         setVector(vector);
@@ -69,12 +68,12 @@ public class MovementComponent extends Component {
     public void setSpeed(float speed) {
         this.speed = speed;
     }
-    
+
     @Override
     public void update() {
-        if(needUpdate){
-            if(getEntity().isMoveable()){
-            getEntity().getLocation().add(getVector());
+        if (needUpdate) {
+            if (getEntity().isMoveable()) {
+                getEntity().getLocation().add(getVector());
             }
             needUpdate = false;
         }
@@ -84,7 +83,7 @@ public class MovementComponent extends Component {
     public boolean autoUpdate() {
         return true;
     }
-    
+
     public boolean isJumping() {
         return jumping;
     }

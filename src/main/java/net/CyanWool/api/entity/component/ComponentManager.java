@@ -75,6 +75,10 @@ public class ComponentManager {
      */
     public synchronized boolean removeComponent(String id) {
         if (hasComponent(id)) {
+            if (getComponent(id) instanceof SystemComponent) {
+                // IS IMPOSSIBLE!!1!!
+                return false;
+            }
             components.remove(id);
             return true;
         }

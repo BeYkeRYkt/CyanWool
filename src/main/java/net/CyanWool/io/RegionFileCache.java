@@ -1,4 +1,5 @@
 package net.CyanWool.io;
+
 /*
  ** 2011 January 5
  **
@@ -9,7 +10,7 @@ package net.CyanWool.io;
  **    May you find forgiveness for yourself and forgive others.
  **    May you share freely, never taking more than you give.
  */
- 
+
 /*
  * 2011 February 16
  *
@@ -21,9 +22,9 @@ package net.CyanWool.io;
  * original McRegion files.
  *
  */
- 
+
 // A simple cache and wrapper for efficiently multiple RegionFiles simultaneously.
- 
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -34,38 +35,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.CyanWool.api.io.RegionFile;
- 
+
 public class RegionFileCache {
- 
+
     private static final int MAX_CACHE_SIZE = 256;
- 
- 
+
     private static final Map<File, Reference<RegionFile>> cache = new HashMap<File, Reference<RegionFile>>();
 
- 
     public static synchronized RegionFile getRegionFile(File basePath, int chunkX, int chunkZ) {
         File regionDir = new File(basePath, "region");
         File file = new File(regionDir, "r." + (chunkX >> 5) + "." + (chunkZ >> 5) + ".mca");
- 
+
         Reference<RegionFile> ref = cache.get(file);
- 
+
         if (ref != null && ref.get() != null) {
             return ref.get();
         }
- 
+
         if (!regionDir.exists()) {
             regionDir.mkdirs();
         }
- 
+
         if (cache.size() >= MAX_CACHE_SIZE) {
             RegionFileCache.clear();
         }
- 
+
         RegionFile reg = new RegionFile(file);
         cache.put(file, new SoftReference<RegionFile>(reg));
         return reg;
     }
- 
+
     public static synchronized void clear() {
         for (Reference<RegionFile> ref : cache.values()) {
             try {
@@ -78,17 +77,17 @@ public class RegionFileCache {
         }
         cache.clear();
     }
- 
+
     public static int getSizeDelta(File basePath, int chunkX, int chunkZ) {
         RegionFile r = getRegionFile(basePath, chunkX, chunkZ);
         return r.getSizeDelta();
     }
- 
+
     public static DataInputStream getChunkDataInputStream(File basePath, int chunkX, int chunkZ) {
         RegionFile r = getRegionFile(basePath, chunkX, chunkZ);
         return r.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
     }
- 
+
     public static DataOutputStream getChunkDataOutputStream(File basePath, int chunkX, int chunkZ) {
         RegionFile r = getRegionFile(basePath, chunkX, chunkZ);
         return r.getChunkDataOutputStream(chunkX & 31, chunkZ & 31);

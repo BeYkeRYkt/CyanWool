@@ -43,6 +43,6 @@ public abstract class Component { // или interface ?
     public Entity getEntity() {
         return entity;
     }
-    
+
     public abstract String getID();
 }

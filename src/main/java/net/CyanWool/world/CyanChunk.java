@@ -10,11 +10,12 @@ import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.world.Chunk;
+import net.CyanWool.api.world.ChunkCoords;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 import net.CyanWool.block.CyanBlock;
 
-public class CyanChunk implements Chunk{
+public class CyanChunk implements Chunk {
 
     private World world;
     private int x;
@@ -25,7 +26,9 @@ public class CyanChunk implements Chunk{
     private Section[] sections;
     private byte[] biomes;
     private boolean needGenerate;
-    
+    private boolean lockedInMemory;
+    private int usedPlayers;
+
     public CyanChunk(World world, int x, int z) {
         this.world = world;
         this.x = x;
@@ -44,11 +47,11 @@ public class CyanChunk implements Chunk{
     }
 
     @Override
-    public Block getBlock(int x, int y, int z) {        
+    public Block getBlock(int x, int y, int z) {
         int id = getSection(y).getBlocks().getBlock(x, y, z);
         int data = getSection(y).getBlocks().getData(x, y, z);
-        //Checking...
-        if(getSection(y).getNotSupportData().getData(x, y, z) != 0){
+        // Checking...
+        if (getSection(y).getNotSupportData().getData(x, y, z) != 0) {
             data = getSection(y).getNotSupportData().getData(x, y, z);
         }
         BlockType type = Register.getBlock(id, data);
@@ -108,7 +111,8 @@ public class CyanChunk implements Chunk{
     @Override
     public void setBlock(int x, int y, int z, BlockType type) {
         int data = type.getData();
-        if(data > type.getMaxData()){
+        getSection(y).getNotSupportData().setData(x, y, z, 0);
+        if (data > type.getMaxData()) {
             getSection(y).getNotSupportData().setData(x, y, z, data);
             data = 0;
         }
@@ -154,8 +158,8 @@ public class CyanChunk implements Chunk{
             CyanWool.getLogger().info("Tried to initialize already loaded chunk (" + x + "," + z + ")");
             return;
         }
-        if(initSections != null){
-            for(int i = 0; i < initSections.length; i++){
+        if (initSections != null) {
+            for (int i = 0; i < initSections.length; i++) {
                 sections[i] = initSections[i];
             }
         }
@@ -163,18 +167,18 @@ public class CyanChunk implements Chunk{
         biomes = new byte[WIDTH * HEIGHT];
         // heightMap = new byte[WIDTH * HEIGHT];
         // tile entity initialization
-        //for (int i = 0; i < sections.length; ++i) {
-        //    if (sections[i] == null)
-        //        continue;
-        //    int by = 16 * i;
-        //    for (int cx = 0; cx < WIDTH; ++cx) {
-        //        for (int cz = 0; cz < HEIGHT; ++cz) {
-        //            for (int cy = by; cy < by + 16; ++cy) {
-        //                // createEntity(cx, cy, cz, getType(cx, cz, cy));
-        //            }
-        //        }
-        //    }
-        //}
+        // for (int i = 0; i < sections.length; ++i) {
+        // if (sections[i] == null)
+        // continue;
+        // int by = 16 * i;
+        // for (int cx = 0; cx < WIDTH; ++cx) {
+        // for (int cz = 0; cz < HEIGHT; ++cz) {
+        // for (int cy = by; cy < by + 16; ++cy) {
+        // // createEntity(cx, cy, cz, getType(cx, cz, cy));
+        // }
+        // }
+        // }
+        // }
     }
 
     private Section getSection(int y) {
@@ -184,7 +188,7 @@ public class CyanChunk implements Chunk{
         }
         return sections[idx];
     }
-    
+
     public Section[] getSections() {
         return sections;
     }
@@ -212,5 +216,39 @@ public class CyanChunk implements Chunk{
     @Override
     public boolean isNeedGenerate() {
         return needGenerate;
+    }
+
+    @Override
+    public void setBlock(int x, int y, int z, int type, int data) {
+        BlockType btype = Register.getBlock(type, data);
+        this.setBlock(x, y, z, btype);
+    }
+
+    @Override
+    public boolean isLocked() {
+        return lockedInMemory;
+    }
+
+    @Override
+    public void setLocked(boolean flag) {
+        this.lockedInMemory = flag;
+    }
+
+    @Override
+    public ChunkCoords getChunkCoords() {
+        return new ChunkCoords(x, z);
+    }
+
+    @Override
+    public int getUsedPlayers() {
+        return usedPlayers;
+    }
+
+    public void addPlayer() {
+        usedPlayers++;
+    }
+
+    public void removePlayer() {
+        usedPlayers--;
     }
 }

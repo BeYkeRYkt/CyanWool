@@ -1,11 +1,11 @@
 package net.CyanWool.api.entity;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.Location;
@@ -13,7 +13,7 @@ import net.CyanWool.api.world.Location;
 public class EntityManager {
 
     private Map<Integer, Entity> entities = new HashMap<Integer, Entity>();
-    private List<Integer> usedIds = new ArrayList<Integer>();
+    private Set<Integer> usedIds = new HashSet<Integer>();
     private int last = 0;
 
     public Collection<Entity> getAll() {

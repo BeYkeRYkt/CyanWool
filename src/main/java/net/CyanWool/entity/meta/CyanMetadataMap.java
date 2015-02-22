@@ -13,7 +13,8 @@ import org.spacehq.mc.protocol.data.game.Position;
 import org.spacehq.mc.protocol.data.game.Rotation;
 import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
 
-public class CyanMetadataMap implements MetadataMap{
+public class CyanMetadataMap implements MetadataMap {
+
     private Map<Integer, EntityMetadata> metadata = new HashMap<Integer, EntityMetadata>();
     private List<EntityMetadata> changes = new ArrayList<EntityMetadata>();
 
@@ -54,8 +55,7 @@ public class CyanMetadataMap implements MetadataMap{
             type = MetadataType.POSITION;
         else if (value instanceof Rotation)
             type = MetadataType.ROTATION;
-        else
-            throw new IllegalArgumentException("Metadata value \"" + value + "\" has an unsupported type.");
+        else throw new IllegalArgumentException("Metadata value \"" + value + "\" has an unsupported type.");
 
         Object old = this.getMetadata(id);
         EntityMetadata metadata = new EntityMetadata(id, type, value);

@@ -1,14 +1,13 @@
-package net.CyanWool.api.entity.component.basics;
+package net.CyanWool.api.entity.component;
 
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.entity.component.Component;
 
 /**
  * XP компонент для игроков
  * 
  * @author DinDev
  */
-public class XPComponent extends Component {
+public class XPComponent extends SystemComponent {
 
     private int xpLevel;
     private int xpTotal;

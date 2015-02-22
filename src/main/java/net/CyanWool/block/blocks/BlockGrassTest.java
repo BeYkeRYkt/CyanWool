@@ -1,8 +1,9 @@
 package net.CyanWool.block.blocks;
 
+import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.Entity;
-import net.CyanWool.api.entity.component.basics.MovementComponent;
+import net.CyanWool.api.entity.component.MovementComponent;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.utils.ChatColors;
@@ -43,7 +44,8 @@ public class BlockGrassTest extends BlockGrass {
     public void onBlockLeftInteract(Player player) {
         player.sendMessage("AZAZAZAZAZA");
         player.damage(1);
-        
+        player.setGamemode(Gamemode.CREATIVE);
+
         MovementComponent component = (MovementComponent) player.getComponentManager().getComponent("movement");
         component.setSpeed(0.2F); // TEST
     }
@@ -52,16 +54,15 @@ public class BlockGrassTest extends BlockGrass {
     public void onBlockRightInteract(Player player) {
         player.sendMessage("AZAZAZAZAZAZA-2");
         player.addHealth(1);
-        
+        player.setGamemode(Gamemode.SURVIVAL);
+
         MovementComponent component = (MovementComponent) player.getComponentManager().getComponent("movement");
         component.setSpeed(0.5F); // TEST
     }
 
     @Override
     public void onEntityWalking(Entity entity) {
-        //Start using ComponentSystem
-        MovementComponent component = (MovementComponent) entity.getComponentManager().getComponent("movement");
-        component.setSneaking(true);
+        entity.setSneaking(true);
     }
 
     @Override

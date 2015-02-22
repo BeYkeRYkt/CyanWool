@@ -4,6 +4,7 @@ import net.CyanWool.api.task.Task;
 
 /**
  * TESTING...
+ * 
  * @author DinDev
  *
  */
@@ -17,7 +18,7 @@ public class AsyncSchedulerThread extends Thread {
     }
 
     public void shutdown() {
-      task.stop();
+        task.stop();
     }
 
     @Override
