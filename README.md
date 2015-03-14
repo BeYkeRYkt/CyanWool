@@ -22,6 +22,6 @@ Credits
 
 Copyright
 ---------
-CyanWool as Glowstone is open-source software released under the MIT license. Please see
+CyanWool is open-source software released under the MIT license. Please see
 the `LICENSE` file for details.
-MCProtocolLib created by Steveice10
+MCProtocolLib, PacketLib, OpenNBT and MCAuthLib  created by Steveice10
