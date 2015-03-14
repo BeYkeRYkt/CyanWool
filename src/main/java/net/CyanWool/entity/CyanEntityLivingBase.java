@@ -1,5 +1,9 @@
 package net.CyanWool.entity;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
@@ -8,16 +12,21 @@ import net.CyanWool.api.entity.component.AgeComponent;
 import net.CyanWool.api.entity.component.DisplayNameComponent;
 import net.CyanWool.api.entity.component.HealthComponent;
 import net.CyanWool.api.entity.component.MovementComponent;
+import net.CyanWool.api.potions.PotionEffect;
 import net.CyanWool.api.world.Location;
+
+import org.spacehq.mc.protocol.data.game.values.entity.Effect;
 
 public abstract class CyanEntityLivingBase extends CyanEntity implements EntityLivingBase {
 
     private SoundInfo damageSound;
     private SoundInfo deathSound;
     private SoundInfo talkSound;
+    private List<PotionEffect> potions;
 
     public CyanEntityLivingBase(Location location) {
         super(location);
+        this.potions = new ArrayList<PotionEffect>();
         getComponentManager().addComponent(new AgeComponent(this));
         getComponentManager().addComponent(new DisplayNameComponent(this));
         getComponentManager().addComponent(new AIComponent(this));
@@ -251,5 +260,27 @@ public abstract class CyanEntityLivingBase extends CyanEntity implements EntityL
     public void setRenderDisplayName(boolean flag) {
         DisplayNameComponent component = (DisplayNameComponent) getComponentManager().getComponent("displayName");
         component.setRenderDisplayName(flag);
+    }
+
+    @Override
+    public List<PotionEffect> getPotionEffects() {
+        return potions;
+    }
+
+    @Override
+    public void addPotionEffect(PotionEffect potion) {
+        potions.add(potion);
+    }
+
+    @Override
+    public void removePotionEffect(Effect effect) {
+        Iterator<PotionEffect> i = getPotionEffects().iterator();
+        while (i.hasNext()) {
+            PotionEffect pe = i.next();
+            if (pe.getPotionType().getEffect() == effect) {
+                i.remove();
+                break;
+            }
+        }
     }
 }

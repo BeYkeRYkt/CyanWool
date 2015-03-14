@@ -16,8 +16,9 @@ import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
 import net.CyanWool.api.inventory.recipes.SimpleRecipeManager;
+import net.CyanWool.api.network.NetworkServer;
 import net.CyanWool.api.plugin.PluginManager;
-import net.CyanWool.api.task.TaskManager;
+import net.CyanWool.api.scheduler.Scheduler;
 import net.CyanWool.api.utils.ServerConfiguration;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
@@ -32,7 +33,7 @@ import net.CyanWool.inventory.items.ItemGrass;
 import net.CyanWool.io.CyanPlayerIOService;
 import net.CyanWool.io.CyanWorldIOService;
 import net.CyanWool.management.PlayerManager;
-import net.CyanWool.network.NetworkServer;
+import net.CyanWool.network.CyanNetworkServer;
 import net.CyanWool.world.CyanWorld;
 
 import org.apache.logging.log4j.LogManager;
@@ -52,11 +53,11 @@ public class CyanServer implements Server {
     private CommandManager cmdManager;
     private PluginManager pluginManager;
 
-    private TaskManager taskManager;
     private ConsoleThread console;
     private PlayerManager playerManager;
     private EntityManager entityManager;
     private RecipeManager recipeManager;
+    private Scheduler scheduler;
 
     private static BufferedImage icon;
 
@@ -87,7 +88,7 @@ public class CyanServer implements Server {
         this.console = new ConsoleThread(this);
         this.console.start();
         this.consoleSender = new ConsoleCommandSender();
-        NetworkServer network = new NetworkServer(this);
+        CyanNetworkServer network = new CyanNetworkServer(this);
         this.network = network;
         network.init();
 
@@ -99,8 +100,6 @@ public class CyanServer implements Server {
 
         this.worlds = new WorldManager(this, new CyanWorldIOService());
         this.cmdManager = new CommandManager();
-        this.taskManager = new TaskManager(this);
-        this.taskManager.start();
         this.pluginManager = new PluginManager();
 
         this.pluginManager.loadPlugins();
@@ -167,7 +166,7 @@ public class CyanServer implements Server {
     public void shutdown() {
         getLogger().info("Shutdown!");
 
-        taskManager.stop();
+        scheduler.stop();
         getLogger().info("Scheduler's shutdown!");
 
         pluginManager.unloadPlugins();
@@ -234,14 +233,30 @@ public class CyanServer implements Server {
         return icon;
     }
 
+    @Override
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    @Override
+    public RecipeManager getRecipeManager() {
+        return recipeManager;
+    }
+
+    @Override
+    public NetworkServer getNetworkServer() {
+        return network;
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
     // NOT API
 
     public PlayerManager getPlayerManager() {
         return playerManager;
-    }
-
-    public NetworkServer getNetworkManager() {
-        return network;
     }
 
     private void loadWorlds() {
@@ -249,11 +264,6 @@ public class CyanServer implements Server {
         World world = new CyanWorld("world", new CyanPlayerIOService());
         getWorldManager().loadWorld(world);
         getWorldManager().addWorld(world);
-    }
-
-    @Override
-    public RecipeManager getRecipeManager() {
-        return recipeManager;
     }
 
     private void registerVanilla() {
@@ -268,4 +278,5 @@ public class CyanServer implements Server {
         Register.registerBlock(new BlockBedrock());
         Register.registerBlock(new BlockGrassTest());
     }
+
 }

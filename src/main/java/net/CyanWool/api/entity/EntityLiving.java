@@ -1,5 +1,7 @@
 package net.CyanWool.api.entity;
 
+import net.CyanWool.api.inventory.inventories.EntityInventory;
+
 public interface EntityLiving extends EntityLivingBase {
 
     public boolean isNoDespawnRequired();
@@ -27,4 +29,6 @@ public interface EntityLiving extends EntityLivingBase {
     public void setEquipmentDropChance(int slot, float chance);
 
     public boolean canPickUpLoot();
+
+    public EntityInventory getEntityInventory();
 }

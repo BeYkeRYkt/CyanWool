@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.CyanWool.api.Gamemode;
+import net.CyanWool.api.CyanWool;
+import net.CyanWool.api.Server;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.block.BlockType;
+import net.CyanWool.api.block.entity.TileEntity;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.entity.EntityManager;
@@ -22,14 +24,18 @@ import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.io.PlayerIOService;
 import net.CyanWool.api.utils.Vector;
 import net.CyanWool.api.world.ChunkManager;
-import net.CyanWool.api.world.Difficulty;
 import net.CyanWool.api.world.Dimension;
-import net.CyanWool.api.world.Effect;
 import net.CyanWool.api.world.Location;
-import net.CyanWool.api.world.Sound;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldGenerator;
 import net.CyanWool.io.CyanChunkIOService;
+
+import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
+import org.spacehq.mc.protocol.data.game.values.setting.Difficulty;
+import org.spacehq.mc.protocol.data.game.values.world.Particle;
+import org.spacehq.mc.protocol.data.game.values.world.Sound;
+import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
+import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
 
 public class CyanWorld implements World {
 
@@ -49,7 +55,7 @@ public class CyanWorld implements World {
     private String path;
     private Dimension dimension;
     private Difficulty difficulty;
-    private Gamemode defaultGamemode;
+    private GameMode defaultGamemode;
     private boolean autoSave;
     private EntityManager entityManager;
 
@@ -152,7 +158,7 @@ public class CyanWorld implements World {
 
     @Override
     public List<Entity> getEntities() {
-        return new ArrayList<Entity>(getEntityManager().getAll());// TODO:FIX
+        return new ArrayList<Entity>(getServer().getEntityManager().getAll());// TODO:FIX
     }
 
     @Override
@@ -209,7 +215,7 @@ public class CyanWorld implements World {
     }
 
     @Override
-    public Gamemode getDefaultGamemode() {
+    public GameMode getDefaultGamemode() {
         return defaultGamemode;
     }
 
@@ -262,7 +268,7 @@ public class CyanWorld implements World {
     }
 
     @Override
-    public void playEffect(Location location, Effect effect, int data) {
+    public void playEffect(Location location, WorldEffect effect, WorldEffectData data) {
         for (Player player : getPlayers()) {
             player.playEffect(location, effect, data);
         }
@@ -323,7 +329,7 @@ public class CyanWorld implements World {
     }
 
     @Override
-    public void playEffectExpect(Location location, Effect effect, int data, Player player) {
+    public void playEffectExpect(Location location, WorldEffect effect, WorldEffectData data, Player player) {
         for (Player players : getPlayers()) {
             if (players.getEntityID() != player.getEntityID()) {
                 players.playEffect(location, effect, data);
@@ -364,7 +370,7 @@ public class CyanWorld implements World {
     }
 
     @Override
-    public void setDefaultGamemode(Gamemode mode) {
+    public void setDefaultGamemode(GameMode mode) {
         this.defaultGamemode = mode;
     }
 
@@ -409,11 +415,6 @@ public class CyanWorld implements World {
     }
 
     @Override
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -445,5 +446,36 @@ public class CyanWorld implements World {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void playParticle(Location location, Particle particle, int amount, int data) {
+        for (Player players : getPlayers()) {
+            players.playParticle(location, particle, amount, data);
+        }
+    }
+
+    @Override
+    public void playParticleExpect(Location location, Particle particle, int amount, int data, Player player) {
+        for (Player players : getPlayers()) {
+            if (!players.equals(player)) {
+                players.playParticle(location, particle, amount, data);
+            }
+        }
+    }
+
+    @Override
+    public TileEntity getTileEntity(int x, int y, int z) {
+        return null;
+    }
+
+    @Override
+    public TileEntity getTileEntity(Location location) {
+        return getTileEntity(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    @Override
+    public Server getServer() {
+        return CyanWool.getServer();
     }
 }

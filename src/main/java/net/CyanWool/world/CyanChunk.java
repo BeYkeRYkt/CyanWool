@@ -251,4 +251,25 @@ public class CyanChunk implements Chunk {
     public void removePlayer() {
         usedPlayers--;
     }
+
+    @Override
+    public void setData(int x, int y, int z, int data) {
+        Block block = getBlock(x, y, z);
+        setBlock(x, y, z, block.getBlockType());
+    }
+
+    @Override
+    public int getData(int x, int y, int z) {
+        return getBlock(x, y, z).getBlockType().getData();
+    }
+
+    @Override
+    public void setData(Location location, int data) {
+        setData(location.getBlockX(), location.getBlockY(), location.getBlockZ(), data);
+    }
+
+    @Override
+    public int getData(Location location) {
+        return getData(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
 }

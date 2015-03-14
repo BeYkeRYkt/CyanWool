@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.CyanWool.api.CyanWool;
+import net.CyanWool.api.Server;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.component.ComponentManager;
@@ -15,7 +16,6 @@ import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 import net.CyanWool.entity.meta.CyanMetadataMap;
-import net.CyanWool.network.NetworkServer;
 
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityMetadataPacket;
@@ -55,7 +55,7 @@ public abstract class CyanEntity implements Entity {
         this.metadata = new CyanMetadataMap();
         getComponentManager().addComponent(new MovementComponent(this));
         getComponentManager().addComponent(new TransportComponent(this));
-        getWorld().getEntityManager().register(this);
+        getServer().getEntityManager().register(this);
         initMetadata();
         // TODO
     }
@@ -156,8 +156,8 @@ public abstract class CyanEntity implements Entity {
         // Maybe...
         if (!isAlive) {
             ServerDestroyEntitiesPacket packet = new ServerDestroyEntitiesPacket(getEntityID());
-            NetworkServer.sendPacketDistance(getLocation(), packet, 32); // Test
-            getWorld().getEntityManager().unregister(this);
+            getServer().getNetworkServer().sendPacketDistance(getLocation(), packet, 32); // Test
+            getServer().getEntityManager().unregister(this);
             return;
         }
 
@@ -172,7 +172,7 @@ public abstract class CyanEntity implements Entity {
                 }
 
                 this.prevLoc = location;
-                getWorld().getEntityManager().moveToOtherLocation(this, location);
+                getServer().getEntityManager().moveToOtherLocation(this, location);
             }
         } else {
             teleport(prevLoc);
@@ -337,6 +337,11 @@ public abstract class CyanEntity implements Entity {
 
     // for others entities
     public abstract List<Packet> getSpawnPackets();
+
+    @Override
+    public Server getServer() {
+        return CyanWool.getServer();
+    }
 
     @Override
     public int hashCode() {

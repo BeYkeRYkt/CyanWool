@@ -60,4 +60,12 @@ public interface Chunk {
     public ChunkCoords getChunkCoords();
 
     public int getUsedPlayers();
+
+    public void setData(int x, int y, int z, int data);
+
+    public int getData(int x, int y, int z);
+
+    public void setData(Location location, int data);
+
+    public int getData(Location location);
 }

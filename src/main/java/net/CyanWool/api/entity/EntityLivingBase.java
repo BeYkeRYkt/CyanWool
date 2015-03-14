@@ -1,6 +1,11 @@
 package net.CyanWool.api.entity;
 
+import java.util.List;
+
 import net.CyanWool.api.SoundInfo;
+import net.CyanWool.api.potions.PotionEffect;
+
+import org.spacehq.mc.protocol.data.game.values.entity.Effect;
 
 public interface EntityLivingBase extends Entity {
 
@@ -70,4 +75,10 @@ public interface EntityLivingBase extends Entity {
     public boolean isRenderDisplayName();
 
     public void setRenderDisplayName(boolean flag);
+
+    public List<PotionEffect> getPotionEffects();
+
+    public void addPotionEffect(PotionEffect potion);
+
+    public void removePotionEffect(Effect effect);
 }

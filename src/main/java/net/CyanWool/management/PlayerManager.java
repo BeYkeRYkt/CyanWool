@@ -8,8 +8,7 @@ import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 import net.CyanWool.entity.player.CyanPlayer;
-import net.CyanWool.network.NetworkServer;
-import net.CyanWool.network.PlayerNetwork;
+import net.CyanWool.network.CyanPlayerNetwork;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.protocol.ProtocolConstants;
@@ -40,7 +39,7 @@ public class PlayerManager {
         World world = server.getWorld(0);
         Location location = world.getSpawnLocation();
         CyanPlayer player = new CyanPlayer(server, profile, location);
-        player.setPlayerNetwork(new PlayerNetwork(server, session, player));
+        player.setPlayerNetwork(new CyanPlayerNetwork(server, session, player));
 
         // player.load();
         ServerJoinGamePacket packet = new ServerJoinGamePacket(player.getEntityID(), false, GameMode.SURVIVAL, 0, Difficulty.NORMAL, server.getMaxPlayers(), WorldType.DEFAULT, false);
@@ -68,7 +67,7 @@ public class PlayerManager {
 
         // Send packets for all players
         for (Packet packets : player.getSpawnPackets()) {
-            NetworkServer.sendPacketForAll(packets);
+            server.getNetworkServer().sendPacketForAll(packets);
         }
 
         player.chat("Hello! This test message for CyanWool!");

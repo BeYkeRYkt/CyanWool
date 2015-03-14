@@ -28,8 +28,4 @@ public interface EntityInventory extends Inventory {
     public ItemStack getItemInHand();
 
     public void setItemInHand(ItemStack stack);
-
-    public int getHeldItemSlot();
-
-    public void setHeldItemSlot(int slot);
 }

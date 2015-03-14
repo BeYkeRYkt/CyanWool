@@ -2,6 +2,7 @@ package net.CyanWool.network;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.api.network.NetworkServer;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.entity.player.CyanPlayer;
 import net.CyanWool.network.handlers.ServerInfo;
@@ -13,14 +14,14 @@ import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
 
-public class NetworkServer {
+public class CyanNetworkServer implements NetworkServer {
 
     private static CyanServer server;
     // MCProtocolLib
     private Server protocol_server;
 
-    public NetworkServer(CyanServer server) {
-        NetworkServer.server = server;
+    public CyanNetworkServer(CyanServer server) {
+        CyanNetworkServer.server = server;
     }
 
     public void init() {
@@ -43,33 +44,61 @@ public class NetworkServer {
         }
     }
 
+    @Override
     public net.CyanWool.api.Server getServer() {
         return server;
     }
 
+    @Override
     public Server getProtocolServer() {
         return protocol_server;
     }
 
+    @Override
     public int getPort() {
         return protocol_server.getPort();
     }
 
+    @Override
     public String getHostAddress() {
         return protocol_server.getHost();
     }
 
-    public static void sendPacketForAll(Packet packet) {
+    @Override
+    public void sendPacketForAll(Packet packet) {
         for (Player player : server.getPlayers()) {
-            ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
+            player.getPlayerNetwork().sendPacket(packet);
         }
     }
 
-    public static void sendPacketDistance(Location location, Packet packet, int radius) {
+    @Override
+    public void sendPacketDistance(Location location, Packet packet, int radius) {
         for (Player player : server.getPlayers()) {
             if (player.getWorld().getName().equals(location.getWorld().getName())) {
                 if (player.getLocation().distance(location) < radius) {
-                    ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
+                    player.getPlayerNetwork().sendPacket(packet);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void sendPacketForAllExpect(Packet packet, Player expect) {
+        for (Player player : server.getPlayers()) {
+            if (!player.equals(expect)) {
+                player.getPlayerNetwork().sendPacket(packet);
+            }
+        }
+    }
+
+    @Override
+    public void sendPacketDistanceExpect(Location location, Packet packet, int radius, Player expect) {
+        for (Player player : server.getPlayers()) {
+            if (!player.equals(expect)) {
+                if (player.getWorld().getName().equals(location.getWorld().getName())) {
+                    if (player.getLocation().distance(location) < radius) {
+                        ((CyanPlayer) player).getPlayerNetwork().sendPacket(packet);
+                    }
                 }
             }
         }

@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.UUID;
 
 import net.CyanWool.api.command.ICommandSender;
+import net.CyanWool.api.network.PlayerNetwork;
 import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.ChunkCoords;
-import net.CyanWool.api.world.Effect;
 import net.CyanWool.api.world.Location;
-import net.CyanWool.api.world.Sound;
+
+import org.spacehq.mc.protocol.data.game.values.world.Particle;
+import org.spacehq.mc.protocol.data.game.values.world.Sound;
+import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
+import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
 
 public interface Player extends Human, ICommandSender {
 
@@ -40,7 +44,9 @@ public interface Player extends Human, ICommandSender {
 
     public void playSound(Location location, Sound sound, float volume, float pitch);
 
-    public void playEffect(Location location, Effect effect, int data);
+    public void playEffect(Location location, WorldEffect effect, WorldEffectData data);
+
+    public void playParticle(Location location, Particle particle, int amount, int data);
 
     public void setTime(long time); // maybe sendTimeUpdate ?
 
@@ -49,4 +55,6 @@ public interface Player extends Human, ICommandSender {
     public void updateChunk(Chunk chunk);
 
     public void respawn();
+
+    public PlayerNetwork getPlayerNetwork();
 }

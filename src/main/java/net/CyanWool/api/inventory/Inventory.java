@@ -18,10 +18,6 @@ public interface Inventory {
 
     public boolean isUseableByPlayer(Human player);
 
-    public void openInventory(Human player);
-
-    public void closeInventory(Human player);
-
     public void addItems(ItemStack... items);
 
     public ItemStack[] getContents();
@@ -37,4 +33,8 @@ public interface Inventory {
     public List<Human> getViewers();
 
     public InventoryType getType();
+
+    public void closeInventory(Human cyanHuman);
+
+    public void openInventory(Human cyanHuman);
 }

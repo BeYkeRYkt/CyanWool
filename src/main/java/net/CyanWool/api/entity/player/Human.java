@@ -1,9 +1,11 @@
 package net.CyanWool.api.entity.player;
 
-import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.entity.EntityLivingBase;
 import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
+import net.CyanWool.api.inventory.inventories.PlayerInventory;
+
+import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
 
 public interface Human extends EntityLivingBase {
 
@@ -71,13 +73,15 @@ public interface Human extends EntityLivingBase {
 
     public void openInventory(Inventory inventory);
 
-    public Gamemode getGameMode();
+    public GameMode getGameMode();
 
-    public void setGamemode(Gamemode mode);
+    public void setGamemode(GameMode mode);
 
     public Inventory getEnderChest();
 
     public int getSleepingTicks();
 
     public void setSleepingTicks(int ticks);
+
+    public PlayerInventory getInventory();
 }

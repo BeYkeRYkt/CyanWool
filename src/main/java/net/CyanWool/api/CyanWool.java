@@ -8,6 +8,7 @@ import net.CyanWool.api.command.ICommandSender;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
 import net.CyanWool.api.plugin.PluginManager;
+import net.CyanWool.api.scheduler.Scheduler;
 import net.CyanWool.api.utils.ServerConfiguration;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
@@ -113,5 +114,9 @@ public class CyanWool {
 
     public static RecipeManager getRecipeManager() {
         return getServer().getRecipeManager();
+    }
+
+    public static Scheduler getScheduler() {
+        return getServer().getScheduler();
     }
 }

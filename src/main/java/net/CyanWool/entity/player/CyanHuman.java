@@ -1,20 +1,21 @@
 package net.CyanWool.entity.player;
 
-import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.component.FoodComponent;
 import net.CyanWool.api.entity.component.HealthComponent;
-import net.CyanWool.api.entity.component.InventoryComponent;
 import net.CyanWool.api.entity.component.XPComponent;
 import net.CyanWool.api.entity.player.Human;
 import net.CyanWool.api.inventory.Inventory;
 import net.CyanWool.api.inventory.ItemStack;
+import net.CyanWool.api.inventory.inventories.PlayerInventory;
 import net.CyanWool.api.world.Location;
-import net.CyanWool.api.world.Sound;
 import net.CyanWool.entity.CyanEntityLivingBase;
+import net.CyanWool.inventory.inventories.CyanPlayerInventory;
 
 import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
+import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 
 public abstract class CyanHuman extends CyanEntityLivingBase implements Human {
 
@@ -32,7 +33,8 @@ public abstract class CyanHuman extends CyanEntityLivingBase implements Human {
     private float walkSpeed;
     private boolean canBuild;
     private Inventory viewInventory;
-    private Gamemode gameMode;
+    private GameMode gameMode;
+    private PlayerInventory inventory;
 
     public CyanHuman(GameProfile profile, Location location) {
         super(location);// TODO
@@ -40,7 +42,9 @@ public abstract class CyanHuman extends CyanEntityLivingBase implements Human {
         getComponentManager().removeComponent("ai");
         getComponentManager().addComponent(new FoodComponent(this, 20)); // ???
         getComponentManager().addComponent(new XPComponent(this));
-        setDamageSound(new SoundInfo(Sound.PLAYER_HURT, 1.0F, 1.0F));
+        CyanPlayerInventory inv = new CyanPlayerInventory(getName());
+        this.inventory = inv;
+        setDamageSound(new SoundInfo(GenericSound.PLAYER_HURT, 1.0F, 1.0F));
         ((HealthComponent) getComponentManager().getComponent("health")).setMaxHealth(20);
         ((HealthComponent) getComponentManager().getComponent("health")).setHealth(20);
     }
@@ -52,19 +56,12 @@ public abstract class CyanHuman extends CyanEntityLivingBase implements Human {
 
     @Override
     public boolean hasItemInHand() {
-        if (getComponentManager().hasComponent("inventory")) {
-            InventoryComponent component = (InventoryComponent) getComponentManager().getComponent("inventory");
-            return component.getInventory().getItemInHand() != null;
-        }
-        return false;
+        return getInventory().getItemInHand() != null;
     }
 
     @Override
     public void setItemInHand(ItemStack item) {
-        if (getComponentManager().hasComponent("inventory")) {
-            InventoryComponent component = (InventoryComponent) getComponentManager().getComponent("inventory");
-            component.getInventory().setItemInHand(item);
-        }
+        getInventory().setItemInHand(item);
     }
 
     @Override
@@ -87,6 +84,7 @@ public abstract class CyanHuman extends CyanEntityLivingBase implements Human {
     public void closeInventory() {
         if (viewInventory != null) {
             viewInventory.closeInventory(this);
+            viewInventory = null;
         }
     }
 
@@ -190,12 +188,12 @@ public abstract class CyanHuman extends CyanEntityLivingBase implements Human {
     }
 
     @Override
-    public Gamemode getGameMode() {
+    public GameMode getGameMode() {
         return gameMode;
     }
 
     @Override
-    public void setGamemode(Gamemode mode) {
+    public void setGamemode(GameMode mode) {
         this.gameMode = mode;
     }
 
@@ -270,5 +268,10 @@ public abstract class CyanHuman extends CyanEntityLivingBase implements Human {
     public void setXPTotal(int xp) {
         XPComponent component = (XPComponent) getComponentManager().getComponent("xp");
         component.setXPTotal(xp);
+    }
+
+    @Override
+    public PlayerInventory getInventory() {
+        return inventory;
     }
 }

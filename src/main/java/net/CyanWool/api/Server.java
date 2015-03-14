@@ -5,9 +5,12 @@ import java.util.List;
 
 import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ICommandSender;
+import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
+import net.CyanWool.api.network.NetworkServer;
 import net.CyanWool.api.plugin.PluginManager;
+import net.CyanWool.api.scheduler.Scheduler;
 import net.CyanWool.api.utils.ServerConfiguration;
 import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
@@ -26,7 +29,7 @@ public interface Server {
 
     public Logger getLogger();
 
-    // public NetworkManager getNetworkManager();
+    public NetworkServer getNetworkServer();
 
     public ServerConfiguration getServerConfiguration();
 
@@ -52,7 +55,11 @@ public interface Server {
 
     public BufferedImage getIcon();
 
-    // public PlayerManager getPlayerManager();
+    // public PlayerManager getPlayerManager(); //for future...
 
     public RecipeManager getRecipeManager();
+
+    public Scheduler getScheduler();
+
+    public EntityManager getEntityManager();
 }

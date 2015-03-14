@@ -65,18 +65,6 @@ public class CyanInventory implements Inventory {
     }
 
     @Override
-    public void openInventory(Human player) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void closeInventory(Human player) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void addItems(ItemStack... items) {
         // todo
     }
@@ -125,5 +113,17 @@ public class CyanInventory implements Inventory {
     @Override
     public InventoryType getType() {
         return type;
+    }
+
+    @Override
+    public void closeInventory(Human cyanHuman) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void openInventory(Human cyanHuman) {
+        // TODO Auto-generated method stub
+
     }
 }

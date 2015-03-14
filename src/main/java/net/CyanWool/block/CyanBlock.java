@@ -2,11 +2,15 @@ package net.CyanWool.block;
 
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.block.BlockSide;
+import net.CyanWool.api.block.BlockState;
 import net.CyanWool.api.block.BlockType;
+import net.CyanWool.api.block.entity.TileEntity;
 import net.CyanWool.api.inventory.ItemStack;
+import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.Location;
-import net.CyanWool.api.world.Sound;
 import net.CyanWool.api.world.World;
+
+import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 
 public class CyanBlock implements Block {
 
@@ -35,7 +39,7 @@ public class CyanBlock implements Block {
         // ParticleEffect.BREAK_BLOCK, new
         // BreakBlockEffectData(getBlockType().getID()));// ?
 
-        if (getBlockType().getBreakSound().getSound() != Sound.CLICK) {
+        if (getBlockType().getBreakSound().getSound() != GenericSound.CLICK) {
             getLocation().getWorld().playSound(getLocation(), getBlockType().getBreakSound().getSound(), getBlockType().getBreakSound().getVolume(), getBlockType().getBreakSound().getPitch());
         } else {
             getLocation().getWorld().playSound(getLocation(), getBlockType().getBreakSound().getName(), getBlockType().getBreakSound().getVolume(), getBlockType().getBreakSound().getPitch());
@@ -82,6 +86,63 @@ public class CyanBlock implements Block {
     @Override
     public World getWorld() {
         return getLocation().getWorld();
+    }
+
+    @Override
+    public int getLightFromSky() {
+        return getChunk().getSkyLight(getX(), getY(), getZ());
+    }
+
+    @Override
+    public int getX() {
+        return location.getBlockX();
+    }
+
+    @Override
+    public int getY() {
+        return location.getBlockY();
+    }
+
+    @Override
+    public int getZ() {
+        return location.getBlockZ();
+    }
+
+    @Override
+    public Chunk getChunk() {
+        return location.getChunk();
+    }
+
+    @Override
+    public void setBlock(int id) {
+        getWorld().setBlock(getLocation(), id, 0);
+    }
+
+    @Override
+    public void setBlock(BlockType type) {
+        getWorld().setBlock(getLocation(), type);
+    }
+
+    @Override
+    public void setData(int data) {
+        getChunk().setData(location, data);
+    }
+
+    @Override
+    public BlockState getBlockState() {
+        TileEntity entity = getTileEntity();
+        if (entity != null) {
+            BlockState state = entity.getBlockState();
+            if (state != null) {
+                return state;
+            }
+        }
+        return new CyanBlockState(this);
+    }
+
+    @Override
+    public TileEntity getTileEntity() {
+        return getWorld().getTileEntity(getLocation());
     }
 
 }

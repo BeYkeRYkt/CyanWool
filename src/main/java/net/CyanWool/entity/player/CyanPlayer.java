@@ -5,33 +5,32 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.Transform;
-import net.CyanWool.api.Gamemode;
 import net.CyanWool.api.Server;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.component.DisplayNameComponent;
 import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.api.network.PlayerNetwork;
 import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.ChunkCoords;
-import net.CyanWool.api.world.Effect;
 import net.CyanWool.api.world.Location;
-import net.CyanWool.api.world.Sound;
 import net.CyanWool.entity.CyanEntity;
 import net.CyanWool.entity.meta.ClientSettings;
 import net.CyanWool.entity.meta.CyanMetadataMap;
-import net.CyanWool.network.PlayerNetwork;
 import net.CyanWool.world.CyanChunk;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.protocol.data.game.EntityMetadata;
 import org.spacehq.mc.protocol.data.game.Position;
 import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
-import org.spacehq.mc.protocol.data.game.values.setting.Difficulty;
 import org.spacehq.mc.protocol.data.game.values.world.CustomSound;
+import org.spacehq.mc.protocol.data.game.values.world.Particle;
+import org.spacehq.mc.protocol.data.game.values.world.Sound;
 import org.spacehq.mc.protocol.data.game.values.world.WorldType;
 import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
 import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
@@ -47,7 +46,14 @@ import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerNotifyClientPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnParticlePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
+import org.spacehq.opennbt.tag.builtin.ByteTag;
+import org.spacehq.opennbt.tag.builtin.CompoundTag;
+import org.spacehq.opennbt.tag.builtin.FloatTag;
+import org.spacehq.opennbt.tag.builtin.IntTag;
+import org.spacehq.opennbt.tag.builtin.ShortTag;
+import org.spacehq.opennbt.tag.builtin.Tag;
 import org.spacehq.packetlib.packet.Packet;
 
 public class CyanPlayer extends CyanHuman implements Player {
@@ -57,10 +63,11 @@ public class CyanPlayer extends CyanHuman implements Player {
     private List<Entity> knowEntities;
     private List<ChunkCoords> chunks;
     private ClientSettings settings;
+    private CompoundTag compTag;
 
     public CyanPlayer(CyanServer server, GameProfile profile, Location location) {
         super(profile, location);
-        super.setGamemode(Gamemode.SURVIVAL);
+        super.setGamemode(GameMode.SURVIVAL);
         this.server = server;
         this.knowEntities = new ArrayList<Entity>();
         this.chunks = new ArrayList<ChunkCoords>();
@@ -244,17 +251,14 @@ public class CyanPlayer extends CyanHuman implements Player {
 
     @Override
     public void playSound(Location location, Sound sound, float volume, float pitch) {
-        org.spacehq.mc.protocol.data.game.values.world.Sound libSound = Transform.convertLibSound(sound);
-        ServerPlaySoundPacket packet = new ServerPlaySoundPacket(libSound, location.getX(), location.getY(), location.getZ(), volume, pitch);
+        ServerPlaySoundPacket packet = new ServerPlaySoundPacket(sound, location.getX(), location.getY(), location.getZ(), volume, pitch);
         getPlayerNetwork().sendPacket(packet);
     }
 
     @Override
-    public void playEffect(Location location, Effect effect, int data) {
-        WorldEffect libEffect = Transform.convertWorldEffect(effect);
-        WorldEffectData libEffectData = Transform.convertWorldEffectData(effect, data);
+    public void playEffect(Location location, WorldEffect effect, WorldEffectData data) {
         Position pos = new Position(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        ServerPlayEffectPacket packet = new ServerPlayEffectPacket(libEffect, pos, libEffectData);
+        ServerPlayEffectPacket packet = new ServerPlayEffectPacket(effect, pos, data);
         getPlayerNetwork().sendPacket(packet);
     }
 
@@ -304,9 +308,9 @@ public class CyanPlayer extends CyanHuman implements Player {
     }
 
     @Override
-    public void setGamemode(Gamemode mode) {
+    public void setGamemode(GameMode mode) {
         super.setGamemode(mode);
-        ServerNotifyClientPacket packet = new ServerNotifyClientPacket(ClientNotification.CHANGE_GAMEMODE, GameMode.valueOf(mode.name()));
+        ServerNotifyClientPacket packet = new ServerNotifyClientPacket(ClientNotification.CHANGE_GAMEMODE, mode);
         getPlayerNetwork().sendPacket(packet);
     }
 
@@ -320,16 +324,17 @@ public class CyanPlayer extends CyanHuman implements Player {
     @Override
     public void respawn() {
         isAlive = true;
-        getWorld().getEntityManager().register(this);
+        getServer().getEntityManager().register(this);
 
         setHealth(getMaxHealth());
         setFoodLevel(20);
 
-        ServerRespawnPacket packet = new ServerRespawnPacket(getWorld().getDimension().getId(), Difficulty.valueOf(getWorld().getDifficulty().name()), GameMode.valueOf(getGameMode().name()), WorldType.FLAT);// TEST
+        ServerRespawnPacket packet = new ServerRespawnPacket(getWorld().getDimension().getId(), getWorld().getDifficulty(), getGameMode(), WorldType.FLAT);// TEST
         getPlayerNetwork().sendPacket(packet);
     }
 
     // Not api
+    @Override
     public PlayerNetwork getPlayerNetwork() {
         return connection;
     }
@@ -410,5 +415,100 @@ public class CyanPlayer extends CyanHuman implements Player {
         }
 
         prev.clear();
+    }
+
+    @Override
+    public void loadCompoundTag(CompoundTag tag) {
+        this.compTag = tag;
+        // start load
+        IntTag gm = tag.get("playerGameType");
+        setGamemode(Transform.transformGameMode(gm.getValue()));
+
+        IntTag selectItem = tag.get("SelectedItemSlot");
+        getInventory().setHeldItemSlot(selectItem.getValue());
+
+        // CompoundTag item = tag.get("SelectedItem"); //TODO
+
+        IntTag x = tag.get("SpawnX");
+        getLocation().setX(x.getValue());
+
+        IntTag y = tag.get("SpawnY");
+        getLocation().setX(y.getValue());
+
+        IntTag z = tag.get("SpawnZ");
+        getLocation().setX(z.getValue());
+
+        // IntTag spawnForced = tag.get("SpawnForced"); // TODO
+
+        ByteTag sleeping = tag.get("Sleeping");
+        if (sleeping.getValue() == 1) {
+            sleepInBedAt(x.getValue(), y.getValue(), z.getValue());
+        }
+
+        ShortTag sleepingTicks = tag.get("SleepTimer");
+        setSleepingTicks(sleepingTicks.getValue());
+
+        IntTag foodLvl = tag.get("foodLevel");
+        setFoodLevel(foodLvl.getValue());
+        // TODO: foodExhaustionLevel, foodSaturationLevel, foodTickTimer
+        // TODO: XpLevel, XpP, XpTotal, XpSeed,
+        // TODO: Inventory, EnderItems
+
+        CompoundTag abilities = tag.get("abilities");
+        FloatTag walk = abilities.get("walkSpeed");
+        setWalkSpeed(walk.getValue());
+
+        FloatTag fly = abilities.get("flySpeed");
+        setFlySpeed(fly.getValue());
+
+        ByteTag mayfly = abilities.get("mayfly");
+        if (mayfly.getValue() == 1) {
+            setAllowFlying(true);
+        }
+
+        ByteTag flying = abilities.get("flying");
+        if (flying.getValue() == 1) {
+            setFlying(true);
+        }
+
+        // TODO: invulnerable
+
+        ByteTag mayBuild = abilities.get("mayBuild");
+        if (mayBuild.getValue() == 1) {
+            setBuild(true);
+        }
+
+        // TODO: instabuild
+        // End.
+    }
+
+    @Override
+    public void saveCompoundTag(CompoundTag tag) {
+        Map<String, Tag> map = tag.getValue();
+        map.put("", new IntTag("playerGameType", Transform.transformGameMode(getGameMode())));
+        map.put("", new IntTag("SelectedItemSlot", getInventory().getHeldItemSlot()));
+        map.put("", new IntTag("SpawnX", getLocation().getBlockX()));
+        map.put("", new IntTag("SpawnY", getLocation().getBlockY()));
+        map.put("", new IntTag("SpawnZ", getLocation().getBlockZ()));
+        // TODO
+
+        tag.setValue(map);
+    }
+
+    @Override
+    public CompoundTag getCompoundTag() {
+        return compTag;
+    }
+
+    @Override
+    public boolean isMonster() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void playParticle(Location location, Particle particle, int amount, int data) {
+        ServerSpawnParticlePacket packet = new ServerSpawnParticlePacket(particle, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), 0, 0, 0, 0, amount, data);
+        getPlayerNetwork().sendPacket(packet);
     }
 }

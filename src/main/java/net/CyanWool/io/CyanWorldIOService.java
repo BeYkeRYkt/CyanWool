@@ -3,8 +3,8 @@ package net.CyanWool.io;
 import java.io.File;
 import java.io.IOException;
 
+import net.CyanWool.Transform;
 import net.CyanWool.api.io.WorldIOService;
-import net.CyanWool.api.world.Difficulty;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
 
@@ -34,7 +34,7 @@ public class CyanWorldIOService implements WorldIOService {
             Location newSpawn = new Location(world, xTag.getValue(), yTag.getValue(), zTag.getValue());
             world.setSpawnLocation(newSpawn);
 
-            world.setDifficulty(Difficulty.getDifficulty(difficulty.getValue()));
+            world.setDifficulty(Transform.transformDifficulty(difficulty.getValue()));
             world.setWorldTime(daytime.getValue());// Demo test
 
         } catch (IOException e) {

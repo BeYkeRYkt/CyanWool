@@ -76,4 +76,8 @@ public class PluginDescriptionFile {
         return mainClass;
     }
 
+    public File getFile() {
+        return file;
+    }
+
 }

@@ -1,10 +1,13 @@
 package net.CyanWool.api.entity;
 
+import net.CyanWool.api.Server;
 import net.CyanWool.api.entity.component.ComponentManager;
 import net.CyanWool.api.entity.meta.MetadataMap;
 import net.CyanWool.api.world.Chunk;
 import net.CyanWool.api.world.Location;
 import net.CyanWool.api.world.World;
+
+import org.spacehq.opennbt.tag.builtin.CompoundTag;
 
 public interface Entity {
 
@@ -76,4 +79,14 @@ public interface Entity {
     public boolean canSeeEntity(Entity entity);
 
     public boolean canSeeLocation(Location location);
+
+    public void loadCompoundTag(CompoundTag tag);
+
+    public void saveCompoundTag(CompoundTag tag);
+
+    public CompoundTag getCompoundTag();
+
+    public boolean isMonster();
+
+    public Server getServer();
 }

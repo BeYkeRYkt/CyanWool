@@ -2,12 +2,12 @@ package net.CyanWool.api.world;
 
 import java.util.List;
 
-import net.CyanWool.api.Gamemode;
+import net.CyanWool.api.Server;
 import net.CyanWool.api.block.Block;
 import net.CyanWool.api.block.BlockType;
+import net.CyanWool.api.block.entity.TileEntity;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
-import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.objects.Arrow;
 import net.CyanWool.api.entity.objects.Egg;
@@ -19,6 +19,13 @@ import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.ItemStack;
 import net.CyanWool.api.io.PlayerIOService;
 import net.CyanWool.api.utils.Vector;
+
+import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
+import org.spacehq.mc.protocol.data.game.values.setting.Difficulty;
+import org.spacehq.mc.protocol.data.game.values.world.Particle;
+import org.spacehq.mc.protocol.data.game.values.world.Sound;
+import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
+import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
 
 public interface World {
 
@@ -52,11 +59,15 @@ public interface World {
 
     public void playSound(Location location, Sound sound, float volume, float pitch);
 
-    public void playEffect(Location location, Effect effect, int data);
+    public void playEffect(Location location, WorldEffect effect, WorldEffectData data);
 
     public void playSoundExpect(Location location, Sound sound, float volume, float pitch, Player player);
 
-    public void playEffectExpect(Location location, Effect effect, int data, Player player);
+    public void playEffectExpect(Location location, WorldEffect effect, WorldEffectData data, Player player);
+
+    public void playParticle(Location location, Particle particle, int amount, int data);
+
+    public void playParticleExpect(Location location, Particle particle, int amount, int data, Player player);
 
     public Entity spawnEntity(EntityType type);
 
@@ -104,9 +115,9 @@ public interface World {
 
     public void setDifficulty(Difficulty diff);
 
-    public Gamemode getDefaultGamemode();
+    public GameMode getDefaultGamemode();
 
-    public void setDefaultGamemode(Gamemode mode);
+    public void setDefaultGamemode(GameMode mode);
 
     public boolean getGamerule(String rule);
 
@@ -136,6 +147,10 @@ public interface World {
 
     public Egg shootEgg(Vector vector);
 
-    public EntityManager getEntityManager();
+    public TileEntity getTileEntity(int x, int y, int z);
+
+    public TileEntity getTileEntity(Location location);
+
+    public Server getServer();
 
 }

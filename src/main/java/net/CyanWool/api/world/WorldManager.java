@@ -6,7 +6,7 @@ import java.util.List;
 
 import net.CyanWool.api.Server;
 import net.CyanWool.api.io.WorldIOService;
-import net.CyanWool.api.theards.WorldThread;
+import net.CyanWool.api.scheduler.CyanTask;
 
 public class WorldManager {
 
@@ -35,18 +35,22 @@ public class WorldManager {
         service.readWorld(world);
     }
 
-    public boolean addWorld(World world) {
+    public boolean addWorld(final World world) {
         for (WorldEntry entry : worldsEntry) {
             if (entry.getWorld().getName().equals(world.getName())) {
                 return false;
             }
         }
 
-        WorldEntry we = new WorldEntry(world);
-        WorldThread thread = new WorldThread(world);
-        we.setTask(thread);
+        CyanTask thread = server.getScheduler().runAsyncTaskRepeat(new Runnable() {
+
+            @Override
+            public void run() {
+                world.onTick();
+            }
+        }, 1, 1);
+        WorldEntry we = new WorldEntry(world, thread);
         worldsEntry.add(we);
-        we.getTask().start();
         server.getLogger().info("Added new world: " + world.getName());
         return true;
     }
@@ -67,13 +71,14 @@ public class WorldManager {
         world.saveAll();
         service.saveWorld(world);
         stopWorldEntry(world);
+        server.getLogger().info("removed world: " + world.getName());
     }
 
     public void saveAllWorlds() {
         Iterator<WorldEntry> it = worldsEntry.iterator();
         while (it.hasNext()) {
             WorldEntry w = it.next();
-            w.getTask().shutdown();
+            w.getTask().cancel(false);
             it.remove();
         }
     }
@@ -84,7 +89,7 @@ public class WorldManager {
         while (it.hasNext()) {
             WorldEntry w = it.next();
             if (w.getWorld().getName().equals(world.getName())) {
-                w.getTask().shutdown();
+                w.getTask().cancel(false);
                 it.remove();
                 return true;
             }
