@@ -79,7 +79,8 @@ public class CyanServer implements Server {
         getLogger().info("Loading server.yml");
         this.config = new ServerConfiguration(configFile);
         this.config.init();
-
+        this.scheduler = new Scheduler(this);
+        
         registerVanilla();
         this.playerManager = new PlayerManager(this);
         this.entityManager = new EntityManager();
