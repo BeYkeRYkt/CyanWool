@@ -9,10 +9,10 @@ import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
 import net.CyanWool.api.network.NetworkServer;
-import net.CyanWool.api.packs.ServerPack;
 import net.CyanWool.api.plugin.PluginManager;
 import net.CyanWool.api.scheduler.Scheduler;
 import net.CyanWool.api.utils.ServerConfiguration;
+import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
 
 import org.apache.logging.log4j.Logger;
@@ -32,6 +32,10 @@ public interface Server {
     public NetworkServer getNetworkServer();
 
     public ServerConfiguration getServerConfiguration();
+
+    public List<World> getWorlds();
+
+    public World getWorld(int i);
 
     public List<Player> getPlayers();
 
@@ -58,8 +62,4 @@ public interface Server {
     public Scheduler getScheduler();
 
     public EntityManager getEntityManager();
-
-    public ServerPack getServerPack();
-
-    public void setServerPack(ServerPack pack);
 }

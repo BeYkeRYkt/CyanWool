@@ -7,10 +7,10 @@ import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ICommandSender;
 import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
-import net.CyanWool.api.packs.ServerPack;
 import net.CyanWool.api.plugin.PluginManager;
 import net.CyanWool.api.scheduler.Scheduler;
 import net.CyanWool.api.utils.ServerConfiguration;
+import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
 
 import org.apache.logging.log4j.Logger;
@@ -64,6 +64,14 @@ public class CyanWool {
         return getServer().getServerConfiguration();
     }
 
+    public static List<World> getWorlds() {
+        return getServer().getWorlds();
+    }
+
+    public static World getWorld(int i) {
+        return getServer().getWorld(i);
+    }
+
     public static List<Player> getPlayers() {
         return getServer().getPlayers();
     }
@@ -92,7 +100,7 @@ public class CyanWool {
         getServer().broadcastMessage(message);
     }
 
-    public static WorldManager getWorldManager() {
+    public WorldManager getWorldManager() {
         return getServer().getWorldManager();
     }
 
@@ -110,13 +118,5 @@ public class CyanWool {
 
     public static Scheduler getScheduler() {
         return getServer().getScheduler();
-    }
-
-    public static ServerPack getServerPack() {
-        return getServer().getServerPack();
-    }
-
-    public static void setServerPack(ServerPack pack) {
-        getServer().setServerPack(pack);
     }
 }

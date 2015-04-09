@@ -153,11 +153,4 @@ public interface World {
 
     public Server getServer();
 
-    public boolean isLoadedSpawnChunks();
-
-    public void loadSpawnChunks();
-
-    public boolean isHardcore();
-
-    public void setHardcore(boolean flag);
 }

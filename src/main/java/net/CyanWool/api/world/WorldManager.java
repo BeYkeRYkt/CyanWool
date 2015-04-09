@@ -3,16 +3,15 @@ package net.CyanWool.api.world;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.Server;
 import net.CyanWool.api.io.WorldIOService;
-import net.CyanWool.api.scheduler.Task;
+import net.CyanWool.api.scheduler.CyanTask;
 
 public class WorldManager {
 
     private Server server;
-    private final List<WorldEntry> worldsEntry = new CopyOnWriteArrayList<WorldEntry>();
+    private final List<WorldEntry> worldsEntry = new ArrayList<WorldEntry>();
     private WorldIOService service;
 
     public WorldManager(Server server, WorldIOService service) {
@@ -43,7 +42,7 @@ public class WorldManager {
             }
         }
 
-        Task thread = server.getScheduler().runTaskRepeat(new Runnable() {
+        CyanTask thread = server.getScheduler().runAsyncTaskRepeat(new Runnable() {
 
             @Override
             public void run() {
@@ -58,7 +57,7 @@ public class WorldManager {
 
     public World getWorld(String name) {
         for (WorldEntry entry : worldsEntry) {
-            if (entry.getWorld().getName().equals(name)) {
+            if (!entry.getWorld().getName().equals(name)) {
                 return entry.getWorld();
             }
         }
@@ -71,31 +70,16 @@ public class WorldManager {
         // ???
         world.saveAll();
         service.saveWorld(world);
-        worldsEntry.remove(world);
-        // stopWorldEntry(world);
-        stopWorldEntry1(world);
+        stopWorldEntry(world);
         server.getLogger().info("removed world: " + world.getName());
     }
 
     public void saveAllWorlds() {
-        // Iterator<WorldEntry> it = worldsEntry.iterator();
-        // while (it.hasNext()) {
-        // WorldEntry w = it.next();
-        // w.getTask().cancel(false);
-        // it.remove();
-        // }
-        for (WorldEntry w : worldsEntry) {
-            w.getTask().cancel();
-            worldsEntry.remove(w);
-        }
-    }
-
-    private void stopWorldEntry1(World world) {
-        for (WorldEntry world1 : worldsEntry) {
-            if (world1.getWorld().getName().equals(world.getName())) {
-                world1.getTask().cancel(false);
-                worldsEntry.remove(world1);
-            }
+        Iterator<WorldEntry> it = worldsEntry.iterator();
+        while (it.hasNext()) {
+            WorldEntry w = it.next();
+            w.getTask().cancel(false);
+            it.remove();
         }
     }
 

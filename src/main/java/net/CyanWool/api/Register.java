@@ -1,15 +1,16 @@
 package net.CyanWool.api;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.inventory.ItemType;
 
 public class Register {
 
-    private static List<BlockType> blocks = new CopyOnWriteArrayList<BlockType>();
-    private static List<ItemType> items = new CopyOnWriteArrayList<ItemType>();
+    private static List<BlockType> blocks = new ArrayList<BlockType>();
+    private static List<ItemType> items = new ArrayList<ItemType>();
 
     public static boolean registerItem(ItemType item) {
         if (!hasItem(item.getId(), item.getData())) {
@@ -46,27 +47,27 @@ public class Register {
     }
 
     public static boolean removeItem(ItemType item) {
-        // Iterator<ItemType> it = items.iterator();
-        // while (it.hasNext()) {
-        // ItemType i = it.next();
-        // if (i.getId() == item.getId()) {
-        // it.remove();
-        // return true;
-        // }
-        // }
-        return items.remove(item);
+        Iterator<ItemType> it = items.iterator();
+        while (it.hasNext()) {
+            ItemType i = it.next();
+            if (i.getId() == item.getId()) {
+                it.remove();
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean removeBlock(BlockType type) {
-        // Iterator<BlockType> it = blocks.iterator();
-        // while (it.hasNext()) {
-        // BlockType t = it.next();
-        // if (t.getID() == type.getID()) {
-        // it.remove();
-        // return true;
-        // }
-        // }
-        return blocks.remove(type);
+        Iterator<BlockType> it = blocks.iterator();
+        while (it.hasNext()) {
+            BlockType t = it.next();
+            if (t.getID() == type.getID()) {
+                it.remove();
+                return true;
+            }
+        }
+        return false;
     }
 
     public static ItemType getItemType(int id) {

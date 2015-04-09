@@ -1,7 +1,7 @@
 package net.CyanWool.entity;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.Server;
@@ -55,8 +55,7 @@ public abstract class CyanEntity implements Entity {
         this.metadata = new CyanMetadataMap();
         getComponentManager().addComponent(new MovementComponent(this));
         getComponentManager().addComponent(new TransportComponent(this));
-        // getServer().getEntityManager().register(this);
-        getWorld().getServer().getEntityManager().register(this);
+        getServer().getEntityManager().register(this);
         initMetadata();
         // TODO
     }
@@ -145,7 +144,6 @@ public abstract class CyanEntity implements Entity {
     public void kill() {
         // TODO damage 100500
         this.isAlive = false;
-        getServer().getEntityManager().unregister(this);
     }
 
     @Override
@@ -305,7 +303,7 @@ public abstract class CyanEntity implements Entity {
 
     public List<Packet> getUpdatePackets() {
         // From Glowstone. Thanks dudes :D
-        List<Packet> list = new CopyOnWriteArrayList<Packet>();
+        ArrayList<Packet> list = new ArrayList<Packet>();
 
         double moveX = getLocation().getX() - prevLoc.getX();
         double moveY = getLocation().getY() - prevLoc.getY();

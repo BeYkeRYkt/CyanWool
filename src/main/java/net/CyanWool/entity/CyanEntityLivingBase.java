@@ -1,8 +1,8 @@
 package net.CyanWool.entity;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.Entity;
@@ -26,7 +26,7 @@ public abstract class CyanEntityLivingBase extends CyanEntity implements EntityL
 
     public CyanEntityLivingBase(Location location) {
         super(location);
-        this.potions = new CopyOnWriteArrayList<PotionEffect>();
+        this.potions = new ArrayList<PotionEffect>();
         getComponentManager().addComponent(new AgeComponent(this));
         getComponentManager().addComponent(new DisplayNameComponent(this));
         getComponentManager().addComponent(new AIComponent(this));

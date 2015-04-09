@@ -13,9 +13,9 @@ public interface TileEntity {
 
     public CompoundTag getCompoundTag();
 
-    // public void loadCompoundTag(CompoundTag tag);
+    public void loadCompoundTag(CompoundTag tag);
 
-    // public void saveCompoundTag(CompoundTag tag);
+    public void saveCompoundTag(CompoundTag tag);
 
     public BlockState getBlockState();
 }

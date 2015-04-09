@@ -1,7 +1,7 @@
 package net.CyanWool.api.inventory.data;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.inventory.ItemData;
 import net.CyanWool.api.potions.PotionEffect;
@@ -18,7 +18,7 @@ public class PotionData extends ItemData {
 
     public PotionData(short maxDurability) {
         super(maxDurability);
-        this.effects = new CopyOnWriteArrayList<PotionEffect>();
+        this.effects = new ArrayList<PotionEffect>();
     }
 
     public void addPotionEffect(PotionEffect effect) {

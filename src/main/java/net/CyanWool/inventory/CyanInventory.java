@@ -1,9 +1,9 @@
 package net.CyanWool.inventory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.entity.player.Human;
 import net.CyanWool.api.inventory.Inventory;
@@ -23,7 +23,7 @@ public class CyanInventory implements Inventory {
         this.name = name;
         this.type = type;
         this.items = new HashMap<Integer, ItemStack>();
-        this.viewers = new CopyOnWriteArrayList<Human>();
+        this.viewers = new ArrayList<Human>();
     }
 
     @Override

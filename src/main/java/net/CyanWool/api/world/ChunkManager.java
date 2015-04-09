@@ -25,4 +25,8 @@ public interface ChunkManager {
     public void saveChunks();
 
     public void onTick();
+
+    public void loadSpawnChunks();
+
+    public boolean isLoadedSpawnChunks();
 }

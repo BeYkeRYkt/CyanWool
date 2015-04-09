@@ -37,7 +37,6 @@ public class CyanWorldIOService implements WorldIOService {
             world.setDifficulty(Transform.transformDifficulty(difficulty.getValue()));
             world.setWorldTime(daytime.getValue());// Demo test
 
-            world.loadSpawnChunks();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

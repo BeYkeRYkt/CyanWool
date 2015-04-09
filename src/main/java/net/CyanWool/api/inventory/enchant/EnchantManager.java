@@ -1,26 +1,30 @@
 package net.CyanWool.api.inventory.enchant;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EnchantManager {
 
-    private static List<Enchantment> enchants = new CopyOnWriteArrayList<Enchantment>();
+    private static List<Enchantment> enchants = new ArrayList<Enchantment>();
 
-    public static boolean registerEnchant(Enchantment enchant) {
+    public static void registerEnchant(Enchantment enchant) {
         if (!enchants.contains(enchant)) {
             enchants.add(enchant);
-            return true;
         }
-        return false;
     }
 
-    public static boolean removeEnchant(Enchantment enchant) {
+    public static void removeEnchant(Enchantment enchant) {
         if (enchants.contains(enchant)) {
-            enchants.remove(enchant);
-            return true;
+            Iterator<Enchantment> it = enchants.iterator();
+            while (it.hasNext()) {
+                Enchantment e = it.next();
+                if (e.equals(enchant)) {
+                    it.remove();
+                    break;
+                }
+            }
         }
-        return false;
     }
 
     public Enchantment getByID(int id) {

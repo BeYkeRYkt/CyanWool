@@ -1,14 +1,14 @@
 package net.CyanWool.api.network;
 
 import net.CyanWool.api.Server;
-import net.CyanWool.api.entity.player.Player;
+import net.CyanWool.entity.player.CyanPlayer;
 
 import org.spacehq.packetlib.event.session.SessionListener;
 import org.spacehq.packetlib.packet.Packet;
 
 public interface PlayerNetwork {
 
-    public Player getPlayer();
+    public CyanPlayer getPlayer();
 
     public void sendPacket(Packet packet);
 

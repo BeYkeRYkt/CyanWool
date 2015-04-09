@@ -1,7 +1,7 @@
 package net.CyanWool.management;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.CyanServer;
 import net.CyanWool.api.entity.player.Player;
@@ -13,6 +13,7 @@ import net.CyanWool.network.CyanPlayerNetwork;
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.protocol.ProtocolConstants;
 import org.spacehq.mc.protocol.data.game.Position;
+import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
 import org.spacehq.mc.protocol.data.game.values.setting.Difficulty;
 import org.spacehq.mc.protocol.data.game.values.world.WorldType;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerDifficultyPacket;
@@ -30,20 +31,18 @@ public class PlayerManager {
 
     public PlayerManager(CyanServer server) {
         this.server = server;
-        this.players = new CopyOnWriteArrayList<Player>();
+        this.players = new ArrayList<Player>();
     }
 
     public synchronized Player loginPlayer(Session session) {
         GameProfile profile = session.getFlag(ProtocolConstants.PROFILE_KEY);
-        World world = server.getWorldManager().getWorld("world");
+        World world = server.getWorld(0);
         Location location = world.getSpawnLocation();
         CyanPlayer player = new CyanPlayer(server, profile, location);
         player.setPlayerNetwork(new CyanPlayerNetwork(server, session, player));
-        // world.getPlayerService().readPlayer(player);
-        player.loadData();
 
         // player.load();
-        ServerJoinGamePacket packet = new ServerJoinGamePacket(player.getEntityID(), world.isHardcore(), player.getGameMode(), world.getDimension().getId(), world.getDifficulty(), server.getMaxPlayers(), WorldType.DEFAULT, false);
+        ServerJoinGamePacket packet = new ServerJoinGamePacket(player.getEntityID(), false, GameMode.SURVIVAL, 0, Difficulty.NORMAL, server.getMaxPlayers(), WorldType.DEFAULT, false);
         session.send(packet);
         players.add(player);
 
@@ -65,7 +64,6 @@ public class PlayerManager {
         // Send Difficulty
         ServerDifficultyPacket diffPacket = new ServerDifficultyPacket(Difficulty.NORMAL);
         session.send(diffPacket);
-        world.getPlayerService().savePlayer(player);
 
         // Send packets for all players
         for (Packet packets : player.getSpawnPackets()) {
@@ -85,8 +83,6 @@ public class PlayerManager {
         // ServerDestroyEntitiesPacket destroyEntitiesPacket = new
         // ServerDestroyEntitiesPacket(player.getEntityID());
         // NetworkServer.sendPacketForAll(destroyEntitiesPacket);
-        // player.getWorld().getPlayerService().savePlayer(player);
-        player.saveData();
         player.kill();
         // Save and unload
         // player.save();
