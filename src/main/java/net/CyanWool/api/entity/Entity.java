@@ -80,13 +80,17 @@ public interface Entity {
 
     public boolean canSeeLocation(Location location);
 
-    public void loadCompoundTag(CompoundTag tag);
+    // public void loadCompoundTag(CompoundTag tag);
 
-    public void saveCompoundTag(CompoundTag tag);
+    // public void saveCompoundTag(CompoundTag tag);
 
     public CompoundTag getCompoundTag();
 
     public boolean isMonster();
 
     public Server getServer();
+
+    public void loadData();
+
+    public void saveData();
 }

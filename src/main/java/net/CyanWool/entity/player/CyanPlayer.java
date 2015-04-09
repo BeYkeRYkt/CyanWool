@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import net.CyanWool.CyanServer;
@@ -53,7 +52,6 @@ import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.opennbt.tag.builtin.FloatTag;
 import org.spacehq.opennbt.tag.builtin.IntTag;
 import org.spacehq.opennbt.tag.builtin.ShortTag;
-import org.spacehq.opennbt.tag.builtin.Tag;
 import org.spacehq.packetlib.packet.Packet;
 
 public class CyanPlayer extends CyanHuman implements Player {
@@ -417,7 +415,7 @@ public class CyanPlayer extends CyanHuman implements Player {
         prev.clear();
     }
 
-    @Override
+    // @Override
     public void loadCompoundTag(CompoundTag tag) {
         this.compTag = tag;
         // start load
@@ -482,21 +480,65 @@ public class CyanPlayer extends CyanHuman implements Player {
         // End.
     }
 
-    @Override
+    // @Override
     public void saveCompoundTag(CompoundTag tag) {
-        Map<String, Tag> map = tag.getValue();
-        map.put("", new IntTag("playerGameType", Transform.transformGameMode(getGameMode())));
-        map.put("", new IntTag("SelectedItemSlot", getInventory().getHeldItemSlot()));
-        map.put("", new IntTag("SpawnX", getLocation().getBlockX()));
-        map.put("", new IntTag("SpawnY", getLocation().getBlockY()));
-        map.put("", new IntTag("SpawnZ", getLocation().getBlockZ()));
+        // Map<String, Tag> map = tag.getValue();
+        // map.put("", new IntTag("playerGameType",
+        // Transform.transformGameMode(getGameMode())));
+        // map.put("", new IntTag("SelectedItemSlot",
+        // getInventory().getHeldItemSlot()));
+        // map.put("", new IntTag("SpawnX", getLocation().getBlockX()));
+        // map.put("", new IntTag("SpawnY", getLocation().getBlockY()));
+        // map.put("", new IntTag("SpawnZ", getLocation().getBlockZ()));
         // TODO
 
-        tag.setValue(map);
+        // tag.setValue(map);
+        if (tag != null) {
+            tag.put(new IntTag("playerGameType", Transform.transformGameMode(getGameMode())));
+            tag.put(new IntTag("SelectedItemSlot", getInventory().getHeldItemSlot()));
+            tag.put(new IntTag("SpawnX", getLocation().getBlockX()));
+            tag.put(new IntTag("SpawnY", getLocation().getBlockY()));
+            tag.put(new IntTag("SpawnZ", getLocation().getBlockZ()));
+
+            byte sleep = 0;
+            if (isSleeping()) {
+                sleep = 1;
+            }
+            tag.put(new ByteTag("Sleeping", sleep));
+            tag.put(new ShortTag("SleepTimer", (short) getSleepingTicks()));
+            tag.put(new IntTag("foodLevel", getFoodLevel()));
+
+            CompoundTag abilities = new CompoundTag("abilities");
+            abilities.put(new FloatTag("walkSpeed", getWalkSpeed()));
+            abilities.put(new FloatTag("flySpeed", getFlySpeed()));
+
+            byte mayfly = 0;
+            if (isAllowFlying()) {
+                mayfly = 1;
+            }
+            abilities.put(new ByteTag("mayfly", mayfly));
+
+            byte flying = 0;
+            if (isFlying()) {
+                flying = 1;
+            }
+            abilities.put(new ByteTag("flying", flying));
+
+            byte mayBuild = 0;
+            if (canBuild()) {
+                mayBuild = 1;
+            }
+            abilities.put(new ByteTag("mayBuild", mayBuild));
+            tag.put(abilities);
+
+        }
     }
 
     @Override
     public CompoundTag getCompoundTag() {
+        if (compTag == null) {
+            compTag = new CompoundTag("");
+        }
         return compTag;
     }
 
@@ -510,5 +552,22 @@ public class CyanPlayer extends CyanHuman implements Player {
     public void playParticle(Location location, Particle particle, int amount, int data) {
         ServerSpawnParticlePacket packet = new ServerSpawnParticlePacket(particle, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), 0, 0, 0, 0, amount, data);
         getPlayerNetwork().sendPacket(packet);
+    }
+
+    @Override
+    public void loadData() {
+        getWorld().getPlayerService().readPlayer(this);
+    }
+
+    @Override
+    public void saveData() {
+        final Player player = this;
+        getServer().getScheduler().runTask(new Runnable() {
+
+            @Override
+            public void run() {
+                getWorld().getPlayerService().savePlayer(player);
+            }
+        }, 1);
     }
 }

@@ -68,4 +68,5 @@ public interface Chunk {
     public void setData(Location location, int data);
 
     public int getData(Location location);
+
 }

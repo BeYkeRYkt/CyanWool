@@ -1,8 +1,8 @@
 package net.CyanWool.world;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.Server;
@@ -11,7 +11,6 @@ import net.CyanWool.api.block.BlockType;
 import net.CyanWool.api.block.entity.TileEntity;
 import net.CyanWool.api.entity.Entity;
 import net.CyanWool.api.entity.EntityLivingBase;
-import net.CyanWool.api.entity.EntityManager;
 import net.CyanWool.api.entity.EntityType;
 import net.CyanWool.api.entity.objects.Arrow;
 import net.CyanWool.api.entity.objects.Egg;
@@ -57,15 +56,18 @@ public class CyanWorld implements World {
     private Difficulty difficulty;
     private GameMode defaultGamemode;
     private boolean autoSave;
-    private EntityManager entityManager;
+    private boolean isHardcore;
+
+    private boolean spawnLoaded;
+    private List<Entity> entities;
 
     public CyanWorld(String name, PlayerIOService service) {
         this.name = name;
         this.service = service;
         this.path = "worlds/" + name;
-        this.entityManager = new EntityManager();
         setGenerator(new FlatWorldGenerator(this)); // TEST
         this.chunk = new CyanChunkManager(this, new CyanChunkIOService(this));
+        this.entities = new CopyOnWriteArrayList<Entity>();
         // this.chunk.loadChunk(getSpawnLocation().getBlockX() >> 4,
         // getSpawnLocation().getBlockZ() >> 4, false);
         this.dimension = Dimension.OVERWORLD;// TEST
@@ -158,7 +160,7 @@ public class CyanWorld implements World {
 
     @Override
     public List<Entity> getEntities() {
-        return new ArrayList<Entity>(getServer().getEntityManager().getAll());// TODO:FIX
+        return entities;// TODO:FIX
     }
 
     @Override
@@ -180,16 +182,17 @@ public class CyanWorld implements World {
 
     @Override
     public void onTick() {
-        if (!chunk.isLoadedSpawnChunks()) {
-            chunk.loadSpawnChunks();
-        }
         chunk.onTick();
 
-        Iterator<Entity> it = getEntities().iterator();
-        while (it.hasNext()) {
-            Entity entity = it.next();
+        // Iterator<Entity> it = getEntities().iterator();
+        // while (it.hasNext()) {
+        // Entity entity = it.next();
+        // entity.onTick();
+        // }
+        for (Entity entity : getEntities()) {
             entity.onTick();
         }
+
         dayTime++;
         if (dayTime == 24000) {
             dayTime = 0;
@@ -477,5 +480,45 @@ public class CyanWorld implements World {
     @Override
     public Server getServer() {
         return CyanWool.getServer();
+    }
+
+    @Override
+    public void loadSpawnChunks() {
+        if (!spawnLoaded) {
+            int centerX = getSpawnLocation().getBlockX() >> 4;
+            int centerZ = getSpawnLocation().getBlockZ() >> 4;
+            int radius = 4 * 8 / 3;
+            long loadTime = System.currentTimeMillis();
+            int total = (radius * 2 + 1) * (radius * 2 + 1), current = 0;
+            for (int x = centerX - radius; x <= centerX + radius; ++x) {
+                for (int z = centerZ - radius; z <= centerZ + radius; ++z) {
+                    ++current;
+                    getChunkManager().loadChunk(x, z);
+                    getChunkManager().getChunk(x, z).setLocked(true);
+                    // spawnChunkLock.acquire(new GlowChunk.Key(x, z));
+                    if (System.currentTimeMillis() >= loadTime + 1000) {
+                        int progress = 100 * current / total;
+                        CyanWool.getLogger().info("Preparing spawn for " + getName() + ": " + progress + "%");
+                        loadTime = System.currentTimeMillis();
+                    }
+                }
+            }
+            spawnLoaded = true;
+        }
+    }
+
+    @Override
+    public boolean isLoadedSpawnChunks() {
+        return spawnLoaded;
+    }
+
+    @Override
+    public boolean isHardcore() {
+        return isHardcore;
+    }
+
+    @Override
+    public void setHardcore(boolean flag) {
+        this.isHardcore = flag;
     }
 }
