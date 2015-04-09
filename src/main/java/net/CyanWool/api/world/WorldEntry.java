@@ -1,13 +1,13 @@
 package net.CyanWool.api.world;
 
-import net.CyanWool.api.scheduler.CyanTask;
+import net.CyanWool.api.scheduler.Task;
 
 public class WorldEntry {
 
     private final World world;
-    private CyanTask task;
+    private Task task;
 
-    WorldEntry(World world, CyanTask task) {
+    WorldEntry(World world, Task task) {
         this.world = world;
         this.task = task;
     }
@@ -22,7 +22,7 @@ public class WorldEntry {
     /**
      * @return the task
      */
-    public CyanTask getTask() {
+    public Task getTask() {
         return task;
     }
 }

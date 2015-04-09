@@ -1,7 +1,7 @@
 package net.CyanWool.api.block;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.SoundInfo;
 import net.CyanWool.api.entity.Entity;
@@ -26,7 +26,7 @@ public class BlockType { // ??
     public BlockType(int id, int data, int maxData) {
         this.id = id;
         this.data = data;
-        this.drop = new ArrayList<ItemStack>();
+        this.drop = new CopyOnWriteArrayList<ItemStack>();
         this.maxData = data;
     }
 

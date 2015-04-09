@@ -7,7 +7,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import net.CyanWool.api.CyanWool;
-import net.CyanWool.api.Register;
 import net.CyanWool.api.Server;
 import net.CyanWool.api.command.CommandManager;
 import net.CyanWool.api.command.ConsoleCommandSender;
@@ -17,24 +16,15 @@ import net.CyanWool.api.entity.player.Player;
 import net.CyanWool.api.inventory.recipes.RecipeManager;
 import net.CyanWool.api.inventory.recipes.SimpleRecipeManager;
 import net.CyanWool.api.network.NetworkServer;
+import net.CyanWool.api.packs.ServerPack;
 import net.CyanWool.api.plugin.PluginManager;
 import net.CyanWool.api.scheduler.Scheduler;
 import net.CyanWool.api.utils.ServerConfiguration;
-import net.CyanWool.api.world.World;
 import net.CyanWool.api.world.WorldManager;
-import net.CyanWool.block.blocks.BlockAir;
-import net.CyanWool.block.blocks.BlockBedrock;
-import net.CyanWool.block.blocks.BlockDirt;
-import net.CyanWool.block.blocks.BlockGrass;
-import net.CyanWool.block.blocks.BlockGrassTest;
-import net.CyanWool.inventory.items.ItemBedrock;
-import net.CyanWool.inventory.items.ItemDirt;
-import net.CyanWool.inventory.items.ItemGrass;
-import net.CyanWool.io.CyanPlayerIOService;
 import net.CyanWool.io.CyanWorldIOService;
 import net.CyanWool.management.PlayerManager;
 import net.CyanWool.network.CyanNetworkServer;
-import net.CyanWool.world.CyanWorld;
+import net.CyanWool.scheduler.CyanScheduler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,6 +50,7 @@ public class CyanServer implements Server {
     private Scheduler scheduler;
 
     private static BufferedImage icon;
+    private ServerPack pack;
 
     public static void main(String[] args) {
         CyanServer mc = new CyanServer();
@@ -79,10 +70,15 @@ public class CyanServer implements Server {
         getLogger().info("Loading server.yml");
         this.config = new ServerConfiguration(configFile);
         this.config.init();
+        this.pack = new MinecraftServerPack(this);
 
-        registerVanilla();
+        // Loading assets
+        getServerPack().registerItems();
+        getServerPack().registerBlocks();
+
+        this.scheduler = new CyanScheduler(this);
         this.playerManager = new PlayerManager(this);
-        this.entityManager = new EntityManager();
+        this.entityManager = new EntityManager(this);
         this.recipeManager = new SimpleRecipeManager();
 
         this.console = new ConsoleThread(this);
@@ -105,7 +101,9 @@ public class CyanServer implements Server {
         this.pluginManager.loadPlugins();
 
         // load worlds...
-        loadWorlds();
+        getServerPack().registerWorlds();
+        getServerPack().reigsterRecipes();
+        getServerPack().registerEnchants();
 
         this.pluginManager.enablePlugins();
 
@@ -153,20 +151,10 @@ public class CyanServer implements Server {
     }
 
     @Override
-    public List<World> getWorlds() {
-        return worlds.getWorlds();
-    }
-
-    @Override
-    public World getWorld(int i) {
-        return worlds.getWorlds().get(i);
-    }
-
-    @Override
     public void shutdown() {
         getLogger().info("Shutdown!");
 
-        scheduler.stop();
+        scheduler.shutdown();
         getLogger().info("Scheduler's shutdown!");
 
         pluginManager.unloadPlugins();
@@ -259,24 +247,15 @@ public class CyanServer implements Server {
         return playerManager;
     }
 
-    private void loadWorlds() {
-        // TODO: TESTING!
-        World world = new CyanWorld("world", new CyanPlayerIOService());
-        getWorldManager().loadWorld(world);
-        getWorldManager().addWorld(world);
+    @Override
+    public ServerPack getServerPack() {
+        return pack;
     }
 
-    private void registerVanilla() {
-        // TODO: TESTING!
-        Register.registerItem(new ItemGrass());
-        Register.registerItem(new ItemDirt());
-        Register.registerItem(new ItemBedrock());
-
-        Register.registerBlock(new BlockAir());
-        Register.registerBlock(new BlockDirt());
-        Register.registerBlock(new BlockGrass());
-        Register.registerBlock(new BlockBedrock());
-        Register.registerBlock(new BlockGrassTest());
+    @Override
+    public void setServerPack(ServerPack pack) {
+        this.pack = pack;
+        getLogger().info("ServerPack has been changed: " + pack.getName());
     }
 
 }

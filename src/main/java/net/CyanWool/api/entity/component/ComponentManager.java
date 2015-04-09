@@ -1,20 +1,20 @@
 package net.CyanWool.api.entity.component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import net.CyanWool.api.entity.Entity;
 
 public class ComponentManager {
 
-    private Map<String, Component> components;
+    private ConcurrentMap<String, Component> components;
     private Entity entity;
 
     public ComponentManager(Entity entity) {
         this.entity = entity;
-        this.components = new HashMap<String, Component>();
+        this.components = new ConcurrentHashMap<String, Component>();
     }
 
     public Entity getEntity() {

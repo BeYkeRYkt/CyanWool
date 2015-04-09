@@ -2,6 +2,7 @@ package net.CyanWool.world;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.CyanWool.api.CyanWool;
 import net.CyanWool.api.Register;
@@ -21,7 +22,8 @@ public class CyanChunk implements Chunk {
     private int x;
     private int z;
 
-    private final List<Entity> entities = new ArrayList<Entity>();
+    // private final List<Entity> entities = new ArrayList<Entity>();
+    private final List<Entity> entities = new CopyOnWriteArrayList<Entity>();
     private boolean isLoaded;
     private Section[] sections;
     private byte[] biomes;
