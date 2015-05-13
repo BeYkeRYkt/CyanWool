@@ -1,16 +1,17 @@
 package net.devwool.cyanwool.api.world;
 
-import net.CyanWool.api.block.Block;
+import net.devwool.cyanwool.api.block.Block;
 import net.devwool.cyanwool.api.utils.NumberConversions;
+import net.devwool.cyanwool.api.world.chunk.Chunk;
 
 public class Position {
-    
+
     private double x;
     private double y;
     private double z;
     private World world;
-    
-    public Position(World world, double x, double y, double z){
+
+    public Position(World world, double x, double y, double z) {
         this.world = world;
         this.x = x;
         this.y = y;
@@ -44,7 +45,7 @@ public class Position {
     public World getWorld() {
         return world;
     }
-    
+
     public int getBlockX() {
         return NumberConversions.floor(x); // TODO
     }
@@ -56,15 +57,15 @@ public class Position {
     public int getBlockZ() {
         return NumberConversions.floor(z); // TODO
     }
-    
+
     public Block getBlock() {
         return world.getBlock(this);// TODO
     }
-    
-    public Chunk getChunk(){
-        
+
+    public Chunk getChunk() {
+        return getWorld().getChunkManager().getChunkFromBlockCoords(getBlockX(), getBlockZ());
     }
-    
+
     public double distanceTo(Position pos) {
         double var2 = pos.getX() - this.getX();
         double var4 = pos.getY() - this.getY();
@@ -79,13 +80,13 @@ public class Position {
         return var2 * var2 + var4 * var4 + var6 * var6;
     }
 
-    public void add(double x, double y, double z){
+    public void add(double x, double y, double z) {
         this.x += x;
         this.y += y;
         this.z += z;
     }
-    
-    public void substract(double x, double y, double z){
+
+    public void substract(double x, double y, double z) {
         this.x -= x;
         this.y -= y;
         this.z -= z;
