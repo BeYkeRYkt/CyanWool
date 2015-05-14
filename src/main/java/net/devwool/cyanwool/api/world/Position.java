@@ -91,4 +91,16 @@ public class Position {
         this.y -= y;
         this.z -= z;
     }
+
+    public void add(Position pos) {
+        this.x += pos.getX();
+        this.y += pos.getY();
+        this.z += pos.getZ();
+    }
+
+    public void substract(Position pos) {
+        this.x -= pos.getX();
+        this.y -= pos.getY();
+        this.z -= pos.getZ();
+    }
 }

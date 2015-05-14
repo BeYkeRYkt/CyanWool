@@ -1,5 +1,9 @@
 package net.devwool.cyanwool.api;
 
+import java.util.List;
+
+import net.devwool.cyanwool.api.entity.EntityManager;
+import net.devwool.cyanwool.api.lang.LanguageManager;
 import net.devwool.cyanwool.api.management.OperatorsManager;
 import net.devwool.cyanwool.api.management.PlayerManager;
 import net.devwool.cyanwool.api.management.WhitelistManager;
@@ -24,7 +28,6 @@ public class CyanWool {
             return;
         }
         server = init;
-        getServer().getLogger().info("Server has been loaded...");
         getServer().getLogger().info("#====#_CyanWool_#====#");
         getServer().getLogger().info("Mod Name: " + getServer().getModName());
         getServer().getLogger().info("Host Address: " + getServer().getNetworkServer().getHostAddress());
@@ -107,12 +110,47 @@ public class CyanWool {
     }
 
     /**
+     * Менеджер для регистрации/удаления сущностей.
+     * 
+     * @return
+     */
+    public static EntityManager getEntityManager() {
+        return getServer().getEntityManager();
+    }
+
+    /**
      * Отправить сообщение в глобальный чат (В том числе сервер).
      * 
      * @param message
      *            - Сообщение
      */
-    public void broadcastMessage(String message) {
+    public static void broadcastMessage(String message) {
         getServer().broadcastMessage(message);
+    }
+
+    /**
+     * Выключить сервер с сообщением
+     * 
+     * @param message
+     *            - Сообщение
+     */
+    public static void shutdown(String message) {
+        getServer().shutdown(message);
+    }
+
+    /**
+     * Менеджер языковых пакетов
+     */
+    public static LanguageManager getLanguageManager() {
+        return getServer().getLanguageManager();
+    }
+
+    /**
+     * Список разработчиков
+     * 
+     * @return
+     */
+    public static List<String> getDevelopers() {
+        return getServer().getDevelopers();
     }
 }

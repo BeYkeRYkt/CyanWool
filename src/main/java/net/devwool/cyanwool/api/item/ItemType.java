@@ -1,6 +1,9 @@
 package net.devwool.cyanwool.api.item;
 
 import net.devwool.cyanwool.api.block.Block;
+import net.devwool.cyanwool.api.entity.Entity;
+import net.devwool.cyanwool.api.entity.EntityLivingBase;
+import net.devwool.cyanwool.api.entity.player.Player;
 import net.devwool.cyanwool.api.utils.BlockSide;
 import net.devwool.cyanwool.api.world.Position;
 import net.devwool.cyanwool.api.world.World;

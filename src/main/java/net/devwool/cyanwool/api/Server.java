@@ -1,5 +1,9 @@
 package net.devwool.cyanwool.api;
 
+import java.util.List;
+
+import net.devwool.cyanwool.api.entity.EntityManager;
+import net.devwool.cyanwool.api.lang.LanguageManager;
 import net.devwool.cyanwool.api.management.OperatorsManager;
 import net.devwool.cyanwool.api.management.PlayerManager;
 import net.devwool.cyanwool.api.management.WhitelistManager;
@@ -53,7 +57,7 @@ public interface Server {
     public OperatorsManager getOperatorsManager();
 
     /**
-     * Менеджер для создания класса игрока и его взаимнодействия. Например заход
+     * Менеджер для создания класса игрока и его взаимнодействия. Например вход
      * игрока на сервер.
      * 
      * @return
@@ -66,5 +70,32 @@ public interface Server {
      * @return
      */
     public NetworkServer getNetworkServer();
+
+    /**
+     * Менеджер для регистрации/удаления сущностей.
+     * 
+     * @return
+     */
+    public EntityManager getEntityManager();
+
+    /**
+     * Менеджер языковых пакетов
+     */
+    public LanguageManager getLanguageManager();
+
+    /**
+     * Выключить сервер с сообщением
+     * 
+     * @param message
+     *            - Сообщение
+     */
+    public void shutdown(String message);
+
+    /**
+     * Список разработчиков
+     * 
+     * @return
+     */
+    public List<String> getDevelopers();
 
 }

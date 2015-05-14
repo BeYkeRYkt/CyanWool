@@ -3,6 +3,7 @@ package net.devwool.cyanwool.api.management;
 import java.util.List;
 
 import net.devwool.cyanwool.api.Server;
+import net.devwool.cyanwool.api.entity.player.Player;
 
 public interface PlayerManager {
 

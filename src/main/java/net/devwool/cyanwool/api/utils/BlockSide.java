@@ -1,5 +1,7 @@
 package net.devwool.cyanwool.api.utils;
 
+import net.devwool.cyanwool.api.entity.EntityLivingBase;
+
 /**
  * http://www.minecraftforum.net/forums/mapping-and-modding/mapping-and-modding-tutorials/1571226-coding-forge-how-to-properly-confuse-minecraft/
  */

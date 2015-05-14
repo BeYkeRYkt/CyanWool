@@ -1,5 +1,6 @@
 package net.devwool.cyanwool.api.network;
 
+import net.devwool.cyanwool.api.entity.player.Player;
 import net.devwool.cyanwool.api.world.Position;
 
 import org.spacehq.packetlib.Server;

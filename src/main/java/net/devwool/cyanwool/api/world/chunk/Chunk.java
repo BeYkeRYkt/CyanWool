@@ -3,6 +3,7 @@ package net.devwool.cyanwool.api.world.chunk;
 import java.util.List;
 
 import net.devwool.cyanwool.api.block.Block;
+import net.devwool.cyanwool.api.entity.Entity;
 import net.devwool.cyanwool.api.world.LightType;
 import net.devwool.cyanwool.api.world.Position;
 import net.devwool.cyanwool.api.world.World;
@@ -39,7 +40,7 @@ public interface Chunk {
 
     public void setLightLevel(LightType type, Position pos, int level);
 
-    public List getEntities();
+    public List<Entity> getEntities();
 
     public boolean canSeeSky(Position pos);
 

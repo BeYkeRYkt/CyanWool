@@ -1,5 +1,6 @@
 package net.devwool.cyanwool.api.block;
 
+import net.devwool.cyanwool.api.entity.player.Player;
 import net.devwool.cyanwool.api.item.ItemStack;
 import net.devwool.cyanwool.api.item.ItemType;
 import net.devwool.cyanwool.api.world.Position;
@@ -9,8 +10,10 @@ import org.spacehq.mc.protocol.data.game.values.world.Sound;
 
 public interface BlockType extends ItemType {
 
+    @Override
     public String getStringId();
 
+    @Override
     public int getId();
 
     public Sound getStepSound();
